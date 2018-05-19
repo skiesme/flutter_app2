@@ -37,7 +37,8 @@ flutter:
   - assets/images/login_background.png
   - assets/images/login_user.png
   - assets/images/login_password.png
-
+  - assets/images/home_background.png
+  - assets/images/home_message.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

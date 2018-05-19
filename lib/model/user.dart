@@ -1,15 +1,15 @@
-class User {
+class UserResult {
   int code;
   String message;
-  UserData response;
+  UserInfo response;
 
-  User({this.code, this.message, this.response});
+  UserResult({this.code, this.message, this.response});
 
-  User.fromJson(Map<String, dynamic> json) {
+  UserResult.fromJson(Map<String, dynamic> json) {
     code = json['Code'];
     message = json['Message'];
     response = json['Response'] != null
-        ? new UserData.fromJson(json['Response'])
+        ? new UserInfo.fromJson(json['Response'])
         : null;
   }
 
@@ -24,7 +24,7 @@ class User {
   }
 }
 
-class UserData {
+class UserInfo {
   String displayname;
   String icon;
   String defsite;
@@ -32,7 +32,7 @@ class UserData {
   int orders;
   Permission permission;
 
-  UserData(
+  UserInfo(
       {this.displayname,
         this.icon,
         this.defsite,
@@ -40,7 +40,7 @@ class UserData {
         this.orders,
         this.permission});
 
-  UserData.fromJson(Map<String, dynamic> json) {
+  UserInfo.fromJson(Map<String, dynamic> json) {
     displayname = json['displayname'];
     icon = json['icon'];
     defsite = json['defsite'];
@@ -66,12 +66,12 @@ class UserData {
 }
 
 class Permission {
-  List<String> bXWO;
-  List<String> pMWO;
-  List<String> xJ2WO;
-  List<String> xJ3WO;
-  List<String> xJ4WO;
-  List<String> xJWO;
+  List<dynamic> bXWO;
+  List<dynamic> pMWO;
+  List<dynamic> xJ2WO;
+  List<dynamic> xJ3WO;
+  List<dynamic> xJ4WO;
+  List<dynamic> xJWO;
 
   Permission(
       {this.bXWO, this.pMWO, this.xJ2WO, this.xJ3WO, this.xJ4WO, this.xJWO});

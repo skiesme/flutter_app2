@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:samex_app/utils/cache.dart';
 
 final http.Client _client = new http.Client();
 
@@ -13,7 +14,16 @@ class SamexApi {
       'username': userName,
       'password': password
     }));
-    print(response.body);
+    print('login: ${response.body}');
+    return response.body;
+  }
+
+  Future<String> user() async {
+    var response = await _client.get(BASE_URL+'/user', headers: {
+        'Authorization': Cache.instance.token
+    });
+    print('user: ${response.body}');
+
     return response.body;
   }
 
