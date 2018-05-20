@@ -176,7 +176,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   List<OrderShortInfo> filter(){
     if(_query.isEmpty) return widget.helper.datas;
-    return widget.helper.datas.where((i) => i.wonum.contains(_query)).toList();
+    return widget.helper.datas.where((i) => i.wonum.contains(_query?.toUpperCase())).toList();
   }
 
   @override
@@ -226,5 +226,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   void dispose() {
     super.dispose();
   }
+
 
 }
