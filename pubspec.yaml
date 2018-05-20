@@ -39,6 +39,13 @@ flutter:
   - assets/images/login_password.png
   - assets/images/home_background.png
   - assets/images/home_message.png
+  - assets/images/home_assets.png
+  - assets/images/home_notification.png
+  - assets/images/home_history.png
+  - assets/images/home_order.png
+  - assets/images/home_material.png
+  - assets/images/home_meter.png
+
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
