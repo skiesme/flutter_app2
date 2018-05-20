@@ -45,6 +45,12 @@ flutter:
   - assets/images/home_order.png
   - assets/images/home_material.png
   - assets/images/home_meter.png
+  - assets/images/task_xj.png
+  - assets/images/task_pm.png
+  - assets/images/task_cm.png
+  - assets/images/order_no_sync.png
+  - assets/images/order_no_handle.png
+  - assets/images/order_error_sync.png
 
   #  - images/a_dot_ham.jpeg
 

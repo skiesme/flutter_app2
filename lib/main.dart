@@ -7,6 +7,8 @@ import 'package:samex_app/page/login_page.dart';
 import 'package:samex_app/page/home_page.dart';
 import 'package:samex_app/data/root_model.dart';
 
+import 'package:samex_app/utils/style.dart';
+
 void main() async {
   await Cache.getInstance();
   runApp(new MyApp());
@@ -51,7 +53,7 @@ class MyApp extends StatelessWidget {
             // "hot reload" (press "r" in the console where you ran "flutter run",
             // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
             // counter didn't reset back to zero; the application is not restarted.
-            primaryColor: Colors.blue.shade600,
+            primaryColor: Style.primaryColor,
           ),
           home: _getHomePage()
         )

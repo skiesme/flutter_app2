@@ -7,7 +7,8 @@ import 'package:samex_app/utils/cache.dart';
 final http.Client _client = new http.Client();
 
 class SamexApi {
-  static const String BASE_URL = 'http://172.19.1.30:40001/app/api';
+  static const String BASE = '172.19.1.30:40001';
+  static const String BASE_URL = 'http://$BASE/app/api';
 
   Future<String> login(String userName, String password) async {
     var response =  await _client.post(BASE_URL+'/login', body: json.encode({
@@ -27,6 +28,23 @@ class SamexApi {
     return response.body;
   }
 
+  Future<String> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
+    Uri uri = new Uri.http(BASE, '/app/api/order', {
+      'worktype': type,
+      'time': '$time',
+      'count': '$count',
+      'older':'$older',
+      'status': status
+    });
+    var response = await _client.get(uri.toString(), headers: {
+      'Authorization': Cache.instance.token
+    });
+
+    print('${uri.toString()}: ${response.body}');
+
+    return response.body;
+
+  }
 
 
 }

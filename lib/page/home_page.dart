@@ -165,8 +165,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   @override
   Widget build(BuildContext context) {
-    getUserInfo(context) ??_handlerRefresh();
-
     return new Scaffold(
 
       body: new RefreshIndicator(
@@ -220,9 +218,8 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
       }
     } catch (e){
       print(e);
+      Func.showMessage('网络出现异常: 获取用户数据失败!');
     }
-
-
   }
 
   @override
@@ -233,6 +230,9 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
   @override
   void reassemble() {
     super.reassemble();
-//    _handlerRefresh();
+
+    new Future.delayed(new Duration(milliseconds: 100), (){
+      _handlerRefresh();
+    });
   }
 }

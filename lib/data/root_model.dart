@@ -20,6 +20,7 @@ void setUserInfo(BuildContext context, UserInfo info){
   RootModelWidget.of(context).model.user = info;
 }
 
+
 class RootModel {
   RootModel({this.userName, this.token}) : this.api = new SamexApi();
 

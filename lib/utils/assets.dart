@@ -12,4 +12,11 @@ class ImageAssets {
   static const String home_material = 'assets/images/home_material.png';
   static const String home_meter = 'assets/images/home_meter.png';
 
+  static const String task_xj = 'assets/images/task_xj.png';
+  static const String task_pm = 'assets/images/task_pm.png';
+  static const String task_cm = 'assets/images/task_cm.png';
+
+  static const String order_no_sync = 'assets/images/order_no_sync.png';
+  static const String order_no_handle = 'assets/images/order_no_handle.png';
+  static const String order_error_sync = 'assets/images/order_error_sync.png';
 }
