@@ -7,6 +7,7 @@ import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/order_model.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -31,6 +32,23 @@ class OrderList extends StatefulWidget {
 }
 
 class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>{
+
+  String _query = '';
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    getModel(context).addListener(hashCode, (String query){
+
+      setState(() {
+        _query = query;
+      });
+
+    });
+
+    if(widget.helper.itemCount() == 0){
+      _handleRefresh();
+    }
+  }
 
   String _getWorkType(){
     switch (widget.type){
@@ -96,9 +114,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         ));
   }
 
-  Widget _getCell(int index){
-    OrderShortInfo info = widget.helper.datas[index];
-
+  Widget _getCell(OrderShortInfo info, int index){
     return new InkWell(
         onTap: (){
 
@@ -158,53 +174,57 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         ));
   }
 
+  List<OrderShortInfo> filter(){
+    if(_query.isEmpty) return widget.helper.datas;
+    return widget.helper.datas.where((i) => i.wonum.contains(_query)).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('${widget.type} ... build');
+//    print('${widget.type} ... build');
 
-    if(widget.helper.itemCount() == 0){
-      return new Container(
-          color: const Color(0xFFF0F0F0),
-          child: new Stack( children: <Widget>[
-            new RefreshIndicator(
-                onRefresh: _handleRefresh,
-                child: new NotificationListener(
-                    onNotification: widget.helper.handle,
-                    child: new ListView.builder(
-                        physics: const AlwaysScrollableScrollPhysics(),
+    List<OrderShortInfo> infos = filter();
 
-                        itemCount: widget.helper.itemCount(),
-                        itemBuilder: (BuildContext context, int index){
-                          return _getCell(index);
-                        })
-                )),
+    Widget view = new ListView.builder(
+        physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
 
-            new Center(
-                child: Text('没发现任务')
-            )
+        itemCount: infos.length,
+        itemBuilder: (BuildContext context, int index){
+          return _getCell(infos[index], index);
+        });
 
-          ]));
+    List<Widget> children = <Widget>[
+      _query.isEmpty ? new RefreshIndicator(
+          onRefresh: _handleRefresh,
+          child: new NotificationListener(
+              onNotification: widget.helper.handle,
+              child: view
+          )) : view
+    ];
+
+    if(infos.length == 0){
+      children.add(
+          new Center(
+              child: Text('没发现任务')
+          ));
     }
+
     return new Container(
         color: const Color(0xFFF0F0F0),
-        child: new RefreshIndicator(
-            onRefresh: _handleRefresh,
-            child: new NotificationListener(
-                onNotification: widget.helper.handle,
-                child: new ListView.builder(
-                    controller: widget.helper.createController(),
-                    physics: const AlwaysScrollableScrollPhysics(),
+        child: new Stack( children: children));
 
-                    itemCount: widget.helper.itemCount(),
-                    itemBuilder: (BuildContext context, int index){
-                      return _getCell(index);
-                    })
-            )));
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
-//    if(widget.helper.itemCount() == 0)
-    _handleRefresh();
+  void deactivate() {
+    super.deactivate();
+    getModel(context).removeListener(hashCode);
+
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 }

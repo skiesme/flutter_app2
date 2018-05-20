@@ -6,6 +6,8 @@ import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/components/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
+import 'package:samex_app/data/order_model.dart';
+import 'package:samex_app/data/root_model.dart';
 
 class TaskPage extends StatefulWidget {
 
@@ -66,7 +68,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   void _clearSearchQuery() {
     setState(() {
       _searchQuery.clear();
-//      _updateSearchQuery(null);
+      _updateSearchQuery('');
     });
   }
 
@@ -100,13 +102,63 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     }
   }
 
+  List<Widget> _buildActions() {
+    if (_isSearching) {
+      return <Widget>[
+        new IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            if (_searchQuery == null || _searchQuery.text.isEmpty) {
+              // Stop searching.
+              Navigator.pop(context);
+              return;
+            }
+
+            _clearSearchQuery();
+          },
+        ),
+      ];
+    }
+
+    return <Widget>[
+      new IconButton(
+        icon: const Icon(Icons.search),
+        onPressed: _startSearch,
+      ),
+    ];
+  }
+
+  Widget _buildSearchField() {
+    return new TextField(
+      controller: _searchQuery,
+      autofocus: true,
+      decoration: const InputDecoration(
+        hintText: '输入工单号',
+        border: InputBorder.none,
+        hintStyle: const TextStyle(color: Colors.white30),
+      ),
+      style: const TextStyle(color: Colors.white, fontSize: 16.0),
+      onChanged: _updateSearchQuery,
+    );
+  }
+
+  void _updateSearchQuery(String newQuery) {
+//    print('_updateSearchQuery $newQuery');
+    getModel(context).queryChanges(newQuery);
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: widget.isTask ? Text('任务箱') : Text('工单箱'),
+        leading: _isSearching ? const BackButton() : null,
+        title: _isSearching ? _buildSearchField() : (widget.isTask ? Text('任务箱') : Text('工单箱')),
+        actions: _buildActions(),
       ),
-      body: _getBody(),
+      body: OrderModelWidget(
+        model: new OrderModel(),
+        child: _getBody(),
+      ),
       bottomNavigationBar: widget.isTask ? new BottomNavigationBar(
         items: _getBottomBar(),
         currentIndex: _tabIndex,
@@ -117,5 +169,13 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         },
       ) : null,
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _controller?.dispose();
+    _searchQuery?.dispose();
   }
 }
