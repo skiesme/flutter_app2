@@ -37,12 +37,20 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     Navigator.push(context, new MaterialPageRoute(builder: (_) => new SettingsPage()));
   }
 
+  void _gotoPage(String menu){
+    if(ImageAssets.home_order == menu){
+      Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskPage(isTask: false,)));
+    }
+  }
+
   Widget getMenu(_Menu menu){
     return new Container(
         height: 160.0,
         margin: new EdgeInsets.all(12.0),
         child: new RaisedButton(
-          onPressed: (){},
+          onPressed: (){
+            _gotoPage(menu.image);
+          },
           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
           color: Colors.white,
           child: new Column(
@@ -75,8 +83,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     UserInfo _user = getUserInfo(context);
 
     List<Widget> list = new List<Widget>();
-    final Orientation orientation = MediaQuery.of(context).orientation;
-
 
     list.add(
         new Stack(children: <Widget>[

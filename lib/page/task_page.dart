@@ -8,6 +8,11 @@ import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 
 class TaskPage extends StatefulWidget {
+
+  final bool isTask;
+
+  TaskPage({this.isTask = true});
+
   @override
   _TaskPageState createState() => new _TaskPageState();
 }
@@ -31,9 +36,13 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     _controller = new TabController(length: 3, vsync: this, initialIndex: _tabIndex);
     _searchQuery = new TextEditingController();
 
-    _pageHelpers.add(new PageHelper());
-    _pageHelpers.add(new PageHelper());
-    _pageHelpers.add(new PageHelper());
+    if(_pageHelpers.length == 0){
+      _pageHelpers.add(new PageHelper());
+      _pageHelpers.add(new PageHelper());
+      _pageHelpers.add(new PageHelper());
+      _pageHelpers.add(new PageHelper());
+    }
+
   }
 
   void _startSearch() {
@@ -80,6 +89,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   }
 
   Widget _getBody(){
+    if(!widget.isTask) return new OrderList(helper: _pageHelpers[3], type: OrderType.ALL,);
     switch(_tabIndex){
       case 0:
         return new OrderList(helper: _pageHelpers[0], type: OrderType.CM,);
@@ -94,10 +104,10 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: Text('任务箱'),
+        title: widget.isTask ? Text('任务箱') : Text('工单箱'),
       ),
       body: _getBody(),
-      bottomNavigationBar: new BottomNavigationBar(
+      bottomNavigationBar: widget.isTask ? new BottomNavigationBar(
         items: _getBottomBar(),
         currentIndex: _tabIndex,
         onTap: (index) {
@@ -105,7 +115,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
             _tabIndex = index;
           });
         },
-      ),
+      ) : null,
     );
   }
 }

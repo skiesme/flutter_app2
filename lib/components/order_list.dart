@@ -55,7 +55,10 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   Future<Null> _handleRefresh() async {
     try{
-      String response = await getApi(context).orderList(type:_getWorkType(), status: _getQueryStatus());
+      String response = await getApi(context).orderList(
+          type:_getWorkType(),
+          status: _getQueryStatus(),
+          count: widget.type != OrderType.ALL ? 100 : 20);
       OrderListResult result = new OrderListResult.fromJson(Func.decode(response));
       if(result.code != 0){
         Func.showMessage(result.message);
@@ -81,20 +84,21 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   Widget _getSyncStatus(){
     return  Container(
-      padding: new EdgeInsets.only(right: 20.0),
+        padding: new EdgeInsets.only(right: 20.0),
         decoration: new BoxDecoration(border: new Border(right: new BorderSide(color: Theme.of(context).dividerColor))),
         child:Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        new Image.asset(ImageAssets.order_no_sync, height: 40.0,),
-        Text(widget.type == OrderType.ALL ? '已完成' : '未同步')
-      ],
-    ));
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            new Image.asset(ImageAssets.order_no_sync, height: 40.0,),
+            Text(widget.type == OrderType.ALL ? '已完成' : '未同步')
+          ],
+        ));
   }
 
-  Widget _getCell(OrderShortInfo info){
-//    print(info.toJson().toString());
+  Widget _getCell(int index){
+    OrderShortInfo info = widget.helper.datas[index];
+
     return new InkWell(
         onTap: (){
 
@@ -114,7 +118,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text('工单: ${info.wonum}'),
+                            Text('工单${index+1} : ${info.wonum}'),
                             Text(info.status, style: _status_style,)
                           ],
                         ),
@@ -171,8 +175,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
                         itemCount: widget.helper.itemCount(),
                         itemBuilder: (BuildContext context, int index){
-                          OrderShortInfo info = widget.helper.datas[index];
-                          return _getCell(info);
+                          return _getCell(index);
                         })
                 )),
 
@@ -194,8 +197,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
                     itemCount: widget.helper.itemCount(),
                     itemBuilder: (BuildContext context, int index){
-                      OrderShortInfo info = widget.helper.datas[index];
-                      return _getCell(info);
+                      return _getCell(index);
                     })
             )));
   }
