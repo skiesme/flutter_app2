@@ -33,7 +33,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    print('afterFirstLayout... type=${widget.type}');
+//    print('afterFirstLayout... type=${widget.type}');
     getModel(context).addListener(hashCode, (String query){
 
       setState(() {
@@ -42,7 +42,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     });
 
-    _handleRefresh();
+    if(widget.helper.itemCount() == 0){
+      _handleRefresh();
+    }
   }
 
   String _getWorkType(){
@@ -198,8 +200,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     List<OrderShortInfo> list = filter();
 
     Widget view = new ListView.builder(
-        physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
 
+        physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
+        controller: widget.helper.createController(),
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index){
           return _getCell(list[index], index);
@@ -207,6 +210,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     List<Widget> children = <Widget>[
       _query.isEmpty ? new RefreshIndicator(
+
           onRefresh: _handleRefresh,
           child: new NotificationListener(
               onNotification: widget.helper.handle,

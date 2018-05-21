@@ -167,8 +167,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -231,6 +229,13 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
   @override
   void afterFirstLayout(BuildContext context) {
     _handlerRefresh();
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    taskPageHelpers.clear();
   }
 
   @override

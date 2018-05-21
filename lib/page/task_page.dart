@@ -18,8 +18,7 @@ class TaskPage extends StatefulWidget {
   _TaskPageState createState() => new _TaskPageState();
 }
 
-
-List<PageHelper<OrderShortInfo> > _pageHelpers = new List();
+List<PageHelper<OrderShortInfo> > taskPageHelpers = new List();
 
 class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin {
 
@@ -34,11 +33,11 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     _controller = new TabController(length: 3, vsync: this, initialIndex: _tabIndex);
     _searchQuery = new TextEditingController();
 
-    if(_pageHelpers.length == 0){
-      _pageHelpers.add(new PageHelper());
-      _pageHelpers.add(new PageHelper());
-      _pageHelpers.add(new PageHelper());
-      _pageHelpers.add(new PageHelper());
+    if(taskPageHelpers.length == 0){
+      taskPageHelpers.add(new PageHelper());
+      taskPageHelpers.add(new PageHelper());
+      taskPageHelpers.add(new PageHelper());
+      taskPageHelpers.add(new PageHelper());
     }
 
   }
@@ -87,14 +86,14 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   }
 
   Widget _getBody(){
-    if(!widget.isTask) return new OrderList(helper: _pageHelpers[3], type: OrderType.ALL,);
+    if(!widget.isTask) return new OrderList(helper: taskPageHelpers[3], type: OrderType.ALL,);
     switch(_tabIndex){
       case 0:
-        return new OrderList(helper: _pageHelpers[0], type: OrderType.CM, key: ValueKey(0));
+        return new OrderList(helper: taskPageHelpers[0], type: OrderType.CM, key: ValueKey(0));
       case 1:
-        return new OrderList(helper: _pageHelpers[1], type: OrderType.XJ, key: ValueKey(1));
+        return new OrderList(helper: taskPageHelpers[1], type: OrderType.XJ, key: ValueKey(1));
       default:
-        return new OrderList(helper: _pageHelpers[2], type: OrderType.PM, key: ValueKey(2));
+        return new OrderList(helper: taskPageHelpers[2], type: OrderType.PM, key: ValueKey(2));
     }
   }
 
