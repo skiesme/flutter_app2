@@ -7,16 +7,9 @@ import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/data/root_model.dart';
-import 'package:samex_app/data/order_model.dart';
+import 'package:samex_app/page/task_detail.dart';
 
 import 'package:after_layout/after_layout.dart';
-
-enum OrderType {
-  ALL,            //全部
-  PM,             //保养
-  XJ,             //巡检
-  CM,             //报修
-}
 
 const double _padding = 16.0;
 const TextStyle _status_style = TextStyle(color: Colors.red);
@@ -35,8 +28,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   String _query = '';
 
+  bool _first = true;
+
   @override
   void afterFirstLayout(BuildContext context) {
+    print('afterFirstLayout... type=${widget.type}');
     getModel(context).addListener(hashCode, (String query){
 
       setState(() {
@@ -71,24 +67,27 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   Future<Null> _handleRefresh([int older = 0]) async {
     try{
-      
+
       int time = 0;
 
       if(widget.helper.itemCount() > 0){
         time = widget.helper.datas[0].reportDate;
       }
-      
+
       String response = await getApi(context).orderList(
           type:_getWorkType(),
           status: _getQueryStatus(),
           time: time,
           older: older,
-          count: 20);
+          count: 100);
       OrderListResult result = new OrderListResult.fromJson(Func.decode(response));
+
+      if(_first) _first = false;
+
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
-        List<OrderShortInfo> info = result.response;
+        List<OrderShortInfo> info = result.response??[];
         widget.helper.addData(info, clear: widget.type != OrderType.ALL);
 
         try {
@@ -124,6 +123,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   Widget _getCell(OrderShortInfo info, int index){
     return new InkWell(
         onTap: (){
+          getModel(context).order = info;
+
+          Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
 
         },
         child: new Column (
@@ -161,7 +163,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                                 Text('标题: ${info.description}', ),
                                 Text('位置: ${info.locationDescription}'),
                                 Text('设备: ${info.assetDescription}'),
-                                Text('创建时间: ${Func.getFullTimeString(info.reportDate * 1000)}')
+                                Text('创建时间: ${Func.getFullTimeString(info.reportDate)}')
                               ],
                             )
                           ],
@@ -189,7 +191,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   @override
   Widget build(BuildContext context) {
-//    print('${widget.type} ... build');
+    print('${widget.type} ... build');
 
     List<OrderShortInfo> infos = filter();
 
@@ -211,9 +213,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     ];
 
     if(infos.length == 0){
+      _handleRefresh();
+
       children.add(
           new Center(
-              child: Text('没发现任务')
+              child: _first ? CircularProgressIndicator() : Text('没发现任务')
           ));
     }
 

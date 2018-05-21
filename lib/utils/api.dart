@@ -46,5 +46,19 @@ class SamexApi {
 
   }
 
+  Future<String> orderDetail(String orderId, [int time]) async {
+    Uri uri = new Uri.http(BASE, '/app/api/order/$orderId', {
+      'time': '${time?? '0'}',
+    });
+
+    var response = await _client.get(uri.toString(), headers: {
+      'Authorization': Cache.instance.token
+    });
+
+    print('${uri.toString()}: ${response.body}');
+
+    return response.body;
+  }
+
 
 }

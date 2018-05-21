@@ -51,6 +51,10 @@ flutter:
   - assets/images/order_no_sync.png
   - assets/images/order_no_handle.png
   - assets/images/order_error_sync.png
+  - assets/images/task_detail_material.png
+  - assets/images/task_detail_detail.png
+  - assets/images/task_detail_task.png
+  - assets/images/task_detail_person.png
 
   #  - images/a_dot_ham.jpeg
 

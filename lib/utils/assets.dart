@@ -19,4 +19,9 @@ class ImageAssets {
   static const String order_no_sync = 'assets/images/order_no_sync.png';
   static const String order_no_handle = 'assets/images/order_no_handle.png';
   static const String order_error_sync = 'assets/images/order_error_sync.png';
+
+  static const String task_detail_material = 'assets/images/task_detail_material.png';
+  static const String task_detail_detail = 'assets/images/task_detail_detail.png';
+  static const String task_detail_task = 'assets/images/task_detail_task.png';
+  static const String task_detail_person = 'assets/images/task_detail_person.png';
 }

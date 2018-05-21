@@ -93,7 +93,8 @@ class Func {
   }
 
   static String getFullTimeString(int mill){
-    DateTime time = new DateTime.fromMillisecondsSinceEpoch(mill);
+    if(mill == null) return '';
+    DateTime time = new DateTime.fromMillisecondsSinceEpoch(mill*1000);
     var formatter = new DateFormat('yyyy-MM-dd HH:mm:ss');
     return formatter.format(time);
   }

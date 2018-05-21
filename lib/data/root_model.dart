@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
+import 'package:samex_app/model/order_list.dart';
 
 SamexApi getApi(BuildContext context){
   return RootModelWidget.of(context).model.api;
@@ -26,11 +27,28 @@ RootModel getModel(BuildContext context){
 
 typedef  QueryListener(String value);
 
+enum OrderType {
+  ALL,            //全部
+  PM,             //保养
+  XJ,             //巡检
+  CM,             //报修
+}
+
+OrderType getOrderType(String type){
+  if(type.startsWith('XJ')) return OrderType.XJ;
+  if(type.startsWith('PM')) return OrderType.PM;
+  if(type.startsWith('CM')) return OrderType.CM;
+
+  return OrderType.ALL;
+}
+
 class RootModel {
   RootModel({this.userName, this.token}) : this.api = new SamexApi();
 
   String userName;
   String token;
+
+  OrderShortInfo order;
 
   UserInfo user;
 

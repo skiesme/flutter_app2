@@ -6,7 +6,6 @@ import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/components/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
-import 'package:samex_app/data/order_model.dart';
 import 'package:samex_app/data/root_model.dart';
 
 class TaskPage extends StatefulWidget {
@@ -23,9 +22,6 @@ class TaskPage extends StatefulWidget {
 List<PageHelper<OrderShortInfo> > _pageHelpers = new List();
 
 class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin {
-
-  static TextStyle _textStyleNormal = TextStyle(color: Colors.grey);
-  static TextStyle _textStyleSelect = TextStyle(color: Style.primaryColor);
 
   int _tabIndex = 1;
   TabController _controller;
@@ -77,15 +73,15 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     int index = 0;
     list.add(new BottomNavigationBarItem(
         icon: new Image.asset(ImageAssets.task_cm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey, height: 24.0,),
-        title: Text('报修', style: index++ == _tabIndex ? _textStyleSelect : _textStyleNormal ,)));
+        title: Text('报修', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
         icon: new Image.asset(ImageAssets.task_xj, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0),
-        title: Text('巡检', style: index++ == _tabIndex ? _textStyleSelect : _textStyleNormal ,)));
+        title: Text('巡检', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
         icon: new Image.asset(ImageAssets.task_pm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0),
-        title: Text('保养', style: index++ == _tabIndex ? _textStyleSelect : _textStyleNormal ,)));
+        title: Text('保养', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     return list;
   }
@@ -155,10 +151,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         title: _isSearching ? _buildSearchField() : (widget.isTask ? Text('任务箱') : Text('工单箱')),
         actions: _buildActions(),
       ),
-      body: OrderModelWidget(
-        model: new OrderModel(),
-        child: _getBody(),
-      ),
+      body: _getBody(),
       bottomNavigationBar: widget.isTask ? new BottomNavigationBar(
         items: _getBottomBar(),
         currentIndex: _tabIndex,
