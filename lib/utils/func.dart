@@ -21,7 +21,6 @@ class Func {
     return json.decode(data);
   }
 
-
   static Widget loadingWidget(BuildContext context) =>  new Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,

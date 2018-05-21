@@ -90,11 +90,11 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     if(!widget.isTask) return new OrderList(helper: _pageHelpers[3], type: OrderType.ALL,);
     switch(_tabIndex){
       case 0:
-        return new OrderList(helper: _pageHelpers[0], type: OrderType.CM,);
+        return new OrderList(helper: _pageHelpers[0], type: OrderType.CM, key: ValueKey(0));
       case 1:
-        return new OrderList(helper: _pageHelpers[1], type: OrderType.XJ,);
+        return new OrderList(helper: _pageHelpers[1], type: OrderType.XJ, key: ValueKey(1));
       default:
-        return new OrderList(helper: _pageHelpers[2], type: OrderType.PM,);
+        return new OrderList(helper: _pageHelpers[2], type: OrderType.PM, key: ValueKey(2));
     }
   }
 

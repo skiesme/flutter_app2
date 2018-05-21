@@ -20,7 +20,7 @@ class OrderList extends StatefulWidget {
   final PageHelper<OrderShortInfo> helper;
   final OrderType type;
 
-  OrderList({@required this.helper, this.type = OrderType.ALL});
+  OrderList({Key key, @required this.helper, this.type = OrderType.ALL}) :super(key:key);
   @override
   _OrderListState createState() => new _OrderListState();
 }
@@ -83,21 +83,12 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           count: 100);
       OrderListResult result = new OrderListResult.fromJson(Func.decode(response));
 
-      if(_first) _first = false;
 
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
         List<OrderShortInfo> info = result.response??[];
         widget.helper.addData(info, clear: widget.type != OrderType.ALL);
-
-        try {
-          setState(() {
-
-          });
-        } catch(e){
-
-        }
       }
 
     } catch(e){
@@ -105,11 +96,22 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
       Func.showMessage('网络出现异常, 获取工单列表失败');
     }
+
+    if(_first) _first = false;
+
+    try {
+      setState(() {
+
+      });
+    } catch(e){
+
+    }
+
   }
 
   Widget _getSyncStatus(){
     return  Container(
-        padding: new EdgeInsets.only(right: 20.0),
+        padding: new EdgeInsets.only(right: _padding),
         decoration: new BoxDecoration(border: new Border(right: new BorderSide(width: 0.5, color: Theme.of(context).dividerColor))),
         child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -156,17 +158,17 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                           children: <Widget>[
                             _getSyncStatus(),
 
-                            SizedBox(width: 20.0,),
-                            Column(
+                            SizedBox(width: _padding,),
+                            Expanded(child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('标题: ${info.description}', ),
+                                Text('标题: ${info.description}'),
                                 Text('位置: ${info.locationDescription}'),
                                 Text('设备: ${info.assetDescription}'),
-                                Text('创建时间: ${Func.getFullTimeString(info.reportDate)}')
+                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
                               ],
-                            )
+                            ))
                           ],
                         ),
 
@@ -191,16 +193,16 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   @override
   Widget build(BuildContext context) {
-    print('${widget.type} ... build');
+//    print('${widget.type} ... build');
 
-    List<OrderShortInfo> infos = filter();
+    List<OrderShortInfo> list = filter();
 
     Widget view = new ListView.builder(
         physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
 
-        itemCount: infos.length,
+        itemCount: list.length,
         itemBuilder: (BuildContext context, int index){
-          return _getCell(infos[index], index);
+          return _getCell(list[index], index);
         });
 
     List<Widget> children = <Widget>[
@@ -212,9 +214,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           )) : view
     ];
 
-    if(infos.length == 0){
-      _handleRefresh();
-
+    if(list.length == 0){
       children.add(
           new Center(
               child: _first ? CircularProgressIndicator() : Text('没发现任务')
