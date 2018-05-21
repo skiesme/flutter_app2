@@ -45,9 +45,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     });
 
-    if(widget.helper.itemCount() == 0){
-      _handleRefresh();
-    }
+    _handleRefresh();
   }
 
   String _getWorkType(){
@@ -71,12 +69,21 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     }
   }
 
-  Future<Null> _handleRefresh() async {
+  Future<Null> _handleRefresh([int older = 0]) async {
     try{
+      
+      int time = 0;
+
+      if(widget.helper.itemCount() > 0){
+        time = widget.helper.datas[0].reportDate;
+      }
+      
       String response = await getApi(context).orderList(
           type:_getWorkType(),
           status: _getQueryStatus(),
-          count: widget.type != OrderType.ALL ? 100 : 20);
+          time: time,
+          older: older,
+          count: 20);
       OrderListResult result = new OrderListResult.fromJson(Func.decode(response));
       if(result.code != 0){
         Func.showMessage(result.message);
@@ -103,7 +110,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   Widget _getSyncStatus(){
     return  Container(
         padding: new EdgeInsets.only(right: 20.0),
-        decoration: new BoxDecoration(border: new Border(right: new BorderSide(color: Theme.of(context).dividerColor))),
+        decoration: new BoxDecoration(border: new Border(right: new BorderSide(width: 0.5, color: Theme.of(context).dividerColor))),
         child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,7 +160,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                               children: <Widget>[
                                 Text('标题: ${info.description}', ),
                                 Text('位置: ${info.locationDescription}'),
-                                Text('设备: ${info.assetDescription}')
+                                Text('设备: ${info.assetDescription}'),
+                                Text('创建时间: ${Func.getFullTimeString(info.reportDate * 1000)}')
                               ],
                             )
                           ],

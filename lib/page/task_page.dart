@@ -144,7 +144,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
 
   void _updateSearchQuery(String newQuery) {
 //    print('_updateSearchQuery $newQuery');
-    getModel(context).queryChanges(newQuery);
+    getModel(context).queryChanges(newQuery??'');
   }
 
   @override
@@ -164,6 +164,9 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         currentIndex: _tabIndex,
         onTap: (index) {
           setState((){
+            if(_isSearching){
+              _updateSearchQuery(_searchQuery.text);
+            }
             _tabIndex = index;
           });
         },

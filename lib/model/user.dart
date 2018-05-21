@@ -28,7 +28,7 @@ class UserInfo {
   String displayname;
   String icon;
   String defsite;
-  String descrition;
+  String description;
   int orders;
   Permission permission;
 
@@ -36,7 +36,7 @@ class UserInfo {
       {this.displayname,
         this.icon,
         this.defsite,
-        this.descrition,
+        this.description,
         this.orders,
         this.permission});
 
@@ -44,7 +44,7 @@ class UserInfo {
     displayname = json['displayname'];
     icon = json['icon'];
     defsite = json['defsite'];
-    descrition = json['descrition'];
+    description = json['description'];
     orders = json['orders'];
     permission = json['permission'] != null
         ? new Permission.fromJson(json['permission'])
@@ -56,7 +56,7 @@ class UserInfo {
     data['displayname'] = this.displayname;
     data['icon'] = this.icon;
     data['defsite'] = this.defsite;
-    data['descrition'] = this.descrition;
+    data['description'] = this.description;
     data['orders'] = this.orders;
     if (this.permission != null) {
       data['permission'] = this.permission.toJson();
