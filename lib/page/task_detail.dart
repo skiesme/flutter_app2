@@ -8,6 +8,7 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
+import 'package:samex_app/components/simple_button.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -156,11 +157,11 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text('基本信息'),
-                new InkWell(
+                SimpleButton(
                   onTap: (){},
                   child: Row(
                     children: <Widget>[
-                      Icon(Icons.attach_file, color: Style.primaryColor,),
+                      Icon(Icons.attach_file, color: Style.primaryColor, size: 16.0,),
                       Text('查看附件', style: Style.textStyleSelect,)
                     ],
                   ),
@@ -177,24 +178,20 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 Positioned(
                     bottom: 0.0,
                     right: 0.0,
-                    child:Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        InkWell(
-                          onTap: (){
-                            setState(() {
-                              _expend = !_expend;
-                            });
-                          },
-                          child: Row(
-                            children: <Widget>[
-                              Text(_expend ? '收缩':'展开', style: Style.textStyleSelect,),
-                              Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
-                            ],
-                          ),)
-                      ],
-                    ))
+                    child: SimpleButton(
+                        onTap: (){
+                          setState(() {
+                            _expend = !_expend;
+                          });
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(_expend ? '收缩':'展开', style: Style.textStyleSelect,),
+                            Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+                          ],
+                        )
+                ))
               ],
             ),
           ]),

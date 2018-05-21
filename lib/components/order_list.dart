@@ -8,6 +8,7 @@ import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/page/task_detail.dart';
+import 'package:samex_app/components/simple_button.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -121,20 +122,20 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   Widget _getCell(OrderShortInfo info, int index){
-    return new InkWell(
-        onTap: (){
-          getModel(context).order = info;
+    return new Column (
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          new Container(
+              color: Colors.white,
+              child: new SimpleButton(
+                  onTap: (){
+                    getModel(context).order = info;
 
-          Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
+                    Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
 
-        },
-        child: new Column (
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              new Container(
-                  color: Colors.white,
-                  child: new Column(
+                  },
+                  child:  new Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
@@ -170,18 +171,17 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                         ),
 
                       ),
-                      Divider(height: 1.0,),
-
                     ],
                   )
-              ),
+              )),
+          Divider(height: 1.0,),
 
-              Container(
-                height: 6.0,
-                color: Colors.transparent,
-              )
-            ]
-        ));
+          Container(
+            height: 6.0,
+            color: Colors.transparent,
+          )
+        ]
+    );
   }
 
   List<OrderShortInfo> filter(){
