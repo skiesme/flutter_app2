@@ -18,6 +18,7 @@ dependencies:
   after_layout: 1.0.2
   pull_to_refresh: ^1.1.0
   sembast: ^1.8.0
+  barcode_scan: ^0.0.4
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +57,7 @@ flutter:
   - assets/images/task_detail_detail.png
   - assets/images/task_detail_task.png
   - assets/images/task_detail_person.png
+  - assets/images/scan.png
 
   #  - images/a_dot_ham.jpeg
 

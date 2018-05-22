@@ -9,6 +9,7 @@ import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/page/task_detail_page.dart';
 import 'package:samex_app/components/simple_button.dart';
+import 'package:samex_app/components/load_more.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -30,6 +31,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   String _query = '';
 
   bool _first = true;
+
+  bool _canLoadMore = true;
 
   @override
   void afterFirstLayout(BuildContext context) {
@@ -68,6 +71,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     }
   }
 
+
+
   Future<Null> _handleRefresh([int older = 0]) async {
     try{
 
@@ -77,20 +82,35 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         time = widget.helper.datas[0].reportDate;
       }
 
+      if(older == 1 && widget.helper.itemCount() > 0){
+        time = widget.helper.datas[widget.helper.itemCount() - 1].reportDate;
+        if(_canLoadMore) _canLoadMore = false;
+        else {
+          print('已经在loadMore了...');
+        }
+      }
+
       String response = await getApi(context).orderList(
           type:_getWorkType(),
           status: _getQueryStatus(),
           time: time,
           older: older,
-          count: 100);
+          count: 20);
       OrderListResult result = new OrderListResult.fromJson(Func.decode(response));
 
-
+      if(older == 1) _canLoadMore = true;
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
         List<OrderShortInfo> info = result.response??[];
-        widget.helper.addData(info, clear: widget.type != OrderType.ALL);
+        if(info.length > 0){
+          print('列表size: ${info.length}');
+          if(older == 0){
+            widget.helper.datas.insertAll(0, info);
+          } else {
+            widget.helper.addData(info);
+          }
+        }
       }
 
     } catch(e){
@@ -211,9 +231,12 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     List<Widget> children = <Widget>[
       _query.isEmpty ? new RefreshIndicator(
           onRefresh: _handleRefresh,
-          child: new NotificationListener(
-              onNotification: widget.helper.handle,
-              child: view
+          child: new LoadMore(
+              scrollNotification: widget.helper.handle,
+              child: view,
+              onLoadMore: () async{
+                _handleRefresh(1);
+              }
           )) : view
     ];
 

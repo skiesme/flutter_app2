@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 
 import 'package:samex_app/page/login_page.dart';
 
@@ -126,6 +128,26 @@ class Func {
       backgroundColor: backGroundColor,
       child: new Image.asset(image, height: height, width: height,),
     );
+  }
+
+  static    Future<String> scan() async {
+    try {
+      String barcode = await BarcodeScanner.scan();
+      print('barcode = $barcode');
+      return barcode;
+    } on PlatformException catch (e) {
+      if (e.code == BarcodeScanner.CameraAccessDenied) {
+        Func.showMessage('相机权限被拒绝');
+      } else {
+        Func.showMessage('未知错误:  $e');
+      }
+    } on FormatException{
+      ///取消
+    } catch (e) {
+      Func.showMessage('未知错误:  $e');
+    }
+
+    return '';
   }
 
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
@@ -36,6 +35,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   void initState() {
     super.initState();
   }
+
 
   void _getOrderDetail() async{
     try{
@@ -170,7 +170,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         Text('位置编号: ${_info.location}'),
         Text('位置描述: ${_info.locationDescription}'),
         Text('资产编号: ${_info.assetnum}'),
-        Text('资产描述: ${_info.locationDescription}'),
+        Text('资产描述: ${_info.assetDescription}'),
         Text('工单状态: ${_info.status}'),
         Text('汇报人员: ${_data?.reportedby ??''}'),
         Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'),
@@ -272,6 +272,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         title: Text(_info?.wonum ?? '',),
       ),
       body: _info== null? Text(''): _getBody(),
+      floatingActionButton: _tabIndex == 1 ? new FloatingActionButton(
+          child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
+          backgroundColor: Colors.redAccent,
+          onPressed: () async {
+            await Func.scan();
+          }) : null,
       bottomNavigationBar: new BottomNavigationBar(
         items: _getBottomBar(),
         currentIndex: _tabIndex,

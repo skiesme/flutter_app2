@@ -232,6 +232,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
   @override
   void afterFirstLayout(BuildContext context) {
     _refreshKey.currentState.show();
+    print('toke: ${Cache.instance.token}');
   }
 
 
