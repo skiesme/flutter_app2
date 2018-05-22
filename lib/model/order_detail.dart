@@ -1,7 +1,7 @@
 class OrderDetailResult {
   int code;
   String message;
-  OrderDetialData response;
+  OrderDetailData response;
 
   OrderDetailResult({this.code, this.message, this.response});
 
@@ -9,7 +9,7 @@ class OrderDetailResult {
     code = json['Code'];
     message = json['Message'];
     response = json['Response'] != null
-        ? new OrderDetialData.fromJson(json['Response'])
+        ? new OrderDetailData.fromJson(json['Response'])
         : null;
   }
 
@@ -24,7 +24,7 @@ class OrderDetailResult {
   }
 }
 
-class OrderDetialData {
+class OrderDetailData {
   String wonum;
   String description;
   String location;
@@ -47,7 +47,7 @@ class OrderDetialData {
   Null supervisor;
   String sopnum;
 
-  OrderDetialData(
+  OrderDetailData(
       {this.wonum,
         this.description,
         this.location,
@@ -70,7 +70,7 @@ class OrderDetialData {
         this.supervisor,
         this.sopnum});
 
-  OrderDetialData.fromJson(Map<String, dynamic> json) {
+  OrderDetailData.fromJson(Map<String, dynamic> json) {
     wonum = json['wonum'];
     description = json['description'];
     location = json['location'];

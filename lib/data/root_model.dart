@@ -4,6 +4,8 @@ import 'package:meta/meta.dart';
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/model/order_list.dart';
+import 'package:samex_app/model/order_detail.dart';
+import 'package:samex_app/model/history.dart';
 import 'package:samex_app/data/sembast.dart';
 
 SamexApi getApi(BuildContext context){
@@ -51,7 +53,18 @@ class RootModel {
 
   OrderShortInfo order;
 
+  bool isTask;
+
+  OrderDetailData orderDetailData;
+
   UserInfo user;
+
+  List<HistoryData> historyList = new List();
+
+  void clearOrderDetailCache(){
+    historyList.clear();
+    orderDetailData = null;
+  }
 
   final SamexApi api;
   final Sembast db;

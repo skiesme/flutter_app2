@@ -72,7 +72,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
 
-
   Future<Null> _handleRefresh([int older = 0]) async {
     try{
 
@@ -155,6 +154,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
               child: new SimpleButton(
                   onTap: (){
                     getModel(context).order = info;
+                    getModel(context).isTask = widget.type != OrderType.ALL;
+                    getModel(context).orderDetailData = null;
 
                     Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
 

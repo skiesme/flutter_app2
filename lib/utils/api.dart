@@ -60,5 +60,33 @@ class SamexApi {
     return response.body;
   }
 
+  Future<String> steps({String sopnum, String wonum, String site}) async {
+    Uri uri = new Uri.http(BASE, '/app/api/orderstep', {
+      'sopnum': sopnum,
+      'wonum': wonum,
+      'site': site
+    });
+
+    var response = await _client.get(uri.toString(), headers: {
+      'Authorization': Cache.instance.token
+    });
+
+    print('${uri.toString()}: ${response.body}');
+
+    return response.body;
+  }
+
+  Future<String> historyXj(String sopnum) async {
+    Uri uri = new Uri.http(BASE, '/app/api/ordernews/$sopnum');
+
+    var response = await _client.get(uri.toString(), headers: {
+      'Authorization': Cache.instance.token
+    });
+
+    print('${uri.toString()}: ${response.body}');
+
+    return response.body;
+  }
+
 
 }

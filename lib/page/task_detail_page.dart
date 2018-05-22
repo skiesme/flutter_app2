@@ -25,7 +25,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   OrderShortInfo _info;
   OrderType _type;
-  OrderDetialData _data;
+  OrderDetailData _data;
 
   int _tabIndex = 0;
 
@@ -44,10 +44,11 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
-        OrderDetialData data = result.response;
+        OrderDetailData data = result.response;
         if(data != null){
           setState(() {
             _data = data;
+            getModel(context).orderDetailData = data;
           });
         }
       }
@@ -151,7 +152,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           children: <Widget>[
             _getHeader2(),
             Divider(),
-            widget,
+            Expanded(child: widget),
           ]),
     );
   }
@@ -300,5 +301,11 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       _getOrderDetail();
     });
 
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    getModel(context).clearOrderDetailCache();
   }
 }
