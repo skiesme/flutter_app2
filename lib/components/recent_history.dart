@@ -21,12 +21,25 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   @override
   Widget build(BuildContext context) {
     List<HistoryData> list = getModel(context).historyList;
-    if(list == null || list.length == 0){
+    if(list.length == 0){
       _getHistory();
       return Center(child: CircularProgressIndicator());
     } else {
+      List<Widget> children = <Widget>[];
+      for(int i = 0, len = list.length; i < len; i++){
+        HistoryData f = list[i];
+        children.add(Row(
+            children: <Widget>[
+              Text('记录:'),
+              Text(f.changby),
+              Expanded( child: Text(Func.getFullTimeString(f.actfinish), textAlign: TextAlign.center,)),
+              Text(f.error == null ? '正常' : '异常', style: TextStyle(color: Colors.redAccent),),
+            ]
+        ));
+        children.add(Divider());
+      }
       return Column(
-        children: list.map((HistoryData f) => Text(f.toJson().toString())).toList(),
+          children: children
       );
     }
   }
@@ -35,7 +48,6 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
     _data = getModel(context).orderDetailData;
     OrderShortInfo info = getModel(context).order;
-
 
     if(_data != null && _data.sopnum.isNotEmpty){
       if(getOrderType(info.worktype) == OrderType.XJ){
@@ -48,8 +60,8 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
             Func.showMessage(result.message);
           } else {
             setState(() {
-                getModel(context).historyList.clear();
-               getModel(context).historyList.addAll(result.response);
+              getModel(context).historyList.clear();
+              getModel(context).historyList.addAll(result.response);
             });
           }
 
@@ -65,9 +77,9 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   @override
   void afterFirstLayout(BuildContext context) {
-    List<HistoryData> list = getModel(context).historyList;
-    if(list == null || list.length == 0) {
-      _getHistory();
-    }
+//    List<HistoryData> list = getModel(context).historyList;
+//    if(list.length == 0) {
+//      _getHistory();
+//    }
   }
 }

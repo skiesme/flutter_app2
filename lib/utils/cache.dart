@@ -6,6 +6,7 @@ const String KEY_TOKEN = "__token";
 const String KEY_SITE = "__site";
 const String KEY_USERNAME = '__username';
 const String KEY_USERINFO = '__userinfo';
+const String KEY_FONTSIZE = '__textfontsize';
 
 class Cache {
   Cache._(this._prefs);
@@ -26,6 +27,7 @@ class Cache {
   String get site => _getString(KEY_SITE);
   String get userName => _getString(KEY_USERNAME);
   String get userInfo => _getString(KEY_USERINFO);
+  double get textScaleFactor => _getDouble(KEY_FONTSIZE);
 
   String _getString(String key){
     return  _prefs.getString(key)?? "";
@@ -39,6 +41,10 @@ class Cache {
     return _prefs.getInt(key);
   }
 
+  double _getDouble(String key){
+    return _prefs.getDouble(key);
+  }
+
   Future<bool> setStringValue(String key, String value) async {
     return _prefs.setString(key, value);
   }
@@ -46,6 +52,9 @@ class Cache {
   Future<bool> setBoolValue(String key, bool value) async => _prefs.setBool(key, value);
 
   Future<bool> setIntValue(String key, int value) async => _prefs.setInt(key, value);
+
+  Future<bool> setDoubleValue(String key, double value) async => _prefs.setDouble(key, value);
+
   void remove(String key) {
     _prefs.remove(key);
   }

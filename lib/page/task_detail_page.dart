@@ -127,7 +127,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   Widget _getBody2(){
 
-    Widget widget = Center( child: CircularProgressIndicator());
+    Widget widget = Container();
     switch (_tabIndex){
       case 0:
         widget = RecentHistory();
@@ -152,7 +152,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           children: <Widget>[
             _getHeader2(),
             Divider(),
-            Expanded(child: widget),
+            widget,
           ]),
     );
   }
@@ -163,15 +163,15 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       Text('工单编号: ${_info.wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
       Text('标题名称: ${_info.description}'),
-      Text('描述详细: '),
+//      Text('描述详细: '),
     ]);
 
     if(_expend){
       list.addAll(<Widget>[
-        Text('位置编号: ${_info.location}'),
-        Text('位置描述: ${_info.locationDescription}'),
-        Text('资产编号: ${_info.assetnum}'),
-        Text('资产描述: ${_info.assetDescription}'),
+        Text('位置编号: ${_info.location??''}'),
+        Text('位置描述: ${_info.locationDescription??''}'),
+        Text('资产编号: ${_info.assetnum??''}'),
+        Text('资产描述: ${_info.assetDescription??''}'),
         Text('工单状态: ${_info.status}'),
         Text('汇报人员: ${_data?.reportedby ??''}'),
         Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'),
@@ -188,6 +188,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 //      list.add(Text('站点编号: ${_data?.lead ?? ''}'));
 
     }
+
+    list.add(SizedBox(height: 8.0,));
 
     return list;
 
@@ -251,17 +253,17 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   Widget _getBody() {
     return new Container(
       color: Style.backgroundColor,
-      child: new Column(
+      child: new SingleChildScrollView(child: new Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           _getHeader(),
           new SizedBox(height: 6.0,),
-          Expanded(child:_getBody2()),
+          _getBody2(),
         ],
       ),
-    );
+    ));
   }
 
 
@@ -293,7 +295,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   @override
   void afterFirstLayout(BuildContext context) {
-
 
     setState(() {
       _info = getModel(context).order;

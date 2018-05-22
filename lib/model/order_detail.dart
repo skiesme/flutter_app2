@@ -40,11 +40,11 @@ class OrderDetailData {
   int targcompdate;
   int actstart;
   int actfinish;
-  Null lead;
+  String lead;
   String reportedby;
-  Null phone;
-  Null wopriority;
-  Null supervisor;
+  String phone;
+  String wopriority;
+  String supervisor;
   String sopnum;
 
   OrderDetailData(

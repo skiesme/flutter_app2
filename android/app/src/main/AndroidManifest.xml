@@ -16,7 +16,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="samex_app"
+        android:label="移动工单"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

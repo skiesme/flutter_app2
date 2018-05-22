@@ -26,16 +26,16 @@ class StepsResult {
 
 class StepsData {
   int changedate;
-  List<Steps> steps;
+  List<OrderStep> steps;
 
   StepsData({this.changedate, this.steps});
 
   StepsData.fromJson(Map<String, dynamic> json) {
     changedate = json['changedate'];
     if (json['steps'] != null) {
-      steps = new List<Steps>();
+      steps = new List<OrderStep>();
       json['steps'].forEach((v) {
-        steps.add(new Steps.fromJson(v));
+        steps.add(new OrderStep.fromJson(v));
       });
     }
   }
@@ -50,7 +50,7 @@ class StepsData {
   }
 }
 
-class Steps {
+class OrderStep {
   int setpno;
   String description;
   Null wonum;
@@ -62,7 +62,7 @@ class Steps {
   Null exectuor;
   Null images;
 
-  Steps(
+  OrderStep(
       {this.setpno,
         this.description,
         this.wonum,
@@ -74,7 +74,7 @@ class Steps {
         this.exectuor,
         this.images});
 
-  Steps.fromJson(Map<String, dynamic> json) {
+  OrderStep.fromJson(Map<String, dynamic> json) {
     setpno = json['setpno'];
     description = json['description'];
     wonum = json['wonum'];

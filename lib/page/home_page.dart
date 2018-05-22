@@ -47,8 +47,8 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   Widget getMenu(_Menu menu){
     return new Container(
-        height: 160.0,
-        margin: new EdgeInsets.all(12.0),
+        height: 140.0,
+        margin: new EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
         child: new RaisedButton(
           onPressed: (){
             _gotoPage(menu.image);
@@ -58,7 +58,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              new Image.asset(menu.image, height: 100.0),
+              new Image.asset(menu.image, height: 80.0),
               new SizedBox(height: 9.0,),
               Text(menu.title, style: TextStyle(fontSize: 16.0))
             ],

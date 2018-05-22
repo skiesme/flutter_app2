@@ -6,6 +6,8 @@ import 'package:samex_app/model/user.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/history.dart';
+import 'package:samex_app/model/steps.dart';
+
 import 'package:samex_app/data/sembast.dart';
 
 SamexApi getApi(BuildContext context){
@@ -46,7 +48,7 @@ OrderType getOrderType(String type){
 }
 
 class RootModel {
-  RootModel({this.userName, this.token}) : this.api = new SamexApi(), this.db = new Sembast();
+  RootModel({this.userName, this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new Sembast();
 
   String userName;
   String token;
@@ -60,9 +62,14 @@ class RootModel {
   UserInfo user;
 
   List<HistoryData> historyList = new List();
+  List<OrderStep> stepsList = new List();
+
+  final ValueChanged<double> onTextScaleChanged;
+
 
   void clearOrderDetailCache(){
     historyList.clear();
+    stepsList.clear();
     orderDetailData = null;
   }
 
