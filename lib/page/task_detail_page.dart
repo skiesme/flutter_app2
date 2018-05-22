@@ -9,10 +9,12 @@ import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/components/simple_button.dart';
+import 'package:samex_app/components/recent_history.dart';
+import 'package:samex_app/components/step_list.dart';
+import 'package:samex_app/components/people_material_list.dart';
 
 import 'package:after_layout/after_layout.dart';
 
-const double _padding = 16.0;
 
 class TaskDetailPage extends StatefulWidget {
 
@@ -92,20 +94,65 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return list;
   }
 
+  Widget _getHeader2(){
+    List<Widget> children = <Widget>[];
+
+    switch(_tabIndex){
+      case 0:
+        String str = (_type == OrderType.PM) ? '保养' :(_type == OrderType.CM ? '维修' : '巡检');
+        children.add(Text('$str历史'));
+        break;
+      case 1:
+        children.add(Text('任务列表'));
+        if(_type != OrderType.XJ){
+          children.add(new RaisedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('新增任务')));
+        }
+        break;
+      case 2:
+        children.add(Text('人员列表'));
+        children.add(new RaisedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('新增人员')));
+        break;
+      case 3:
+        children.add(Text('物料列表'));
+        children.add(new RaisedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('新增物料')));
+        break;
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: children,
+    );
+  }
+
   Widget _getBody2(){
-//    if(!widget.isTask) return new OrderList(helper: _pageHelpers[3], type: OrderType.ALL,);
-//    switch(_tabIndex){
-//      case 0:
-//        return new OrderList(helper: _pageHelpers[0], type: OrderType.CM,);
-//      case 1:
-//        return new OrderList(helper: _pageHelpers[1], type: OrderType.XJ,);
-//      default:
-//        return new OrderList(helper: _pageHelpers[2], type: OrderType.PM,);
-//    }
+
+    Widget widget = Center( child: CircularProgressIndicator());
+    switch (_tabIndex){
+      case 0:
+        widget = RecentHistory();
+        break;
+      case 1:
+        widget = StepList();
+        break;
+      case 2:
+      case 3:
+        widget = PeopleAndMaterialList(isPeople: _tabIndex == 2,);
+        break;
+    }
+
 
     return  new Container(
       color: Colors.white,
-      child: Text('列表....') ,
+      padding: EdgeInsets.all(Style.padding),
+      child:  Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            _getHeader2(),
+            Divider(),
+            widget,
+          ]),
     );
   }
 
@@ -125,12 +172,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         Text('资产编号: ${_info.assetnum}'),
         Text('资产描述: ${_info.locationDescription}'),
         Text('工单状态: ${_info.status}'),
-        Text('优先等级: ${_data?.wopriority ?? ''}'),
         Text('汇报人员: ${_data?.reportedby ??''}'),
         Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'),
       ]);
       if(_type != OrderType.XJ){
         list.addAll(<Widget>[
+          Text('优先等级: ${_data?.wopriority ?? ''}'),
           Text('主管人员: ${_data?.supervisor??''}'),
           Text('负责人员: ${_data?.lead ?? ''}'),
           Text('联系电话: ${_data?.phone ?? ''}'),
@@ -149,7 +196,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return new Container(
       color: Colors.white,
 //      constraints: new BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 2) ,
-      padding: EdgeInsets.all(_padding),
+      padding: EdgeInsets.all(Style.padding),
       child: new Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -191,7 +238,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                             Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
                           ],
                         )
-                ))
+                    ))
               ],
             ),
           ]),
@@ -202,7 +249,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   Widget _getBody() {
     return new Container(
-      color: const Color(0xFFF0F0F0),
+      color: Style.backgroundColor,
       child: new Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -210,7 +257,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         children: <Widget>[
           _getHeader(),
           new SizedBox(height: 6.0,),
-          _getBody2(),
+          Expanded(child:_getBody2()),
         ],
       ),
     );

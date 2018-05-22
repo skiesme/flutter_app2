@@ -210,7 +210,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     List<Widget> children = <Widget>[
       _query.isEmpty ? new RefreshIndicator(
-
           onRefresh: _handleRefresh,
           child: new NotificationListener(
               onNotification: widget.helper.handle,

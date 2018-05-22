@@ -33,6 +33,8 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   List<_Menu> _menus = <_Menu>[];
 
+  GlobalKey<RefreshIndicatorState> _refreshKey = new GlobalKey<RefreshIndicatorState>();
+
   void openSettings(){
     Navigator.push(context, new MaterialPageRoute(builder: (_) => new SettingsPage()));
   }
@@ -172,6 +174,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     return new Scaffold(
 
       body: new RefreshIndicator(
+          key: _refreshKey,
           onRefresh: _handlerRefresh,
           child: new CustomScrollView(
               physics: new AlwaysScrollableScrollPhysics(),
@@ -228,7 +231,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   @override
   void afterFirstLayout(BuildContext context) {
-    _handlerRefresh();
+    _refreshKey.currentState.show();
   }
 
 

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:samex_app/utils/cache.dart';
 
-final http.Client _client = new http.Client();
+final _client = new http.Client();
 
 class SamexApi {
   static const String BASE = '172.19.1.30:40001';

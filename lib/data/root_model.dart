@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/model/order_list.dart';
+import 'package:samex_app/data/sembast.dart';
 
 SamexApi getApi(BuildContext context){
   return RootModelWidget.of(context).model.api;
@@ -43,7 +44,7 @@ OrderType getOrderType(String type){
 }
 
 class RootModel {
-  RootModel({this.userName, this.token}) : this.api = new SamexApi();
+  RootModel({this.userName, this.token}) : this.api = new SamexApi(), this.db = new Sembast();
 
   String userName;
   String token;
@@ -53,6 +54,7 @@ class RootModel {
   UserInfo user;
 
   final SamexApi api;
+  final Sembast db;
 
   Map<int, QueryListener> _listeners = new Map();
 

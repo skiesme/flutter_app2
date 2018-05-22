@@ -79,6 +79,13 @@
             </list>
           </value>
         </entry>
+        <entry key="dart2_constant">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dart2_constant-1.0.1+dart2/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="flutter">
           <value>
             <list>
@@ -282,6 +289,13 @@
             </list>
           </value>
         </entry>
+        <entry key="sembast">
+          <value>
+            <list>
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/sembast-1.8.0/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="shared_preferences">
           <value>
             <list>
@@ -450,6 +464,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/crypto-2.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/csslib-0.14.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-0.1.2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dart2_constant-1.0.1+dart2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fluttertoast-2.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/front_end-0.1.0-alpha.12/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/glob-1.1.5/lib" />
@@ -476,6 +491,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/pub_semver-1.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/pull_to_refresh-1.1.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/quiver-0.29.0+1/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/sembast-1.8.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.4.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shelf-0.7.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/shelf_packages_handler-1.0.3/lib" />
