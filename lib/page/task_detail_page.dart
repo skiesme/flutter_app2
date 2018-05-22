@@ -253,7 +253,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   Widget _getBody() {
     return new Container(
       color: Style.backgroundColor,
-      child: new SingleChildScrollView(child: new Column(
+      child: new SingleChildScrollView(
+        key: ValueKey(_tabIndex),
+        child: new Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
