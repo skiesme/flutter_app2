@@ -45,8 +45,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     OrderDetailData data = widget.data;
     if(data != null){
       try{
-        String response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
-        StepsResult result = new StepsResult.fromJson(Func.decode(response));
+        Map response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
+        StepsResult result = new StepsResult.fromJson(response);
 
         if(result.code != 0){
           Func.showMessage(result.message);

@@ -1,38 +1,52 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 import 'package:samex_app/utils/cache.dart';
 
-final _client = new http.Client();
+import 'package:dio/dio.dart';
+
+Dio _dio = new Dio();
 
 class SamexApi {
   static const String BASE = '172.19.1.30:40001';
   static const String BASE_URL = 'http://$BASE/app/api';
+  static Options _option;
 
-  String getImageUrl(String docinfoid){
-    return 'http://$BASE/app/stepimage$docinfoid';
+  Options _options(){
+    if(_option == null){
+      _option = new Options();
+    }
+
+    _option.headers = {
+      'Authorization': Cache.instance.token
+    };
+    _option.connectTimeout = 5000;
+    _option.receiveTimeout = 3000;
+
+    return _option;
   }
 
-  Future<String> login(String userName, String password) async {
-    var response =  await _client.post(BASE_URL+'/login', body: json.encode({
+  String getImageUrl(String docinfoid){
+    return 'http://$BASE/app/stepimage/$docinfoid';
+  }
+
+  Future<Map> login(String userName, String password) async {
+    Response response =  await _dio.post(BASE_URL+'/login', data: json.encode({
       'username': userName,
       'password': password
     }));
-    print('login: ${response.body}');
-    return response.body;
+    print('login: ${response.data}');
+    return response.data;
   }
 
-  Future<String> user() async {
-    var response = await _client.get(BASE_URL+'/user', headers: {
-        'Authorization': Cache.instance.token
-    });
-    print('user: ${response.body}');
+  Future<Map> user() async {
+    Response response = await _dio.get(BASE_URL+'/user', options: _options());
+    print('user: ${response.data}');
 
-    return response.body;
+    return response.data;
   }
 
-  Future<String> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
+  Future<Map> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
     Uri uri = new Uri.http(BASE, '/app/api/order', {
       'worktype': type,
       'time': '$time',
@@ -40,56 +54,48 @@ class SamexApi {
       'older':'$older',
       'status': status
     });
-    var response = await _client.get(uri.toString(), headers: {
-      'Authorization': Cache.instance.token
-    });
+    Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.body}');
+    print('${uri.toString()}: ${response.data}');
 
-    return response.body;
+    return response.data;
 
   }
 
-  Future<String> orderDetail(String orderId, [int time]) async {
+  Future<Map> orderDetail(String orderId, [int time]) async {
     Uri uri = new Uri.http(BASE, '/app/api/order/$orderId', {
       'time': '${time?? '0'}',
     });
 
-    var response = await _client.get(uri.toString(), headers: {
-      'Authorization': Cache.instance.token
-    });
+    Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.body}');
+    print('${uri.toString()}: ${response.data}');
 
-    return response.body;
+    return response.data;
   }
 
-  Future<String> steps({String sopnum, String wonum, String site}) async {
+  Future<Map> steps({String sopnum, String wonum, String site}) async {
     Uri uri = new Uri.http(BASE, '/app/api/orderstep', {
       'sopnum': sopnum,
       'wonum': wonum,
       'site': site
     });
 
-    var response = await _client.get(uri.toString(), headers: {
-      'Authorization': Cache.instance.token
-    });
+    Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.body}');
+    print('${uri.toString()}: ${response.data}');
 
-    return response.body;
+    return response.data;
   }
 
-  Future<String> historyXj(String sopnum) async {
+  Future<Map> historyXj(String sopnum) async {
     Uri uri = new Uri.http(BASE, '/app/api/ordernews/$sopnum');
 
-    var response = await _client.get(uri.toString(), headers: {
-      'Authorization': Cache.instance.token
-    });
+    Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.body}');
+    print('${uri.toString()}: ${response.data}');
 
-    return response.body;
+    return response.data;
   }
 
 

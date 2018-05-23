@@ -42,8 +42,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   Future _getOrderDetail() async{
     try{
-      String response = await getApi(context).orderDetail(_info.wonum, _data?.changedate);
-      OrderDetailResult result = new OrderDetailResult.fromJson(Func.decode(response));
+      final response = await getApi(context).orderDetail(_info.wonum, _data?.changedate);
+      OrderDetailResult result = new OrderDetailResult.fromJson(response);
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {

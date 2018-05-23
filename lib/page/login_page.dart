@@ -38,9 +38,9 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      String response = await getApi(context).login(
+      final response = await getApi(context).login(
           _controller.text, _controller2.text);
-      LoginResult result = new LoginResult.fromJson(Func.decode(response));
+      LoginResult result = new LoginResult.fromJson(response);
       if(result.code != 0){
         if(result.code == 20000) {
           _controller.clear();

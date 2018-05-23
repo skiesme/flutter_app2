@@ -212,8 +212,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   Future<Null> _handlerRefresh() async {
     try {
-      String response = await getApi(context).user();
-      UserResult result = new UserResult.fromJson(Func.decode(response));
+      UserResult result = new UserResult.fromJson(await getApi(context).user());
       if(result.code != 0) {
         Func.showMessage(result.message);
       } else {

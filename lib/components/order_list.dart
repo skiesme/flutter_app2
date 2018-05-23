@@ -89,13 +89,13 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         }
       }
 
-      String response = await getApi(context).orderList(
+      Map response = await getApi(context).orderList(
           type:_getWorkType(),
           status: _getQueryStatus(),
           time: time,
           older: older,
           count: 20);
-      OrderListResult result = new OrderListResult.fromJson(Func.decode(response));
+      OrderListResult result = new OrderListResult.fromJson(response);
 
       if(older == 1) _canLoadMore = true;
       if(result.code != 0){

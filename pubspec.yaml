@@ -10,7 +10,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   shared_preferences: 0.4.1
-  http: ^0.11.3+16
   sqflite: ^0.8.9
   path_provider: ^0.4.0
   intl: ^0.15.5
@@ -20,6 +19,7 @@ dependencies:
   sembast: ^1.8.0
   barcode_scan: ^0.0.4
   image_picker: ^0.4.1
+  dio: ^0.0.14
 
 dev_dependencies:
   flutter_test:

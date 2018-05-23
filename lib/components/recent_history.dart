@@ -53,9 +53,8 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     if(data != null && data.sopnum.isNotEmpty){
       if(getOrderType(data.worktype) == OrderType.XJ){
         try {
-          String response = await getApi(context).historyXj(data.sopnum);
-          HistoryResult result = new HistoryResult.fromJson(
-              Func.decode(response));
+          Map response = await getApi(context).historyXj(data.sopnum);
+          HistoryResult result = new HistoryResult.fromJson(response);
 
           if(result.code != 0){
             Func.showMessage(result.message);
