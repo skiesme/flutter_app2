@@ -10,14 +10,16 @@ import 'package:after_layout/after_layout.dart';
 
 class RecentHistory extends StatefulWidget {
 
-  RecentHistory();
+  RecentHistory({@required this.data});
+
+  final OrderDetailData data;
+
 
   @override
   _RecentHistoryState createState() => new _RecentHistoryState();
 }
 
 class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<RecentHistory> {
-  OrderDetailData _data;
   @override
   Widget build(BuildContext context) {
     List<HistoryData> list = getModel(context).historyList;
@@ -46,13 +48,12 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   void _getHistory() async {
 
-    _data = getModel(context).orderDetailData;
-    OrderShortInfo info = getModel(context).order;
+    OrderDetailData data = widget.data;
 
-    if(_data != null && _data.sopnum.isNotEmpty){
-      if(getOrderType(info.worktype) == OrderType.XJ){
+    if(data != null && data.sopnum.isNotEmpty){
+      if(getOrderType(data.worktype) == OrderType.XJ){
         try {
-          String response = await getApi(context).historyXj(_data.sopnum);
+          String response = await getApi(context).historyXj(data.sopnum);
           HistoryResult result = new HistoryResult.fromJson(
               Func.decode(response));
 

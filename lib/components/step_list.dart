@@ -13,7 +13,8 @@ import 'package:after_layout/after_layout.dart';
 
 class StepList extends StatefulWidget {
 
-  StepList({Key key}) : super(key:key);
+  StepList({Key key, @required this.data}) : super(key:key);
+  final OrderDetailData data;
 
   @override
   StepListState createState() => new StepListState();
@@ -21,7 +22,6 @@ class StepList extends StatefulWidget {
 
 class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
-  OrderDetailData _data;
 
   Future<Null> gotoStep(String asset) async {
     List<OrderStep> list = getModel(context).stepsList;
@@ -42,10 +42,10 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   }
 
   void _getSteps() async {
-    _data = getModel(context).orderDetailData;
-    if(_data != null){
+    OrderDetailData data = widget.data;
+    if(data != null){
       try{
-        String response = await getApi(context).steps(sopnum: '', wonum: _data.wonum, site: _data.site);
+        String response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
         StepsResult result = new StepsResult.fromJson(Func.decode(response));
 
         if(result.code != 0){

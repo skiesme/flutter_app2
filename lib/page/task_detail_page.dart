@@ -25,7 +25,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   OrderShortInfo _info;
   OrderType _type;
-  OrderDetailData _data;
+  static OrderDetailData _data;
 
   int _tabIndex = 0;
 
@@ -36,6 +36,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   @override
   void initState() {
     super.initState();
+    _data = null;
   }
 
 
@@ -132,10 +133,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     Widget widget = Container();
     switch (_tabIndex){
       case 0:
-        widget = RecentHistory();
+        widget = RecentHistory(data: _data,);
         break;
       case 1:
-        widget = StepList(key: _stepKey,);
+        widget = StepList(key: _stepKey, data: _data,);
         break;
       case 2:
       case 3:
@@ -146,15 +147,20 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
     return  new Container(
       color: Colors.white,
-      padding: Style.pagePadding,
       child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            _getHeader2(),
-            Divider(),
-            widget,
+            new Padding(
+              padding: Style.pagePadding2,
+              child: _getHeader2(),
+            ),
+            Divider(height: 1.0,),
+            new Padding(
+              padding: Style.pagePadding2,
+              child: widget,
+            ),
           ]),
     );
   }
@@ -200,51 +206,55 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   Widget  _getHeader(){
     return new Container(
       color: Colors.white,
-//      constraints: new BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 2) ,
-      padding: Style.pagePadding,
       child: new Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text('基本信息'),
-                SimpleButton(
-                  onTap: (){},
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.attach_file, color: Style.primaryColor, size: 16.0,),
-                      Text('查看附件', style: Style.textStyleSelect,)
-                    ],
-                  ),
-                )
-              ],
+            new Padding(
+              padding: Style.pagePadding2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text('基本信息'),
+                  SimpleButton(
+                    onTap: (){},
+                    child: Row(
+                      children: <Widget>[
+                        Icon(Icons.attach_file, color: Style.primaryColor, size: 16.0,),
+                        Text('查看附件', style: Style.textStyleSelect,)
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-            Divider(),
-            new Stack(
-              children: <Widget>[
-                Column(
-                  children: _getList(),
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                ),
-                Positioned(
-                    bottom: 0.0,
-                    right: 0.0,
-                    child: SimpleButton(
-                        onTap: (){
-                          setState(() {
-                            _expend = !_expend;
-                          });
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Text(_expend ? '收缩':'展开', style: Style.textStyleSelect,),
-                            Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
-                          ],
-                        )
-                    ))
-              ],
+            Divider(height: 1.0,),
+            new Padding(
+              padding: Style.pagePadding2,
+              child: new Stack(
+                children: <Widget>[
+                  Column(
+                    children: _getList(),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                  ),
+                  Positioned(
+                      bottom: 0.0,
+                      right: 0.0,
+                      child: SimpleButton(
+                          onTap: (){
+                            setState(() {
+                              _expend = !_expend;
+                            });
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(_expend ? '收缩':'展开', style: Style.textStyleSelect,),
+                              Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+                            ],
+                          )
+                      ))
+                ],
+              ),
             ),
           ]),
 
@@ -264,7 +274,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         children: <Widget>[
           _getHeader(),
           SizedBox(height: Style.separateHeight,),
-          _getBody2(),
+          _data == null ? Func.centerLoading(): _getBody2(),
         ],
       ),
     ));

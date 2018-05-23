@@ -47,24 +47,13 @@ class Func {
       )
   );
 
-  static Widget topLoadingWidgetInChildren () => new Positioned.fill(
-      child: new GestureDetector(
-          onTap: (){},
-          behavior: HitTestBehavior.opaque,
-          child: new Center(
-              child: new Theme(
-                data: new ThemeData(
-                  accentColor: Colors.red,
-                ),
-                child: new Container(
+  static Widget centerLoading() => new Center(
+              child:  new Container(
                     height: 60.0,
                     width: 60.0,
-                    child:new CircularProgressIndicator(
-                    )
+                    child:new CircularProgressIndicator()
                 ),
-              )
-          )
-      ));
+  );
 
   static  FormFieldValidator<String>  validateNull(String msg){
     return (String value) {

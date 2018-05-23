@@ -31,6 +31,8 @@ class _PictureListState extends State<PictureList> {
 
   List<File> _images = new List();
 
+  List<String> _resources = new List();
+
   Future _getImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.camera);
 
@@ -52,20 +54,25 @@ class _PictureListState extends State<PictureList> {
                 appBar: new AppBar(
                     title: new Text('图片预览')
                 ),
-                body: new SizedBox.expand(
-                  child: new Hero(
-                    tag: '${child.hashCode}',
-                    child: new GridPhotoViewer(child: Container(color: Colors.black, child: child,)),
-                  ),
+
+                body: new DefaultTabController(
+                  length: _resources.length,
+                  initialIndex: index,
+                  child: Container(child:_PageSelector(icons: _resources,), color: Colors.black,),
                 ),
+//                body: new SizedBox.expand(
+//                  child:  new PageView.builder(
+//                      controller: new PageController(initialPage: index),
+//                      itemCount: _resources.length,
+//                      itemBuilder: (_, index){
+//                        return new GridPhotoViewer(path: _resources[index]);
+//                      }),
+//                ),
               );
             }
         ));
       },
-      child: new Hero(
-      key: new Key('${child.hashCode}'),
-      tag: '${child.hashCode}',
-      child:Stack(
+      child: Stack(
         overflow: Overflow.visible,
         children: <Widget>[
           child,
@@ -92,7 +99,7 @@ class _PictureListState extends State<PictureList> {
             child:Icon(Icons.delete, size: 20.0, color: Colors.white,) ,
           ))
         ],
-      )),
+      ),
     );
   }
 
@@ -104,14 +111,17 @@ class _PictureListState extends State<PictureList> {
 
     int count = 0;
 
+    _resources.clear();
+
     if(_step.images != null){
       for(int i = 0, len = _step.images.length; i < len; i++){
         String id = _step.images[i];
         children.add( _largeImage(
             new Image(image: NetworkImage(getApi(context).getImageUrl(id), headers: {
               'Authorization': Cache.instance.token
-            }), width: width,fit: BoxFit.cover,), count));
+            }), width: width,), count));
 
+        _resources.add(id);
         children.add(SizedBox(width: Style.separateHeight/2,));
         count++;
       }
@@ -119,9 +129,10 @@ class _PictureListState extends State<PictureList> {
 
 
     for(int i = 0, len = _images.length; i < len; i++){
-      children.add(_largeImage(new Image.file(_images[i], width: width,fit: BoxFit.cover,), count));
+      children.add(_largeImage(new Image.file(_images[i], width: width,), count));
 
       children.add(SizedBox(width: Style.separateHeight/2,));
+      _resources.add(_images[i].path);
       count++;
     }
 
@@ -172,12 +183,66 @@ class _PictureListState extends State<PictureList> {
 }
 
 
+class _PageSelector extends StatelessWidget {
+  const _PageSelector({ this.icons });
+
+  final List<String> icons;
+
+  void _handleArrowButtonPress(BuildContext context, int delta) {
+    final TabController controller = DefaultTabController.of(context);
+    if (!controller.indexIsChanging)
+      controller.animateTo((controller.index + delta).clamp(0, icons.length - 1));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TabController controller = DefaultTabController.of(context);
+    final Color color = Colors.white;
+    return new SafeArea(
+      top: false,
+      bottom: false,
+      child: new Stack(
+        children: <Widget>[
+          new IconTheme(
+            data: new IconThemeData(
+              size: 128.0,
+              color: color,
+            ),
+            child: new TabBarView(
+                children: icons.map((String icon) {
+                  return new Container(
+                    child: new GridPhotoViewer(path: icon),
+                  );
+                }).toList()
+            ),
+          ),
+          Positioned(
+              bottom: 20.0,
+              left: 0.0,
+              right: 0.0,
+              child: new Container(
+              margin: const EdgeInsets.only(top: 16.0),
+              child: new Row(
+
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    new TabPageSelector(controller: controller, color: Colors.black, selectedColor: Colors.white,),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center
+              )
+          )),
+        ],
+      ),
+    );
+  }
+}
+
 const double _kMinFlingVelocity = 800.0;
 
 class GridPhotoViewer extends StatefulWidget {
-  const GridPhotoViewer({ Key key, @required this.child }) : super(key: key);
+  const GridPhotoViewer({ Key key, @required this.path }) : super(key: key);
 
-  final Widget child;
+  final String path;
 
   @override
   _GridPhotoViewerState createState() => new _GridPhotoViewerState();
@@ -256,12 +321,19 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
       onScaleStart: _handleOnScaleStart,
       onScaleUpdate: _handleOnScaleUpdate,
       onScaleEnd: _handleOnScaleEnd,
+      onDoubleTap: (){
+        Navigator.pop(context);
+      },
       child: new ClipRect(
         child: new Transform(
           transform: new Matrix4.identity()
             ..translate(_offset.dx, _offset.dy)
             ..scale(_scale),
-          child: widget.child,
+          child: widget.path.startsWith('http') ? Image(
+              image: NetworkImage(widget.path, headers: {
+                'Authorization': Cache.instance.token
+              }))
+              : new Image.file(new File(widget.path)) ,
         ),
       ),
     );

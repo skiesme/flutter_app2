@@ -62,55 +62,58 @@ class _StepPageState extends State<StepPage> {
               child:Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Padding(padding: Style.pagePadding, child:Text('基本信息')),
+                  Padding(padding: Style.pagePadding2, child:Text('基本信息')),
                   Divider(height: 1.0,),
-                  Padding(padding: Style.pagePadding2, child:Text('任务: ${data.setpno ?? ''}')),
-                  Padding(padding: Style.pagePadding2, child:Text('描述: ${data.description ??''}')),
-                  Padding(padding: Style.pagePadding2, child:Text('资产: ${data.location ?? ''}')),
-                  Padding(padding: Style.pagePadding2, child:Text('描述: ${data.locationDescription ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('任务: ${data.setpno ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('描述: ${data.description ??''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('资产: ${data.location ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('描述: ${data.locationDescription ?? ''}')),
                   Container(height: Style.separateHeight, color: Style.backgroundColor,),
 
-                  Padding(padding: Style.pagePadding, child:Text('操作信息')),
+                  Padding(padding: Style.pagePadding2, child:Text('操作信息')),
                   Divider(height: 1.0,),
 
 
                   Padding(padding: new EdgeInsets.symmetric(horizontal: Style.padding), child: new Row(
                       children: <Widget>[
-                        new Expanded(
-                          child: new Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              const Text('状态: '),
-                              new Text('${data.status??''}', style:  data.status == '异常' ? TextStyle(color: Colors.redAccent) : null,),
-                            ],
-                          ),
+                        new Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            const Text('状态: '),
+                            new Text('${data.status??''}', style:  data.status == '异常' ? TextStyle(color: Colors.redAccent) : null,),
+                          ],
                         ),
-                        getModel(context).isTask ? new PopupMenuButton<_StatusSelect>(
-                          icon: const Icon(Icons.arrow_drop_down),
-                          itemBuilder: (BuildContext context) {
-                            return _statusList.map((_StatusSelect status) {
-                              return new PopupMenuItem<_StatusSelect>(
-                                value: status,
-                                child: new Text(status.value),
-                              );
-                            }).toList();
-                          },
-                          onSelected: (_StatusSelect value) {
-                            print('status = ${value.value}');
-                            setState(() {
-                              data.status = value.value;
-                            });
-                          },
-                        ) : Text(''),
+
+                        getModel(context).isTask ? new Expanded(
+                            child:new PopupMenuButton<_StatusSelect>(
+                              tooltip:'请选择巡检状态',
+
+                              child: Align(child: const Icon(Icons.arrow_drop_down), alignment: Alignment.centerRight, heightFactor: 1.5,),
+                              itemBuilder: (BuildContext context) {
+                                return _statusList.map((_StatusSelect status) {
+                                  return new PopupMenuItem<_StatusSelect>(
+                                    value: status,
+                                    child: new Text(status.value),
+                                  );
+                                }).toList();
+                              },
+                              onSelected: (_StatusSelect value) {
+                                print('status = ${value.value}');
+                                setState(() {
+                                  data.status = value.value;
+                                });
+                              },
+                            )) : Text(''),
                       ])),
-                  Padding(padding: Style.pagePadding2, child:Divider(height: 1.0,)),
-                  Padding(padding: Style.pagePadding2, child:Text('时间: ${Func.getFullTimeString(data.statusdate)}')),
-                  Padding(padding: Style.pagePadding2, child:Divider(height: 1.0,)),
-                  Padding(padding: Style.pagePadding, child:Text('人员: ${getModel(context).user?.displayname ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Divider(height: 1.0,)),
+                  Padding(padding: Style.pagePadding4, child:Text('时间: ${Func.getFullTimeString(data.statusdate)}')),
+                  Padding(padding: Style.pagePadding4, child:Divider(height: 1.0,)),
+                  Padding(padding: Style.pagePadding2, child:Text('人员: ${getModel(context).user?.displayname ?? ''}')),
+                  SizedBox(height: Style.separateHeight/2,),
                   Container(height: Style.separateHeight, color: Style.backgroundColor,),
 
 
-                  Padding(padding: Style.pagePadding, child:Row(
+                  Padding(padding: Style.pagePadding2, child:Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('备注: '),
@@ -127,7 +130,7 @@ class _StepPageState extends State<StepPage> {
                     ],
                   )),
 
-                  Padding(padding: Style.pagePadding, child:Row(
+                  Padding(padding: Style.pagePadding2, child:Row(
                     children: <Widget>[
                       Text('照片: '),
                       new PictureList(index: widget.index, canAdd: getModel(context).isTask,)
@@ -167,7 +170,7 @@ class _StepPageState extends State<StepPage> {
   @override
   void initState() {
     super.initState();
-    _controller = new TextEditingController(text: widget.data.remark?? ' ');
+    _controller = new TextEditingController(text: widget.data.remark?? '');
   }
 
 

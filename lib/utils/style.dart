@@ -10,8 +10,9 @@ class Style {
 
   static Color backgroundColor = const Color(0xFFF0F0F0);
 
-  static const pagePadding = const EdgeInsets.symmetric(horizontal: padding, vertical: padding/2);
-  static const pagePadding2 = const EdgeInsets.symmetric(horizontal: padding, vertical: padding/4);
+  static const pagePadding = const EdgeInsets.symmetric(horizontal: padding, vertical: padding);
+  static const pagePadding2 = const EdgeInsets.symmetric(horizontal: padding, vertical: padding/2);
+  static const pagePadding4 = const EdgeInsets.symmetric(horizontal: padding, vertical: padding/4);
 
   static const separateHeight = 8.0;
 
