@@ -31,13 +31,15 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   bool _expend = false;
 
+  GlobalKey<StepListState> _stepKey = new GlobalKey<StepListState>();
+
   @override
   void initState() {
     super.initState();
   }
 
 
-  void _getOrderDetail() async{
+  Future _getOrderDetail() async{
     try{
       String response = await getApi(context).orderDetail(_info.wonum, _data?.changedate);
       OrderDetailResult result = new OrderDetailResult.fromJson(Func.decode(response));
@@ -133,7 +135,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         widget = RecentHistory();
         break;
       case 1:
-        widget = StepList();
+        widget = StepList(key: _stepKey,);
         break;
       case 2:
       case 3:
@@ -144,7 +146,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
     return  new Container(
       color: Colors.white,
-      padding: EdgeInsets.all(Style.padding),
+      padding: Style.pagePadding,
       child:  Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -189,7 +191,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
     }
 
-    list.add(SizedBox(height: 8.0,));
+    list.add(SizedBox(height: Style.separateHeight,));
 
     return list;
 
@@ -199,7 +201,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return new Container(
       color: Colors.white,
 //      constraints: new BoxConstraints(maxHeight: MediaQuery.of(context).size.height / 2) ,
-      padding: EdgeInsets.all(Style.padding),
+      padding: Style.pagePadding,
       child: new Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -261,7 +263,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           _getHeader(),
-          new SizedBox(height: 6.0,),
+          SizedBox(height: Style.separateHeight,),
           _getBody2(),
         ],
       ),
@@ -281,7 +283,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
           backgroundColor: Colors.redAccent,
           onPressed: () async {
-            await Func.scan();
+            String result = await Func.scan();
+
+            if(result.isNotEmpty){
+              _stepKey.currentState?.gotoStep(result);
+            }
+
           }) : null,
       bottomNavigationBar: new BottomNavigationBar(
         items: _getBottomBar(),
@@ -307,8 +314,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-    getModel(context).clearOrderDetailCache();
+  void reassemble() {
+    super.reassemble();
   }
+
 }

@@ -19,6 +19,7 @@ dependencies:
   pull_to_refresh: ^1.1.0
   sembast: ^1.8.0
   barcode_scan: ^0.0.4
+  image_picker: ^0.4.1
 
 dev_dependencies:
   flutter_test:

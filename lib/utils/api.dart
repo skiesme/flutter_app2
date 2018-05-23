@@ -10,6 +10,10 @@ class SamexApi {
   static const String BASE = '172.19.1.30:40001';
   static const String BASE_URL = 'http://$BASE/app/api';
 
+  String getImageUrl(String docinfoid){
+    return 'http://$BASE/app/stepimage$docinfoid';
+  }
+
   Future<String> login(String userName, String password) async {
     var response =  await _client.post(BASE_URL+'/login', body: json.encode({
       'username': userName,

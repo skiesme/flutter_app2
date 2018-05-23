@@ -53,14 +53,14 @@ class StepsData {
 class OrderStep {
   int setpno;
   String description;
-  Null wonum;
+  String wonum;
   String location;
   String locationDescription;
   String status;
   int statusdate;
-  Null remark;
-  Null exectuor;
-  Null images;
+  String remark;
+  String exectuor;
+  List<String> images;
 
   OrderStep(
       {this.setpno,

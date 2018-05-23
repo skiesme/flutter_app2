@@ -156,6 +156,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                     getModel(context).order = info;
                     getModel(context).isTask = widget.type != OrderType.ALL;
                     getModel(context).orderDetailData = null;
+                    getModel(context).clearOrderDetailCache();
 
                     Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
 

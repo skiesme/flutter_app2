@@ -55,7 +55,7 @@ class RootModel {
 
   OrderShortInfo order;
 
-  bool isTask;
+  bool isTask = true;
 
   OrderDetailData orderDetailData;
 

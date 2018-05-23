@@ -5,18 +5,23 @@ class SimpleButton extends StatelessWidget {
 
   final Widget child;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
   final EdgeInsets padding;
   final double elevation;
+  final ShapeBorder shape;
+  final Color color;
 
-  SimpleButton({@required this.child, this.onTap, this.padding, this.elevation});
+  SimpleButton({@required this.child, this.onTap, this.padding, this.elevation, this.onLongPress, this.shape, this.color});
 
   @override
   Widget build(BuildContext context) {
     return new Material(
       elevation: elevation??0.0,
-      color: Colors.transparent,
+      color: color ?? Colors.transparent,
+      shape: this.shape,
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: padding?? EdgeInsets.all(1.0),
           child: child,

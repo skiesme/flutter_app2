@@ -94,7 +94,7 @@ class Func {
   }
 
   static String getFullTimeString(int mill){
-    if(mill == null) return '';
+    if(mill == null || mill < 0) return '';
     DateTime time = new DateTime.fromMillisecondsSinceEpoch(mill*1000);
     var formatter = new DateFormat('yyyy-MM-dd HH:mm:ss');
     return formatter.format(time);
@@ -130,7 +130,7 @@ class Func {
     );
   }
 
-  static    Future<String> scan() async {
+  static Future<String> scan() async {
     try {
       String barcode = await BarcodeScanner.scan();
       print('barcode = $barcode');

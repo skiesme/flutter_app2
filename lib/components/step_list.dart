@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/utils/func.dart';
@@ -5,23 +7,45 @@ import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/steps.dart';
+import 'package:samex_app/page/step_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
 class StepList extends StatefulWidget {
+
+  StepList({Key key}) : super(key:key);
+
   @override
-  _StepListState createState() => new _StepListState();
+  StepListState createState() => new StepListState();
 }
 
-class _StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
+class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
   OrderDetailData _data;
+
+  Future<Null> gotoStep(String asset) async {
+    List<OrderStep> list = getModel(context).stepsList;
+
+    if(list !=null){
+      for(int i = 0, len = list.length; i< len; i++){
+        if(asset == list[i].location ){
+          final result = await Navigator.push(context, new MaterialPageRoute(builder: (_) => new StepPage(index: i, data: list[i],)));
+          if(result != null) {
+            setState(() {
+
+            });
+          }
+          break;
+        }
+      }
+    }
+  }
 
   void _getSteps() async {
     _data = getModel(context).orderDetailData;
     if(_data != null){
       try{
-        String response = await getApi(context).steps(sopnum: _data.sopnum, wonum: _data.wonum, site: _data.site);
+        String response = await getApi(context).steps(sopnum: '', wonum: _data.wonum, site: _data.site);
         StepsResult result = new StepsResult.fromJson(Func.decode(response));
 
         if(result.code != 0){
@@ -32,7 +56,6 @@ class _StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
             getModel(context).stepsList.addAll(result.response.steps);
           });
         }
-
 
       } catch (e){
         print (e);
@@ -54,8 +77,8 @@ class _StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         OrderStep f = list[i];
         List<Widget> children2 = <Widget>[];
 
-        children2.add(Text('任务$i: ${f.description}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
-        children2.add(Text('资产: ${f.location}-${f.locationDescription}'));
+        children2.add(Text('任务$i: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
+        children2.add(Text('资产: ${f.location??''}-${f.locationDescription??''}'));
         children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
         children2.add(Text('状态: ${f.status??'未处理'}'));
         children2.add(Divider(height: 1.0,));
@@ -63,7 +86,9 @@ class _StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         children.add(
             SimpleButton(
               padding: new EdgeInsets.only(top: 6.0),
-              onTap: (){},
+              onTap: (){
+                gotoStep(f.location);
+              },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: children2,
