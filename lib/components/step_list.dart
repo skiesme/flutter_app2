@@ -86,7 +86,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         children.add(
             SimpleButton(
               padding: new EdgeInsets.only(top: 6.0),
-              onTap: (){
+              onDoubleTap: (){
                 gotoStep(f.location);
               },
               child: Column(

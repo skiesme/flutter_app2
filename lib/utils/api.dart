@@ -47,6 +47,7 @@ class SamexApi {
   }
 
   Future<Map> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
+    DateTime now = new DateTime.now();
     Uri uri = new Uri.http(BASE, '/app/api/order', {
       'worktype': type,
       'time': '$time',
@@ -56,7 +57,7 @@ class SamexApi {
     });
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+    print('time: ${new DateTime.now().millisecondsSinceEpoch - now.millisecondsSinceEpoch} - ${uri.toString()}: ${response.data}');
 
     return response.data;
 
