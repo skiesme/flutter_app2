@@ -54,8 +54,8 @@ class OrderStep {
   int setpno;
   String description;
   String wonum;
-  String location;
-  String locationDescription;
+  String assetnum;
+  String assetDescription;
   String status;
   int statusdate;
   String remark;
@@ -66,8 +66,8 @@ class OrderStep {
       {this.setpno,
         this.description,
         this.wonum,
-        this.location,
-        this.locationDescription,
+        this.assetnum,
+        this.assetDescription,
         this.status,
         this.statusdate,
         this.remark,
@@ -78,8 +78,8 @@ class OrderStep {
     setpno = json['setpno'];
     description = json['description'];
     wonum = json['wonum'];
-    location = json['location'];
-    locationDescription = json['location_description'];
+    assetnum = json['assetnum'];
+    assetDescription = json['asset_description'];
     status = json['status'];
     statusdate = json['statusdate'];
     remark = json['remark'];
@@ -92,8 +92,8 @@ class OrderStep {
     data['setpno'] = this.setpno;
     data['description'] = this.description;
     data['wonum'] = this.wonum;
-    data['location'] = this.location;
-    data['location_description'] = this.locationDescription;
+    data['assetnum'] = this.assetnum;
+    data['asset_description'] = this.assetDescription;
     data['status'] = this.status;
     data['statusdate'] = this.statusdate;
     data['remark'] = this.remark;

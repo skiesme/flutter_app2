@@ -26,9 +26,10 @@ class _StatusSelect{
 class StepPage extends StatefulWidget {
 
   final int index;
-  OrderStep data;
+  final OrderStep data;
+  final bool isTask;
 
-  StepPage({@required this.index, @required this.data});
+  StepPage({@required this.index, @required this.data, @required this.isTask});
 
 
   @override
@@ -38,6 +39,8 @@ class StepPage extends StatefulWidget {
 class _StepPageState extends State<StepPage> {
 
   TextEditingController _controller;
+
+  String _status;
 
   Widget _getBody(){
 
@@ -66,8 +69,8 @@ class _StepPageState extends State<StepPage> {
                   Divider(height: 1.0,),
                   Padding(padding: Style.pagePadding4, child:Text('任务: ${data.setpno ?? ''}')),
                   Padding(padding: Style.pagePadding4, child:Text('描述: ${data.description ??''}')),
-                  Padding(padding: Style.pagePadding4, child:Text('资产: ${data.location ?? ''}')),
-                  Padding(padding: Style.pagePadding4, child:Text('描述: ${data.locationDescription ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('资产: ${data.assetnum ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('描述: ${data.assetDescription ?? ''}')),
                   Container(height: Style.separateHeight, color: Style.backgroundColor,),
 
                   Padding(padding: Style.pagePadding2, child:Text('操作信息')),
@@ -80,7 +83,7 @@ class _StepPageState extends State<StepPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             const Text('状态: '),
-                            new Text('${data.status??''}', style:  data.status == '异常' ? TextStyle(color: Colors.redAccent) : null,),
+                            new Text('${(_status??data.status)??''}', style:  (_status ??data.status) == '异常' ? TextStyle(color: Colors.redAccent) : null,),
                           ],
                         ),
 
@@ -98,9 +101,9 @@ class _StepPageState extends State<StepPage> {
                                 }).toList();
                               },
                               onSelected: (_StatusSelect value) {
-                                print('status = ${value.value}');
+//                                print('status = ${value.value}');
                                 setState(() {
-                                  data.status = value.value;
+                                  _status = value.value;
                                 });
                               },
                             )) : Text(''),
@@ -108,7 +111,7 @@ class _StepPageState extends State<StepPage> {
                   Padding(padding: Style.pagePadding4, child:Divider(height: 1.0,)),
                   Padding(padding: Style.pagePadding4, child:Text('时间: ${Func.getFullTimeString(data.statusdate)}')),
                   Padding(padding: Style.pagePadding4, child:Divider(height: 1.0,)),
-                  Padding(padding: Style.pagePadding2, child:Text('人员: ${getModel(context).user?.displayname ?? ''}')),
+                  Padding(padding: Style.pagePadding2, child:Text('人员: ${(widget.isTask ? getModel(context).user?.displayname : data.exectuor) ?? ''}')),
                   SizedBox(height: Style.separateHeight/2,),
                   Container(height: Style.separateHeight, color: Style.backgroundColor,),
 
@@ -117,10 +120,10 @@ class _StepPageState extends State<StepPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text('备注: '),
-                      Expanded(child: getModel(context).isTask ? TextField(
+                      Expanded(child: widget.isTask ? TextField(
                         controller: _controller,
                         maxLines: 3,
-                        enabled: getModel(context).isTask,
+                        enabled: widget.isTask,
                         decoration: new InputDecoration(
                           contentPadding: EdgeInsets.all(0.0),
                           hintStyle: TextStyle(fontSize: 16.0),
@@ -133,14 +136,14 @@ class _StepPageState extends State<StepPage> {
                   Padding(padding: Style.pagePadding2, child:Row(
                     children: <Widget>[
                       Text('照片: '),
-                      new PictureList(index: widget.index, canAdd: getModel(context).isTask,)
+                      new PictureList(index: widget.index, canAdd: widget.isTask,)
                     ],
                   )),
 
                 ],
               ),
             ),)),
-          getModel(context).isTask ? new Positioned(left: 0.0, bottom: 20.0, right: 0.0, child: Row(
+          widget.isTask ? new Positioned(left: 0.0, bottom: 20.0, right: 0.0, child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[

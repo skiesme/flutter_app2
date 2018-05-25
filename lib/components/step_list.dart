@@ -28,8 +28,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
     if(list !=null){
       for(int i = 0, len = list.length; i< len; i++){
-        if(asset == list[i].location ){
-          final result = await Navigator.push(context, new MaterialPageRoute(builder: (_) => new StepPage(index: i, data: list[i],)));
+        if(asset == list[i].assetnum ){
+          final result = await Navigator.push(context, new MaterialPageRoute(builder: (_) => new StepPage(index: i, data: list[i], isTask: getModel(context).isTask,)));
           if(result != null) {
             setState(() {
 
@@ -78,7 +78,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         List<Widget> children2 = <Widget>[];
 
         children2.add(Text('任务$i: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
-        children2.add(Text('资产: ${f.location??''}-${f.locationDescription??''}'));
+        children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
         children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
         children2.add(Text('状态: ${f.status??'未处理'}'));
         children2.add(Divider(height: 1.0,));
@@ -87,7 +87,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
             SimpleButton(
               padding: new EdgeInsets.only(top: 6.0),
               onDoubleTap: (){
-                gotoStep(f.location);
+                gotoStep(f.assetnum);
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

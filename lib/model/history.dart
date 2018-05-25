@@ -31,7 +31,7 @@ class HistoryData {
   String wonum;
   String changby;
   int actfinish;
-  Null error;
+  List<String> error;
 
   HistoryData({this.wonum, this.changby, this.actfinish, this.error});
 
@@ -39,7 +39,7 @@ class HistoryData {
     wonum = json['wonum'];
     changby = json['changby'];
     actfinish = json['actfinish'];
-    error = json['error'];
+    error = json['error']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -47,7 +47,7 @@ class HistoryData {
     data['wonum'] = this.wonum;
     data['changby'] = this.changby;
     data['actfinish'] = this.actfinish;
-    data['error'] = this.error;
+    data['error'] = this.error??[];
     return data;
   }
 }
