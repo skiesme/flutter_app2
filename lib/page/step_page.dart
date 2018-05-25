@@ -67,7 +67,7 @@ class _StepPageState extends State<StepPage> {
                 children: <Widget>[
                   Padding(padding: Style.pagePadding2, child:Text('基本信息')),
                   Divider(height: 1.0,),
-                  Padding(padding: Style.pagePadding4, child:Text('任务: ${data.setpno ?? ''}')),
+                  Padding(padding: Style.pagePadding4, child:Text('任务: ${widget.index+1 ?? ''}')),
                   Padding(padding: Style.pagePadding4, child:Text('描述: ${data.description ??''}')),
                   Padding(padding: Style.pagePadding4, child:Text('资产: ${data.assetnum ?? ''}')),
                   Padding(padding: Style.pagePadding4, child:Text('描述: ${data.assetDescription ?? ''}')),

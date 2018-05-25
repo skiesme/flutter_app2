@@ -51,7 +51,7 @@ class StepsData {
 }
 
 class OrderStep {
-  int setpno;
+  int stepno;
   String description;
   String wonum;
   String assetnum;
@@ -63,7 +63,7 @@ class OrderStep {
   List<String> images;
 
   OrderStep(
-      {this.setpno,
+      {this.stepno,
         this.description,
         this.wonum,
         this.assetnum,
@@ -75,7 +75,7 @@ class OrderStep {
         this.images});
 
   OrderStep.fromJson(Map<String, dynamic> json) {
-    setpno = json['setpno'];
+    stepno = json['stepno'];
     description = json['description'];
     wonum = json['wonum'];
     assetnum = json['assetnum'];
@@ -89,7 +89,7 @@ class OrderStep {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['setpno'] = this.setpno;
+    data['stepno'] = this.stepno;
     data['description'] = this.description;
     data['wonum'] = this.wonum;
     data['assetnum'] = this.assetnum;

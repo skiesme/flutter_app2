@@ -77,7 +77,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         OrderStep f = list[i];
         List<Widget> children2 = <Widget>[];
 
-        children2.add(Text('任务$i: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
+        children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
         children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
         children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
         children2.add(Text('状态: ${f.status??'未处理'}'));
