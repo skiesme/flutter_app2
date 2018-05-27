@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class LoadingPage extends StatelessWidget {
+class LoadingView extends StatelessWidget {
   final Widget child;
   final bool show;
-  LoadingPage({this.child, this.show = false});
+  LoadingView({this.child, this.show = false});
 
   @override
   Widget build(BuildContext context) {

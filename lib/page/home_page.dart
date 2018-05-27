@@ -217,6 +217,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
         Func.showMessage(result.message);
       } else {
         UserInfo info = result.response;
+        Cache.instance.setStringValue(KEY_SITE, info.defsite);
 
         setState(() {
           setUserInfo(context, info);

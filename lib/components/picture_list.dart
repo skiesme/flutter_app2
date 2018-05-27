@@ -1,15 +1,16 @@
 import 'dart:math';
 import 'dart:io';
 import 'dart:async';
+import 'package:meta/meta.dart';
 
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/components/simple_button.dart';
 
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/style.dart';
+import 'package:samex_app/utils/func.dart';
 
 import 'package:image_picker/image_picker.dart';
 
@@ -18,34 +19,40 @@ class PictureList extends StatefulWidget {
 
   final int index;
   final bool canAdd;
+  final OrderStep step;
 
-  PictureList({@required this.index, this.canAdd = true});
+  PictureList({Key key, @required this.index, this.canAdd = true, @required  this.step}):super(key:key);
 
   @override
-  _PictureListState createState() => new _PictureListState();
+  PictureListState createState() => new PictureListState();
 }
 
-class _PictureListState extends State<PictureList> {
+class PictureListState extends State<PictureList> {
 
-  OrderStep _step;
+  List<ImageData> _images = new List();
 
-  List<File> _images = new List();
-
-  List<String> _resources = new List();
+  List<ImageData> _resources = new List();
 
   Future _getImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.camera);
 
     if(image != null){
       setState(() {
-        _images.add(image);
+        ImageData data = new ImageData(path: image.path, time: Func.getYYYYMMDDHHMMSSString());
+        _images.add(data);
+//        getModel(context).step.images.add(data.toString());
       });
     }
   }
 
+  List<ImageData> getImages() {
+    return _images??[];
+  }
+
   Widget _largeImage(Widget child,  int index){
 
-    if(!getModel(context).isTask) return child;
+//    print('largeimage : ${this._resources.toString()}');
+
     return new GestureDetector(
       onTap: (){
         Navigator.push(context, new MaterialPageRoute<void>(
@@ -58,21 +65,13 @@ class _PictureListState extends State<PictureList> {
                 body: new DefaultTabController(
                   length: _resources.length,
                   initialIndex: index,
-                  child: Container(child:_PageSelector(icons: _resources,), color: Colors.black,),
+                  child: Container(child:_PageSelector(icons: this._resources), color: Colors.black,),
                 ),
-//                body: new SizedBox.expand(
-//                  child:  new PageView.builder(
-//                      controller: new PageController(initialPage: index),
-//                      itemCount: _resources.length,
-//                      itemBuilder: (_, index){
-//                        return new GridPhotoViewer(path: _resources[index]);
-//                      }),
-//                ),
               );
             }
         ));
       },
-      child: Stack(
+      child: getModel(context).isTask ? Stack(
         overflow: Overflow.visible,
         children: <Widget>[
           child,
@@ -81,12 +80,14 @@ class _PictureListState extends State<PictureList> {
             color: Colors.redAccent,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
             onTap: (){
-              if(_step != null && _step.images != null && _step.images.length > index){
-                _step.images.removeAt(index);
+              getModel(context).step.images.removeAt(index);
+
+              if(widget.step != null && widget.step.images != null && widget.step.images.length > index){
+                widget.step.images.removeAt(index);
               } else {
                 int preIndex = 0;
-                if(_step != null && _step.images != null){
-                  preIndex = _step.images.length;
+                if(widget.step != null && widget.step.images != null){
+                  preIndex = widget.step.images.length;
                 }
 
                 _images.removeAt(index - preIndex);
@@ -99,7 +100,7 @@ class _PictureListState extends State<PictureList> {
             child:Icon(Icons.delete, size: 20.0, color: Colors.white,) ,
           ))
         ],
-      ),
+      ) : child,
     );
   }
 
@@ -113,26 +114,40 @@ class _PictureListState extends State<PictureList> {
 
     _resources.clear();
 
-    if(_step.images != null){
-      for(int i = 0, len = _step.images.length; i < len; i++){
-        String id = _step.images[i];
-        children.add( _largeImage(
-            new Image(image: NetworkImage(getApi(context).getImageUrl(id), headers: {
-              'Authorization': Cache.instance.token
-            }), width: width,), count));
+//    print('show picture list: ${widget.step.toString()}');
 
-        _resources.add(id);
-        children.add(SizedBox(width: Style.separateHeight/2,));
-        count++;
+    if(widget.step.images != null){
+      for(int i = 0, len = widget.step.images.length; i < len; i++){
+        String id = widget.step.images[i];
+        try {
+          if(id.startsWith('/')) continue;
+
+          ImageData data = new ImageData.fromString(id);
+
+          children.add(_largeImage(
+              new Image(
+                image: NetworkImage(getApi(context).getImageUrl(data.path), headers: {
+                  'Authorization': Cache.instance.token
+                }), width: width,), count));
+
+          data.path = getApi(context).getImageUrl(data.path);
+
+          _resources.add(data);
+          children.add(SizedBox(width: Style.separateHeight / 2,));
+          count++;
+        } catch (e){
+
+          print(e);
+        }
       }
     }
 
 
     for(int i = 0, len = _images.length; i < len; i++){
-      children.add(_largeImage(new Image.file(_images[i], width: width,), count));
+      children.add(_largeImage(new Image.file(File(_images[i].path), width: width,), count));
 
       children.add(SizedBox(width: Style.separateHeight/2,));
-      _resources.add(_images[i].path);
+      _resources.add(_images[i]);
       count++;
     }
 
@@ -162,11 +177,7 @@ class _PictureListState extends State<PictureList> {
   @override
   Widget build(BuildContext context) {
 
-    if(getModel(context).stepsList.length > widget.index){
-      _step =  getModel(context).stepsList[widget.index];
-    }
-
-    if(_step?.images != null && _step.images.length > 0){
+    if(widget.step?.images != null && widget.step.images.length > 0){
       return _getImageList();
     } else {
 
@@ -182,17 +193,38 @@ class _PictureListState extends State<PictureList> {
   }
 }
 
+class ImageData {
+  String path;
+  String time;
+
+  ImageData({@required this.path, @required this.time});
+
+  @override
+  String toString() {
+    return '$path,$time';
+  }
+
+  ImageData.fromString([String data = '']) {
+    if(data.contains(',')){
+      List<String> list = data.split(',');
+      path = list[0];
+      time = list[1];
+    } else {
+      throw new Exception('图片格式有误:$data');
+    }
+  }
+}
 
 class _PageSelector extends StatelessWidget {
   const _PageSelector({ this.icons });
 
-  final List<String> icons;
+  final List<ImageData> icons;
 
-  void _handleArrowButtonPress(BuildContext context, int delta) {
-    final TabController controller = DefaultTabController.of(context);
-    if (!controller.indexIsChanging)
-      controller.animateTo((controller.index + delta).clamp(0, icons.length - 1));
-  }
+//  void _handleArrowButtonPress(BuildContext context, int delta) {
+//    final TabController controller = DefaultTabController.of(context);
+//    if (!controller.indexIsChanging)
+//      controller.animateTo((controller.index + delta).clamp(0, icons.length - 1));
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -209,10 +241,16 @@ class _PageSelector extends StatelessWidget {
               color: color,
             ),
             child: new TabBarView(
-                children: icons.map((String icon) {
-                  return new Container(
-                    child: new GridPhotoViewer(path: icon),
-                  );
+                children: icons.map((ImageData icon) {
+                  return new Stack(
+                        children: <Widget>[
+                          SizedBox.expand(child: new GridPhotoViewer(path: icon.path)),
+                          Align(
+                            child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+                            alignment: Alignment.topCenter,
+                          ),
+                        ],
+                      );
                 }).toList()
             ),
           ),
@@ -221,16 +259,16 @@ class _PageSelector extends StatelessWidget {
               left: 0.0,
               right: 0.0,
               child: new Container(
-              margin: const EdgeInsets.only(top: 16.0),
-              child: new Row(
+                  margin: const EdgeInsets.only(top: 16.0),
+                  child: new Row(
 
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    new TabPageSelector(controller: controller, color: Colors.black, selectedColor: Colors.white,),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center
-              )
-          )),
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        new TabPageSelector(controller: controller, color: Colors.black, selectedColor: Colors.white,),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center
+                  )
+              )),
         ],
       ),
     );
@@ -330,10 +368,10 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
             ..translate(_offset.dx, _offset.dy)
             ..scale(_scale),
           child: widget.path.startsWith('http') ? Image(
-              image: NetworkImage(widget.path, headers: {
-                'Authorization': Cache.instance.token
-              }))
-              : new Image.file(new File(widget.path)) ,
+            image: NetworkImage(widget.path, headers: {
+              'Authorization': Cache.instance.token
+            }), fit: BoxFit.cover,)
+              : new Image.file(new File(widget.path), fit: BoxFit.cover,) ,
         ),
       ),
     );

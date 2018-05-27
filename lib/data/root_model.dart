@@ -54,6 +54,7 @@ class RootModel {
   String token;
 
   OrderShortInfo order;
+  OrderStep step;
 
   bool isTask = true;
 
@@ -71,6 +72,7 @@ class RootModel {
     historyList.clear();
     stepsList.clear();
     orderDetailData = null;
+    step = null;
   }
 
   final SamexApi api;

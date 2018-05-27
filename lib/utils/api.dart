@@ -4,31 +4,38 @@ import 'dart:convert';
 import 'package:samex_app/utils/cache.dart';
 
 import 'package:dio/dio.dart';
+import 'package:samex_app/model/steps.dart';
 
 Dio _dio = new Dio();
 
 class SamexApi {
-  static const String BASE = '172.19.1.30:40001';
-//  static const String BASE = '192.168.50.162:40001';
+//  static const String BASE = '172.19.1.30:40001';
+  static const String BASE = '192.168.50.162:40001';
   static const String BASE_URL = 'http://$BASE/app/api';
   static Options _option;
 
-  Options _options(){
+  Options _options({int connectTimeout = 6000, receiveTimeout = 3000, Map<String, dynamic> headers }){
     if(_option == null){
       _option = new Options();
     }
 
-    _option.headers = {
-      'Authorization': Cache.instance.token
-    };
-    _option.connectTimeout = 5000;
-    _option.receiveTimeout = 3000;
+    if(headers == null){
+      _option.headers = {
+        'Authorization': Cache.instance.token
+      };
+    } else {
+      _option.headers = headers;
+    }
+
+    _option.connectTimeout = connectTimeout;
+    _option.receiveTimeout = receiveTimeout;
+
 
     return _option;
   }
 
   String getImageUrl(String docinfoid){
-    return 'http://$BASE/app/stepimage/$docinfoid';
+    return 'http://$BASE/stepimage/$docinfoid?site=${Cache.instance.site}';
   }
 
   Future<Map> login(String userName, String password) async {
@@ -98,6 +105,31 @@ class SamexApi {
     print('${uri.toString()}: ${response.data}');
 
     return response.data;
+  }
+
+  Future<Map> postStep(OrderStep step) async {
+    Uri uri = new Uri.http(BASE, '/app/api/orderstep/upload');
+
+    FormData formData = new FormData.from(step.toJson());
+    List<UploadFileInfo> list = step.getUploadImage();
+
+    formData['site'] = Cache.instance.site;
+
+    for(int i =0, len = list.length; i< len; i++){
+      formData['file${i+1}'] = list[i];
+    }
+
+    print('${uri.toString()}: ${formData.toString()}');
+
+
+    Response response = await _dio.post(uri.toString(), data: formData, options: new Options( headers: {
+      'Authorization': Cache.instance.token
+    }));
+
+    print('${uri.toString()}: ${response.data}');
+
+    return response.data;
+
   }
 
 

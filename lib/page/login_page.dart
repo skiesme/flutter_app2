@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      body: new LoadingPage(
+      body: new LoadingView(
         show: _showLoading,
         child: new GestureDetector(child: new Container(
           decoration: new BoxDecoration(image: new DecorationImage(image: new AssetImage(ImageAssets.login_background), fit: BoxFit.cover)),

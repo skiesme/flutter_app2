@@ -1,3 +1,8 @@
+import 'package:dio/dio.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:path/path.dart';
+
 class StepsResult {
   int code;
   String message;
@@ -59,7 +64,7 @@ class OrderStep {
   String status;
   int statusdate;
   String remark;
-  String exectuor;
+  String executor;
   List<String> images;
 
   OrderStep(
@@ -68,10 +73,10 @@ class OrderStep {
         this.wonum,
         this.assetnum,
         this.assetDescription,
-        this.status,
+        this.status='',
         this.statusdate,
         this.remark,
-        this.exectuor,
+        this.executor,
         this.images});
 
   OrderStep.fromJson(Map<String, dynamic> json) {
@@ -83,8 +88,55 @@ class OrderStep {
     status = json['status'];
     statusdate = json['statusdate'];
     remark = json['remark'];
-    exectuor = json['exectuor'];
-    images = json['images'];
+    executor = json['exectuor'];
+    images = json['images']?.cast<String>();
+  }
+
+  String _getImages(){
+    String list = '';
+
+    if(images == null) return list;
+
+    for(int i =0, len = images.length; i < len; i++){
+      String f = images[i];
+      try {
+        String path = f;
+        if (f.contains(',')) {
+          path = f.split(',')[0];
+        }
+        if(path.startsWith('/')){
+        } else {
+          if(list.length > 0){
+            list += '##';
+          }
+          list += f;
+        }
+      }
+      catch(e){
+      }
+    }
+
+    return list;
+  }
+
+  List<UploadFileInfo> getUploadImage() {
+    List<UploadFileInfo> list = [];
+    if(images == null) return list;
+    for(int i =0, len = images.length; i < len; i++){
+      String f = images[i];
+      try {
+        String path = f;
+        if (f.contains(',')) {
+          path = f.split(',')[0];
+        }
+        if(path.startsWith('/')){
+          list.add(new UploadFileInfo(new File(path), basename(path)));
+        }
+      } catch(e){
+      }
+    }
+
+    return list;
   }
 
   Map<String, dynamic> toJson() {
@@ -97,8 +149,25 @@ class OrderStep {
     data['status'] = this.status;
     data['statusdate'] = this.statusdate;
     data['remark'] = this.remark;
-    data['exectuor'] = this.exectuor;
-    data['images'] = this.images;
+    data['executor'] = this.executor;
+    data['images'] = _getImages();
+//    data['file'] = _getImages(true);
     return data;
+  }
+
+  @override
+  String toString() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['stepno'] = this.stepno;
+    data['description'] = this.description;
+    data['wonum'] = this.wonum;
+    data['assetnum'] = this.assetnum;
+    data['asset_description'] = this.assetDescription;
+    data['status'] = this.status;
+    data['statusdate'] = this.statusdate;
+    data['remark'] = this.remark;
+    data['exectuor'] = this.executor;
+    data['images'] = this.images;
+    return json.encode(data).toString();
   }
 }

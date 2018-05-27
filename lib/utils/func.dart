@@ -49,8 +49,7 @@ class Func {
 
   static Widget centerLoading() => new Center(
               child:  new Container(
-                    height: 60.0,
-                    width: 60.0,
+                    padding: EdgeInsets.all(16.0),
                     child:new CircularProgressIndicator()
                 ),
   );
@@ -87,6 +86,15 @@ class Func {
     DateTime time = new DateTime.fromMillisecondsSinceEpoch(mill*1000);
     var formatter = new DateFormat('yyyy-MM-dd HH:mm:ss');
     return formatter.format(time);
+  }
+
+  static String getYYYYMMDDHHMMSSString([ DateTime time ]){
+    if(time == null){
+      time = DateTime.now();
+    }
+    var formatter = new DateFormat('yyyy-MM-dd HH:mm:ss');
+    return formatter.format(time);
+
   }
 
   static String mapToString(Map map){
