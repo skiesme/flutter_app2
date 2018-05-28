@@ -47,49 +47,53 @@ class _StepPageState extends State<StepPage> {
   bool _show = false;
 
   Future<bool> _postStep() async {
+    if(_status.isEmpty){
+      Func.showMessage('请先配置状态再提交');
+      return false;
+    }
 
     setState(() {
       _show = true;
     });
 
-    try{
-      List<ImageData> list = _key.currentState.getImages();
+    new Future.delayed(new Duration(milliseconds: 100), () async {
+      try{
+        List<ImageData> list = _key.currentState.getImages();
 
-      for(int i =0, len = list.length; i< len; i++){
-        getModel(context).step.images.add(list[i].toString());
+        for(int i =0, len = list.length; i< len; i++){
+          getModel(context).step.images.add(list[i].toString());
+        }
+
+        getModel(context).step.status = _status;
+        double time = DateTime.now().millisecondsSinceEpoch / 1000;
+        getModel(context).step.statusdate =  time.toInt();
+        getModel(context).step.remark = _controller.text;
+        getModel(context).step.executor = getModel(context).user.displayname;
+
+        getModel(context).stepsList[widget.index] = getModel(context).step;
+
+        Map response = await getApi(context).postStep(getModel(context).step);
+        StepsResult result = new StepsResult.fromJson(response);
+        if(result.code != 0) {
+          Func.showMessage(result.message);
+        } else {
+          Func.showMessage('提交成功');
+          Navigator.pop(context, true);
+          return;
+        }
+
+      } on DioError catch(e) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx and is also not 304.
+        print('${e.response.data}, ${e.message}, ${e.stackTrace}');
+        Func.showMessage('网络出现异常, 步骤提交失败');
       }
 
-      getModel(context).step.status = _status;
-      double time = DateTime.now().millisecondsSinceEpoch / 1000;
-      getModel(context).step.statusdate =  time.toInt();
-      getModel(context).step.remark = _controller.text;
-      getModel(context).step.executor = getModel(context).user.displayname;
-
-      getModel(context).stepsList[widget.index] = getModel(context).step;
-
-      Map response = await getApi(context).postStep(getModel(context).step);
-      StepsResult result = new StepsResult.fromJson(response);
-      if(result.code != 0) {
-        Func.showMessage(result.message);
-      } else {
-        Func.showMessage('提交成功');
-        setState(() {
-          _show = false;
-        });
-        return true;
-      }
-
-    } on DioError catch(e) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx and is also not 304.
-      print('${e.response.data}, ${e.message}, ${e.stackTrace}');
-      Func.showMessage('网络出现异常, 步骤提交失败');
-
-    }
-
-    setState(() {
-      _show = false;
+      setState(() {
+        _show = false;
+      });
     });
+
 
     return false;
   }
@@ -102,7 +106,7 @@ class _StepPageState extends State<StepPage> {
       Func.closeKeyboard(context);
     }
 
-    print('orderstep : ${data.toString()}');
+//    print('orderstep : ${data.toString()}');
     if(data == null) {
       return Center(child: Text('步骤数据丢失...'),);
     }
@@ -136,7 +140,7 @@ class _StepPageState extends State<StepPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
                             const Text('状态: '),
-                            new Text('${_status??''}', style:  _status == '异常' ? TextStyle(color: Colors.redAccent) : null,),
+                            new Text(_status, style:  _status == '异常' ? TextStyle(color: Colors.redAccent) : null,),
                           ],
                         ),
 
@@ -213,7 +217,6 @@ class _StepPageState extends State<StepPage> {
                 onPressed: () async{
                   bool result = await _postStep();
                   if(result){
-                    Navigator.pop(context, true);
                   }
                 },
               )
@@ -230,7 +233,7 @@ class _StepPageState extends State<StepPage> {
   void initState() {
     super.initState();
     _controller = new TextEditingController(text: widget.data.remark?? '');
-    _status = widget.data.status;
+    _status = widget.data.status?? '';
   }
 
 

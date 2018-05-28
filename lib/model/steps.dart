@@ -1,7 +1,12 @@
-import 'package:dio/dio.dart';
-import 'dart:io';
+import 'dart:io' as Io;
 import 'dart:convert';
+import 'dart:async';
+
+import 'package:dio/dio.dart';
+import 'package:image/image.dart';
+
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class StepsResult {
   int code;
@@ -89,7 +94,28 @@ class OrderStep {
     statusdate = json['statusdate'];
     remark = json['remark'];
     executor = json['exectuor'];
-    images = json['images']?.cast<String>();
+    images = json['images']?.cast<String>() ?? [];
+  }
+
+  static Future<String> _getThumbPath(String thumbnail ) async {
+//    var documentsDirectory = await getExternalStorageDirectory();
+    var documentsDirectory = await getApplicationDocumentsDirectory();
+
+    var path = join(documentsDirectory.path, thumbnail);
+
+    print(documentsDirectory);
+
+    // make sure the folder exists
+    if (!await new Io.Directory(dirname(path)).exists()) {
+      try {
+        await new Io.Directory(dirname(path)).create(recursive: true);
+      } catch (e) {
+        if (!await new Io.Directory(dirname(path)).exists()) {
+          print(e);
+        }
+      }
+    }
+    return path;
   }
 
   String _getImages(){
@@ -103,6 +129,8 @@ class OrderStep {
         String path = f;
         if (f.contains(',')) {
           path = f.split(',')[0];
+        } else {
+          continue;
         }
         if(path.startsWith('/')){
         } else {
@@ -119,7 +147,7 @@ class OrderStep {
     return list;
   }
 
-  List<UploadFileInfo> getUploadImage() {
+  Future<List<UploadFileInfo>> getUploadImage() async {
     List<UploadFileInfo> list = [];
     if(images == null) return list;
     for(int i =0, len = images.length; i < len; i++){
@@ -130,7 +158,37 @@ class OrderStep {
           path = f.split(',')[0];
         }
         if(path.startsWith('/')){
-          list.add(new UploadFileInfo(new File(path), basename(path)));
+//          print('${new DateTime.now()} 111111111');
+
+          List<int> bytes = await new Future.delayed(new Duration(milliseconds: 0), (){
+            return new Io.File(path).readAsBytesSync();
+          });
+
+          Image image = await new Future.delayed(new Duration(milliseconds: 200), (){
+            return  decodeImage(bytes);
+          });
+
+//          print('${new DateTime.now()} 22222222');
+
+
+          String cachePath = await _getThumbPath('${i+1}.png');
+          print('cachePath = $cachePath');
+
+          Io.File file = new Io.File(cachePath);
+          if(await file.exists()){
+            await file.delete();
+          }
+
+          // Save the thumbnail as a PNG.
+          await new Future.delayed(new Duration(milliseconds: 50), (){
+//            image = copyResize(image, 1280);
+//            image = copyRotate(image, 90);
+            new Io.File(cachePath).writeAsBytes(encodeJpg(image, quality: 80));
+          });
+
+//          print('${new DateTime.now()} 333333');
+
+          list.add(new UploadFileInfo(new Io.File(cachePath), basename(cachePath), contentType: Io.ContentType.BINARY));
         }
       } catch(e){
       }
@@ -150,7 +208,10 @@ class OrderStep {
     data['statusdate'] = this.statusdate;
     data['remark'] = this.remark;
     data['executor'] = this.executor;
-    data['images'] = _getImages();
+    String images = _getImages();
+    if(images.contains(',')){
+      data['images'] = _getImages();
+    }
 //    data['file'] = _getImages(true);
     return data;
   }

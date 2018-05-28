@@ -34,7 +34,7 @@ class PictureListState extends State<PictureList> {
   List<ImageData> _resources = new List();
 
   Future _getImage() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.camera);
+    File image = await ImagePicker.pickImage(source: ImageSource.camera, maxHeight: 1280.0, maxWidth: 1280.0);
 
     if(image != null){
       setState(() {
@@ -80,22 +80,23 @@ class PictureListState extends State<PictureList> {
             color: Colors.redAccent,
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
             onTap: (){
-              getModel(context).step.images.removeAt(index);
+
+              print('index=$index, widget.step.images.length=${widget.step.images.length}');
 
               if(widget.step != null && widget.step.images != null && widget.step.images.length > index){
                 widget.step.images.removeAt(index);
-              } else {
+              } else if(_images.length > 0){
                 int preIndex = 0;
                 if(widget.step != null && widget.step.images != null){
                   preIndex = widget.step.images.length;
                 }
 
                 _images.removeAt(index - preIndex);
-
-                setState(() {
-
-                });
               }
+
+              setState(() {
+
+              });
             },
             child:Icon(Icons.delete, size: 20.0, color: Colors.white,) ,
           ))
@@ -158,7 +159,6 @@ class PictureListState extends State<PictureList> {
       children.add(SizedBox(width: Style.separateHeight/2,));
       children.add(SimpleButton(
         onTap: (){
-          print('add .. $width');
           _getImage();
         },
         padding: EdgeInsets.all(10.0),
