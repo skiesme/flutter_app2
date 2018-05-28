@@ -8,12 +8,12 @@ import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/components/simple_button.dart';
 
 import 'package:samex_app/data/root_model.dart';
-import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
 
 import 'package:image_picker/image_picker.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PictureList extends StatefulWidget {
 
@@ -72,7 +72,6 @@ class PictureListState extends State<PictureList> {
         ));
       },
       child: getModel(context).isTask ? Stack(
-        overflow: Overflow.visible,
         children: <Widget>[
           child,
           Positioned( right: 0.0,child:SimpleButton(
@@ -126,10 +125,16 @@ class PictureListState extends State<PictureList> {
           ImageData data = new ImageData.fromString(id);
 
           children.add(_largeImage(
-              new Image(
-                image: NetworkImage(getApi(context).getImageUrl(data.path), headers: {
-                  'Authorization': Cache.instance.token
-                }), width: width,), count));
+
+              Container(
+                  height: width,
+                  width: width,
+                  child:new CachedNetworkImage(
+                      imageUrl: getModel(context).api.getImageUrl(data.path),
+                      placeholder: Center( child:new CircularProgressIndicator()),
+                      errorWidget: new Icon(Icons.error, color: Colors.red,)))
+
+              , count));
 
           data.path = getApi(context).getImageUrl(data.path);
 
@@ -243,14 +248,14 @@ class _PageSelector extends StatelessWidget {
             child: new TabBarView(
                 children: icons.map((ImageData icon) {
                   return new Stack(
-                        children: <Widget>[
-                          SizedBox.expand(child: new GridPhotoViewer(path: icon.path)),
-                          Align(
-                            child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
-                            alignment: Alignment.topCenter,
-                          ),
-                        ],
-                      );
+                    children: <Widget>[
+                      SizedBox.expand(child: new GridPhotoViewer(path: icon.path)),
+                      Align(
+                        child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+                        alignment: Alignment.topCenter,
+                      ),
+                    ],
+                  );
                 }).toList()
             ),
           ),
@@ -367,10 +372,11 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
           transform: new Matrix4.identity()
             ..translate(_offset.dx, _offset.dy)
             ..scale(_scale),
-          child: widget.path.startsWith('http') ? Image(
-            image: NetworkImage(widget.path, headers: {
-              'Authorization': Cache.instance.token
-            }), fit: BoxFit.cover,)
+          child: widget.path.startsWith('http') ? new CachedNetworkImage(
+            imageUrl: widget.path,
+            placeholder: new CircularProgressIndicator(),
+            errorWidget: new Icon(Icons.error),
+          )
               : new Image.file(new File(widget.path), fit: BoxFit.cover,) ,
         ),
       ),

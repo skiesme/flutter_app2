@@ -37,7 +37,7 @@ class SamexApi {
   }
 
   String getImageUrl(String docinfoid){
-    return 'http://$BASE/stepimage/$docinfoid?site=${Cache.instance.site}';
+    return 'http://$BASE/static/stepimage/${Cache.instance.site}/$docinfoid';
   }
 
   Future<Map> login(String userName, String password) async {
