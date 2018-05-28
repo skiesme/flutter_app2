@@ -80,8 +80,6 @@ class PictureListState extends State<PictureList> {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
             onTap: (){
 
-              print('index=$index, widget.step.images.length=${widget.step.images.length}');
-
               if(widget.step != null && widget.step.images != null && widget.step.images.length > index){
                 widget.step.images.removeAt(index);
               } else if(_images.length > 0){

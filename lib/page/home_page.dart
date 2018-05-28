@@ -128,10 +128,9 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                           elevation: 2.0,
                           child: new Container(
                             height: 20.0,
-                            width: 24.0,
+                            padding: EdgeInsets.symmetric(horizontal: 2.0),
                             decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
-                            padding: EdgeInsets.all(2.0),
-                            child: Text('${_user?.orders??0}', style: _textStyle, textAlign: TextAlign.center,),
+                            child: Center( child: Text('${_user?.orders??0}', style: _textStyle, textAlign: TextAlign.center,)),
                           ),
                         ),
                         Text('项任务未处理', style: _textStyle,),
