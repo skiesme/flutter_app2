@@ -11,6 +11,8 @@ import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/components/recent_history.dart';
 import 'package:samex_app/components/step_list.dart';
 import 'package:samex_app/components/people_material_list.dart';
+import 'package:samex_app/components/loading_view.dart';
+
 
 import 'package:after_layout/after_layout.dart';
 
@@ -30,6 +32,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   int _tabIndex = 0;
 
   bool _expend = false;
+
+  bool _show = false;
 
   GlobalKey<StepListState> _stepKey = new GlobalKey<StepListState>();
 
@@ -59,6 +63,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       print(e);
       Func.showMessage('网络出现异常: 获取工单详情失败');
     }
+
+    setState(() {
+      _show = false;
+    });
   }
 
   String getWorkTypeString(){
@@ -264,22 +272,76 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   Widget _getBody() {
     return new Container(
-      color: Style.backgroundColor,
-      child: new SingleChildScrollView(
-        key: ValueKey(_tabIndex),
-        child: new Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _getHeader(),
-          SizedBox(height: Style.separateHeight,),
-          _data == null ? Func.centerLoading(): _getBody2(),
-        ],
-      ),
-    ));
+        color: Style.backgroundColor,
+        child: new SingleChildScrollView(
+          key: ValueKey(_tabIndex),
+          child: new Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _getHeader(),
+              SizedBox(height: Style.separateHeight,),
+              _data == null ? Func.centerLoading(): _getBody2(),
+            ],
+          ),
+        ));
   }
 
+
+
+  void _selectMenu(OrderPostStyle style) async {
+    switch(style){
+      case OrderPostStyle.Post:
+
+        if(_type == OrderType.XJ) {
+
+          setState(() {
+            _show = true;
+          });
+
+          try {
+            Map response = await getModel(context).api.postXJ(_data?.wonum ?? '');
+            OrderDetailResult  result = new OrderDetailResult.fromJson(response);
+            if(result.code != 0) {
+              Func.showMessage(result.message);
+            } else {
+              Func.showMessage('提交成功');
+
+              getModel(context).user.orders = await getApi(context).orderCount();
+
+
+              Navigator.pop(context, true);
+              return;
+            }
+          } catch (e) {
+            print(e);
+
+            Func.showMessage('网络异常提交工单出错');
+          }
+
+          setState(() {
+            _show = false;
+          });
+
+        } else {
+          Func.showMessage('提交工单功能暂只支持巡检工单');
+        }
+
+        break;
+      case OrderPostStyle.Redirect:
+        Func.showMessage('该功能还未支持');
+        break;
+      case OrderPostStyle.Refresh:
+        setState(() {
+          _show = true;
+        });
+
+        _getOrderDetail();
+
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,8 +349,30 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return new Scaffold(
       appBar: new AppBar(
         title: Text(_info?.wonum ?? '',),
+        actions: getModel(context).isTask ?  <Widget>[
+          new PopupMenuButton<OrderPostStyle>(
+            onSelected: _selectMenu,
+            itemBuilder: (BuildContext context) => <PopupMenuItem<OrderPostStyle>>[
+              const PopupMenuItem<OrderPostStyle>(
+                value: OrderPostStyle.Post,
+                child: const Text('提交工作流'),
+              ),
+              const PopupMenuItem<OrderPostStyle>(
+                value: OrderPostStyle.Redirect,
+                child: const Text('转移工作流'),
+              ),
+              const PopupMenuItem<OrderPostStyle>(
+                value: OrderPostStyle.Refresh,
+                child: const Text('刷新工作流'),
+              ),
+            ],
+          ),
+        ] : null,
       ),
-      body: _info== null? Text(''): _getBody(),
+      body: LoadingView(
+        child: _info== null? Text(''): _getBody(),
+        show: _show,
+      ),
       floatingActionButton: _tabIndex == 1 ? new FloatingActionButton(
           child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
           backgroundColor: Colors.redAccent,
@@ -327,5 +411,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   void reassemble() {
     super.reassemble();
   }
+
+}
+
+enum OrderPostStyle {
+  Post,
+  Redirect,
+  Refresh
 
 }

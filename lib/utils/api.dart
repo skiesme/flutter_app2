@@ -5,14 +5,17 @@ import 'package:samex_app/utils/cache.dart';
 
 import 'package:dio/dio.dart';
 import 'package:samex_app/model/steps.dart';
+import 'package:samex_app/utils/func.dart';
+import 'package:samex_app/model/user.dart';
+
 
 Dio _dio = new Dio();
 
 class SamexApi {
-    static const String BASE = '192.168.60.18:40001';
+//    static const String BASE = '192.168.60.18:40001';
 
 //  static const String BASE = '172.19.1.30:40001';
-//  static const String BASE = '192.168.50.162:40001';
+  static const String BASE = '192.168.50.162:40001';
   static const String BASE_URL = 'http://$BASE/app/api';
   static Options _option;
 
@@ -49,11 +52,38 @@ class SamexApi {
     return response.data;
   }
 
-  Future<Map> user() async {
-    Response response = await _dio.get(BASE_URL+'/user', options: _options());
-    print('user: ${response.data}');
+  Future<UserInfo> user([bool onlyCount = false]) async {
 
-    return response.data;
+    UserInfo info;
+
+    try {
+
+      String url = BASE_URL+'/user' +(onlyCount ? '/count':'');
+
+      Response response = await _dio.get(url, options: _options());
+      print('user: ${response.data}');
+
+      UserResult result = new UserResult.fromJson(response.data);
+      if(result.code != 0) {
+        Func.showMessage(result.message);
+      } else {
+        info = result.response;
+        if(!onlyCount){
+          Cache.instance.setStringValue(KEY_SITE, info.defsite);
+        }
+      }
+    } catch (e){
+      print(e);
+      Func.showMessage('网络出现异常: 获取用户数据失败!');
+    }
+
+
+    return info;
+  }
+
+  Future<int> orderCount() async {
+    UserInfo info = await user(true);
+    return info?.orders ?? 0;
   }
 
   Future<Map> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
@@ -132,6 +162,12 @@ class SamexApi {
 
     return response.data;
 
+  }
+
+  Future<Map> postXJ(String woNum) async {
+    Response response =  await _dio.post(BASE_URL+'/order/xj/$woNum', options: _options());
+    print('postXJ: ${response.data}');
+    return response.data;
   }
 
 

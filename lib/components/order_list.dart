@@ -152,13 +152,20 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           new Container(
               color: Colors.white,
               child: new SimpleButton(
-                  onTap: (){
+                  onTap: () async {
                     getModel(context).order = info;
                     getModel(context).isTask = widget.type != OrderType.ALL;
                     getModel(context).orderDetailData = null;
                     getModel(context).clearOrderDetailCache();
 
-                    Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
+                    final result  = await Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskDetailPage()));
+                    if(result != null) {
+                      widget.helper.datas?.removeAt(index);
+
+                      setState(() {
+
+                      });
+                    }
 
                   },
                   child:  new Column(

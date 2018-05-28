@@ -23,6 +23,7 @@ UserInfo getUserInfo(BuildContext context) {
 }
 
 void setUserInfo(BuildContext context, UserInfo info){
+  if(info == null) return;
   RootModelWidget.of(context).model.user = info;
 }
 

@@ -210,21 +210,12 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
   }
 
   Future<Null> _handlerRefresh() async {
-    try {
-      UserResult result = new UserResult.fromJson(await getApi(context).user());
-      if(result.code != 0) {
-        Func.showMessage(result.message);
-      } else {
-        UserInfo info = result.response;
-        Cache.instance.setStringValue(KEY_SITE, info.defsite);
 
-        setState(() {
-          setUserInfo(context, info);
-        });
-      }
-    } catch (e){
-      print(e);
-      Func.showMessage('网络出现异常: 获取用户数据失败!');
+    UserInfo info = await getApi(context).user();
+    if(info != null) {
+      setState(() {
+        setUserInfo(context, info);
+      });
     }
   }
 
