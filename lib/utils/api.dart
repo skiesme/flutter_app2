@@ -12,9 +12,9 @@ import 'package:samex_app/model/user.dart';
 Dio _dio = new Dio();
 
 class SamexApi {
-//    static const String BASE = '192.168.60.18:40001';
+    static const String BASE = '192.168.60.18:40001';
 
-  static const String BASE = '172.19.1.30:40001';
+//  static const String BASE = '172.19.1.30:40001';
 //  static const String BASE = '192.168.50.162:40001';
   static const String BASE_URL = 'http://$BASE/app/api';
   static Options _option;

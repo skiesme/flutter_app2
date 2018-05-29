@@ -71,7 +71,7 @@ class PictureListState extends State<PictureList> {
             }
         ));
       },
-      child: getModel(context).isTask ? Stack(
+      child: widget.canAdd ? Stack(
         children: <Widget>[
           child,
           Positioned( right: 0.0,child:SimpleButton(

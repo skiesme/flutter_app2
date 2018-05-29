@@ -12,7 +12,7 @@ import 'package:samex_app/components/recent_history.dart';
 import 'package:samex_app/components/step_list.dart';
 import 'package:samex_app/components/people_material_list.dart';
 import 'package:samex_app/components/loading_view.dart';
-
+import 'package:samex_app/page/attachment_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -224,7 +224,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 children: <Widget>[
                   Text('基本信息'),
                   SimpleButton(
-                    onTap: (){},
+                    onTap: (){
+                      Navigator.push(context, new MaterialPageRoute(
+                          builder: (_) => new AttachmentPage(wonum: _info.wonum, data: getModel(context).stepsList)));
+                    },
                     child: Row(
                       children: <Widget>[
                         Icon(Icons.attach_file, color: Style.primaryColor, size: 16.0,),
