@@ -66,7 +66,7 @@ class _StepPageState extends State<StepPage>{
       _tips = null;
     });
 
-    await Future.delayed(Duration(seconds: 8));
+    await Future.delayed(Duration(seconds: 0));
 
     try{
       List<ImageData> list = _key.currentState.getImages();
