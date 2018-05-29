@@ -31,6 +31,8 @@ class StepPage extends StatefulWidget {
   final OrderStep data;
   final bool isTask;
 
+  static const String path = '/StepPage';
+
   StepPage({@required this.index, @required this.data, @required this.isTask});
 
 
@@ -38,90 +40,104 @@ class StepPage extends StatefulWidget {
   _StepPageState createState() => new _StepPageState();
 }
 
-class _StepPageState extends State<StepPage> {
+class _StepPageState extends State<StepPage>{
 
   TextEditingController _controller;
   GlobalKey<PictureListState> _key = new GlobalKey<PictureListState>();
-
+  CalculationManager _manager;
   String _status;
   bool _show = false;
+  String _tips;
 
-  Future<bool> _postStep() async {
+  void _postStep() async {
     if(_status.isEmpty || getModel(context).step == null){
       Func.showMessage('请先配置状态再提交');
-      return false;
+      return;
     }
 
     setState(() {
       _show = true;
+      _tips = null;
     });
 
-    new Future.delayed(new Duration(milliseconds: 100), () async {
-      try{
-        List<ImageData> list = _key.currentState.getImages();
+    await Future.delayed(Duration(seconds: 0));
 
-        for(int i =0, len = list.length; i< len; i++){
-          getModel(context).step.images.add(list[i].toString());
-        }
+    try{
+      List<ImageData> list = _key.currentState.getImages();
 
-        if(getModel(context).step != null){
-          getModel(context).step.status = _status;
-          double time = DateTime.now().millisecondsSinceEpoch / 1000;
-          getModel(context).step.statusdate =  time.toInt();
-          getModel(context).step.remark = _controller.text;
-          getModel(context).step.executor = getModel(context).user.displayname;
+      for(int i =0, len = list.length; i< len; i++){
+        getModel(context).step.images.add(list[i].toString());
+      }
 
-          getModel(context).stepsList[widget.index] = getModel(context).step;
-        }
+      if(getModel(context).step != null){
+        getModel(context).step.status = _status;
+        double time = DateTime.now().millisecondsSinceEpoch / 1000;
+        getModel(context).step.statusdate =  time.toInt();
+        getModel(context).step.remark = _controller.text;
+        getModel(context).step.executor = getModel(context).user.displayname;
 
-        List<String> images = getModel(context).step.getUploadImages();
+        getModel(context).stepsList[widget.index] = getModel(context).step;
+      }
 
-        print('found len=${images.length}  upload');
-        List<UploadFileInfo> lists = new List();
+      List<String> images = getModel(context).step.getUploadImages();
 
+      print('found len=${images.length}  upload');
+      List<UploadFileInfo> lists = new List();
 
-        if(images.length > 0) {
-          CalculationManager manager = new CalculationManager(
-              images: images,
-              onResultListener: (List<UploadFileInfo> files){
-                print('onResultListener ....len=${files.length}');
-                lists = files;
-              });
-
-          manager.start();
-
-          while(lists.length == 0){
-//            print('等待 ....');
-
-            await Future.delayed(new Duration(milliseconds: 200));
-          }
-
-          manager.stop();
-        }
-
-
+      var postStep = () async {
+        _manager?.stop();
         Map response = await getApi(context).postStep(getModel(context).step, lists);
         StepsResult result = new StepsResult.fromJson(response);
         if(result.code != 0) {
           Func.showMessage(result.message);
         } else {
           Func.showMessage('提交成功');
+          Navigator.popUntil(context, ModalRoute.withName(StepPage.path));
           Navigator.pop(context, true);
           return;
         }
 
-      }  catch(e) {
-        print(e);
-        Func.showMessage('网络出现异常, 步骤提交失败');
+        setState(() {
+          _show = false;
+        });
+      };
+
+
+      if(images.length > 0) {
+        _manager = new CalculationManager(
+            images: images,
+            onProgressListener: (int step){
+              setState(() {
+                _tips = '图片$step处理中';
+              });
+            },
+            onResultListener: (List<UploadFileInfo> files)  {
+              print('onResultListener ....len=${files.length}');
+              lists = files;
+
+              setState(() {
+                _tips = '上传中';
+              });
+              postStep();
+
+            });
+
+        _manager?.start();
+
+      } else {
+        postStep();
       }
+
+
+    }  catch(e) {
 
       setState(() {
         _show = false;
       });
-    });
+      print(e);
+      Func.showMessage('网络出现异常, 步骤提交失败');
+    }
 
-
-    return false;
   }
 
   Widget _getBody(){
@@ -241,9 +257,7 @@ class _StepPageState extends State<StepPage> {
                 child: Text('提交保存', style: TextStyle(color: Colors.white),),
                 color: Style.primaryColor,
                 onPressed: () async{
-                  bool result = await _postStep();
-                  if(result){
-                  }
+                  _postStep();
                 },
               )
             ],
@@ -254,7 +268,6 @@ class _StepPageState extends State<StepPage> {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -262,23 +275,24 @@ class _StepPageState extends State<StepPage> {
     _status = widget.data.status?? '';
   }
 
-
   @override
   void dispose() {
     super.dispose();
     _controller?.dispose();
+    _manager?.stop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: new AppBar(
-        title: Text('填写结果'),
-      ),
-      body: new LoadingView(
-          show: _show,
-          child:_getBody()),
+    return new LoadingView(
+      show: _show,
+      tips: _tips,
+      child: new Scaffold(
+          resizeToAvoidBottomPadding: false,
+          appBar: new AppBar(
+            title: Text('填写结果'),
+          ),
+          body: _getBody()),
     );
   }
 }

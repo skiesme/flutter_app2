@@ -14,9 +14,9 @@
 
 
   class SamexApi {
-    static String ipAndPort = '192.168.60.18:40001';
+//    static String ipAndPort = '192.168.60.18:40001';
 
-//    static String ipAndPort = '172.19.1.30:40001';
+    static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.162:40001';
     static String baseUrl = 'http://$ipAndPort/app/api';
     static Options _option;
@@ -59,10 +59,9 @@
     Future<UserInfo> user([bool onlyCount = false]) async {
 
       UserInfo info;
+      String url = baseUrl+'/user' +(onlyCount ? '/count':'');
 
       try {
-
-        String url = baseUrl+'/user' +(onlyCount ? '/count':'');
 
         Response response = await _dio.get(url, options: _options());
         print('user: ${response.data}');
@@ -77,7 +76,7 @@
           }
         }
       } catch (e){
-        print(e);
+        print('$url :  $e');
         Func.showMessage('网络出现异常: 获取用户数据失败!');
       }
 
@@ -143,32 +142,6 @@
       return response.data;
     }
 
-    Future<Map> postStep2(OrderStep step) async {
-      Uri uri = new Uri.http(ipAndPort, '/app/api/orderstep/upload');
-
-
-      FormData formData = new FormData.from(step.toJson());
-      List<UploadFileInfo> list = await step.getUploadImage();
-
-      formData['site'] = Cache.instance.site;
-
-      for(int i =0, len = list.length; i< len; i++){
-        formData['file${i+1}'] = list[i];
-      }
-
-      print('${uri.toString()}: ${formData.toString()}');
-
-
-      Response response = await _dio.post(uri.toString(), data: formData, options: new Options( headers: {
-        'Authorization': Cache.instance.token
-      }));
-
-      print('${uri.toString()}: ${response.data}');
-
-      return response.data;
-
-    }
-
     Future<Map> postStep(OrderStep step, List<UploadFileInfo> files) async {
       Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
 
@@ -177,9 +150,6 @@
       Map<String, dynamic> formData = step.toJson();
 
       print('${uri.toString()}: ${formData.toString()}');
-
-
-//      List<UploadFileInfo> list = await step.getUploadImage();
 
       request.fields.addAll(formData);
 

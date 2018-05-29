@@ -349,54 +349,55 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   @override
   Widget build(BuildContext context) {
 
-    return new Scaffold(
-      appBar: new AppBar(
-        title: Text(_info?.wonum ?? '',),
-        actions: getModel(context).isTask ?  <Widget>[
-          new PopupMenuButton<OrderPostStyle>(
-            onSelected: _selectMenu,
-            itemBuilder: (BuildContext context) => <PopupMenuItem<OrderPostStyle>>[
-              const PopupMenuItem<OrderPostStyle>(
-                value: OrderPostStyle.Post,
-                child: const Text('提交工作流'),
-              ),
-              const PopupMenuItem<OrderPostStyle>(
-                value: OrderPostStyle.Redirect,
-                child: const Text('转移工作流'),
-              ),
-              const PopupMenuItem<OrderPostStyle>(
-                value: OrderPostStyle.Refresh,
-                child: const Text('刷新工作流'),
-              ),
-            ],
-          ),
-        ] : null,
-      ),
-      body: LoadingView(
-        child: _info== null? Text(''): _getBody(),
-        show: _show,
-      ),
-      floatingActionButton: _tabIndex == 1 ? new FloatingActionButton(
-          child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
-          backgroundColor: Colors.redAccent,
-          onPressed: () async {
-            String result = await Func.scan();
+    return
+      LoadingView(
+          show: _show,
+          child: new Scaffold(
+            appBar: new AppBar(
+              title: Text(_info?.wonum ?? '',),
+              actions: getModel(context).isTask ?  <Widget>[
+                new PopupMenuButton<OrderPostStyle>(
+                  onSelected: _selectMenu,
+                  itemBuilder: (BuildContext context) => <PopupMenuItem<OrderPostStyle>>[
+                    const PopupMenuItem<OrderPostStyle>(
+                      value: OrderPostStyle.Post,
+                      child: const Text('提交工作流'),
+                    ),
+                    const PopupMenuItem<OrderPostStyle>(
+                      value: OrderPostStyle.Redirect,
+                      child: const Text('转移工作流'),
+                    ),
+                    const PopupMenuItem<OrderPostStyle>(
+                      value: OrderPostStyle.Refresh,
+                      child: const Text('刷新工作流'),
+                    ),
+                  ],
+                ),
+              ] : null,
+            ),
+            body: _info== null? Text(''): _getBody(),
+            floatingActionButton: _tabIndex == 1 ? new FloatingActionButton(
+                child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
+                backgroundColor: Colors.redAccent,
+                onPressed: () async {
+                  String result = await Func.scan();
 
-            if(result.isNotEmpty){
-              _stepKey.currentState?.gotoStep(result);
-            }
+                  if(result.isNotEmpty){
+                    _stepKey.currentState?.gotoStep(result);
+                  }
 
-          }) : null,
-      bottomNavigationBar: new BottomNavigationBar(
-        items: _getBottomBar(),
-        currentIndex: _tabIndex,
-        onTap: (index) {
-          setState((){
-            _tabIndex = index;
-          });
-        },
-      ),
-    );
+                }) : null,
+            bottomNavigationBar: new BottomNavigationBar(
+              items: _getBottomBar(),
+              currentIndex: _tabIndex,
+              onTap: (index) {
+                setState((){
+                  _tabIndex = index;
+                });
+              },
+            ),
+          )
+      );
   }
 
   @override

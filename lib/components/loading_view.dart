@@ -1,9 +1,39 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LoadingView extends StatelessWidget {
   final Widget child;
   final bool show;
-  LoadingView({this.child, this.show = false});
+  final String tips;
+  LoadingView({this.child, this.show = false, this.tips});
+
+  WillPopCallback _onWillPop(BuildContext context) {
+    if(show == false) return null;
+    return (){
+//      return Future.value(false);
+       showDialog(
+        context: context,
+        builder:(BuildContext context)=> new AlertDialog(
+          title: new Text('警告'),
+          content: new Text('强行取消提交容易出现异常, 请谨慎操作'),
+          actions: <Widget>[
+            new FlatButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+                Navigator.of(context).pop(false);
+              },
+              child: new Text('退出'),
+            ),
+            new FlatButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: new Text('我点错了', style: TextStyle(color: Colors.redAccent),),
+            ),
+          ],
+        ),
+      ) ?? false;
+    };
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,18 +41,18 @@ class LoadingView extends StatelessWidget {
     List<Widget> children = new List<Widget>();
     children.add(this.child);
     if(show){
-      children.add(new Container(
-        color: const Color(0x00000000),
+      children.add(Container(
+        color: Colors.black87.withOpacity(0.4),
         child: new Center(
           child: new Container(
-                width: 120.0,
-                height: 120.0,
+                width: 100.0,
+                height: 100.0,
                 child: new RaisedButton(
                   onPressed: null,
-                  disabledColor: Colors.black54,
-                  disabledElevation: 2.0,
+                  disabledColor: Colors.black87.withOpacity(0.6),
+                  disabledElevation: 4.0,
                   shape: RoundedRectangleBorder(borderRadius:  BorderRadius.all( Radius.circular(10.0))),
-                  padding: new EdgeInsets.all(10.0),
+                  padding: new EdgeInsets.all(8.0),
                   color: Colors.black54,
                   highlightColor: Colors.black54,
                   child:new Column(
@@ -30,8 +60,8 @@ class LoadingView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     new CircularProgressIndicator(),
-                    new SizedBox(height: 12.0,),
-                    Text('请稍后', style: TextStyle(color: Colors.white),)
+                    new SizedBox(height: 8.0,),
+                    Text(tips??'加载中...', style: TextStyle(color: Colors.white),)
                   ],
                 ),
               )),
@@ -39,6 +69,10 @@ class LoadingView extends StatelessWidget {
       ));
     }
 
-    return new Stack( children: children);
+    return new WillPopScope(
+        onWillPop: _onWillPop(context),
+        child: new Stack( children: children)
+    )
+    ;
   }
 }

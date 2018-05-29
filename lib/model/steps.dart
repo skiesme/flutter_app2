@@ -1,24 +1,25 @@
 import 'dart:io' as Io;
 import 'package:meta/meta.dart';
 import 'dart:convert';
-import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:image/image.dart';
 
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-
 
 
 typedef void OnResultListener(List<UploadFileInfo> result);
+typedef void OnProgressListener(int step);
 
 class Calculator {
-  Calculator({ @required this.onResultListener, this.data })
+  Calculator({
+    @required this.onResultListener, @required this.onProgressListener,
+    @required this.data })
       : assert(onResultListener != null);
 
   final OnResultListener onResultListener;
+  final OnProgressListener onProgressListener;
   final List<String> data;
 
   void run() {
@@ -33,6 +34,8 @@ class Calculator {
           path = f.split(',')[0];
         }
         if(path.startsWith('/')){
+
+          onProgressListener(i+1);
 
           List<int> bytes =  new Io.File(path).readAsBytesSync();
 
@@ -77,7 +80,9 @@ enum CalculationState {
 }
 
 class CalculationManager {
-  CalculationManager({ @required this.onResultListener, @required this.images})
+  CalculationManager({
+    @required this.onResultListener, @required this.onProgressListener,
+    @required this.images})
       : assert(onResultListener != null),
         _receivePort = new ReceivePort() {
     _receivePort.listen(_handleMessage);
@@ -88,6 +93,7 @@ class CalculationManager {
   bool get isRunning => _state != CalculationState.idle;
 
   final OnResultListener onResultListener;
+  final OnProgressListener onProgressListener;
   List<String> images;
 
   // Start the background computation.
@@ -141,25 +147,23 @@ class CalculationManager {
   }
 
   void _handleMessage(dynamic message) {
-    onResultListener(message);
+
+    if(message is List<UploadFileInfo>){
+      onResultListener(message);
+    } else if(message is int) {
+      onProgressListener(message);
+    }
 
   }
 
-  // Main entry point for the spawned isolate.
-  //
-  // This entry point must be static, and its (single) argument must match
-  // the message passed in Isolate.spawn above. Typically, some part of the
-  // message will contain a SendPort so that the spawned isolate can
-  // communicate back to the main isolate.
-  //
-  // Static and global variables are initialized anew in the spawned isolate,
-  // in a separate memory space.
   static void _calculate(DecodeMessage message) {
-    print('44444');
 
     final SendPort sender = message.sendPort;
     final Calculator calculator = new Calculator(
         onResultListener: sender.send,
+        onProgressListener: (int step) {
+          sender.send(step);
+        },
         data: message.data
     );
     calculator.run();
@@ -256,25 +260,6 @@ class OrderStep {
     images = json['images']?.cast<String>() ?? [];
   }
 
-  static Future<String> _getThumbPath(String thumbnail ) async {
-//    var documentsDirectory = await getExternalStorageDirectory();
-    var documentsDirectory = await getApplicationDocumentsDirectory();
-
-    var path = join(documentsDirectory.path, thumbnail);
-
-    // make sure the folder exists
-    if (!await new Io.Directory(dirname(path)).exists()) {
-      try {
-        await new Io.Directory(dirname(path)).create(recursive: true);
-      } catch (e) {
-        if (!await new Io.Directory(dirname(path)).exists()) {
-          print(e);
-        }
-      }
-    }
-    return path;
-  }
-
   String _getImages(){
     String list = '';
 
@@ -320,47 +305,6 @@ class OrderStep {
       } catch(e){
       }
     });
-
-    return list;
-  }
-
-  Future<List<UploadFileInfo>> getUploadImage() async {
-    List<UploadFileInfo> list = [];
-    if(images == null) return list;
-
-    int i = 0;
-    await Future.forEach(images, (String f) async {
-      try {
-        String path = f;
-        if (f.contains(',')) {
-          path = f.split(',')[0];
-        }
-        if(path.startsWith('/')){
-
-          List<int> bytes = await new Future.delayed(Duration.zero, (){
-            return new Io.File(path).readAsBytes();
-          });
-
-          Image image = await new Future.delayed(Duration.zero, (){
-            return  decodeImage(bytes);
-          });
-
-          String cachePath = await _getThumbPath('${i++}.png');
-
-          Io.File file = new Io.File(cachePath);
-          if(await file.exists()){
-            await file.delete();
-          }
-
-          // Save the thumbnail as a PNG.
-          await  new Io.File(cachePath).writeAsBytes(encodeJpg(image, quality: 80));
-
-          list.add(new UploadFileInfo(new Io.File(cachePath), basename(cachePath), contentType: Io.ContentType.BINARY));
-        }
-      } catch(e){
-      }
-    });
-
 
     return list;
   }

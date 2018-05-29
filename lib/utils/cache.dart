@@ -1,6 +1,8 @@
 import 'dart:async';
-
+import 'dart:io';
+import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path_provider/path_provider.dart';
 
 const String KEY_TOKEN = "__token";
 const String KEY_SITE = "__site";
@@ -13,14 +15,31 @@ class Cache {
 
   static Cache instance;
   final SharedPreferences _prefs;
-
+  Directory documentsDirectory;
   static Future<Cache> getInstance() async {
     if(instance == null){
       Future<SharedPreferences> prefs = SharedPreferences.getInstance();
       instance = new Cache._(await prefs);
+      instance.documentsDirectory = await getApplicationDocumentsDirectory();
     }
 
     return instance;
+  }
+
+  String getThumbPath(String thumbnail )  {
+    var path = join(documentsDirectory.path, thumbnail);
+
+    // make sure the folder exists
+    if ( new Directory(dirname(path)).existsSync()) {
+      try {
+        new Directory(dirname(path)).createSync(recursive: true);
+      } catch (e) {
+        if (! new Directory(dirname(path)).existsSync()) {
+          print(e);
+        }
+      }
+    }
+    return path;
   }
 
   String get token => _getString(KEY_TOKEN);

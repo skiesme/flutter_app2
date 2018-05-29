@@ -30,7 +30,10 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       for(int i = 0, len = list.length; i< len; i++){
         if(asset == list[i].assetnum ){
           getModel(context).step = list[i];
-          final result = await Navigator.push(context, new MaterialPageRoute(builder: (_) => new StepPage(index: i, data: list[i], isTask: getModel(context).isTask,)));
+          final result = await Navigator.push(context, new MaterialPageRoute(
+              builder: (_) => new StepPage(index: i, data: list[i], isTask: getModel(context).isTask,),
+              settings: new RouteSettings(name: StepPage.path)
+          ));
           if(result != null) {
             _getSteps();
           }
