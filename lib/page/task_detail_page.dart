@@ -19,6 +19,8 @@ import 'package:after_layout/after_layout.dart';
 
 class TaskDetailPage extends StatefulWidget {
 
+  static const String path = '/TaskDetailPage';
+
   @override
   _TaskDetailPageState createState() => new _TaskDetailPageState();
 }
@@ -313,8 +315,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
               getModel(context).user.orders = await getApi(context).orderCount();
 
-
-              Navigator.pop(context, true);
+              if(mounted){
+                Navigator.popUntil(context, ModalRoute.withName(TaskDetailPage.path));
+                Navigator.pop(context, true);
+              }
               return;
             }
           } catch (e) {
@@ -322,11 +326,11 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
             Func.showMessage('网络异常提交工单出错');
           }
-
-          setState(() {
-            _show = false;
-          });
-
+          if(mounted) {
+            setState(() {
+              _show = false;
+            });
+          }
         } else {
           Func.showMessage('提交工单功能暂只支持巡检工单');
         }
@@ -352,6 +356,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return
       LoadingView(
           show: _show,
+          confirm: true,
           child: new Scaffold(
             appBar: new AppBar(
               title: Text(_info?.wonum ?? '',),

@@ -1,14 +1,14 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LoadingView extends StatelessWidget {
   final Widget child;
   final bool show;
   final String tips;
-  LoadingView({this.child, this.show = false, this.tips});
+  final bool confirm;
+  LoadingView({this.child, this.show = false, this.tips, this.confirm = false});
 
   WillPopCallback _onWillPop(BuildContext context) {
-    if(show == false) return null;
+    if(show == false || !confirm) return null;
     return (){
 //      return Future.value(false);
        showDialog(

@@ -49,6 +49,12 @@ class _StepPageState extends State<StepPage>{
   bool _show = false;
   String _tips;
 
+  void setMountState(VoidCallback func){
+    if(mounted){
+      setState(func);
+    }
+  }
+
   void _postStep() async {
     if(_status.isEmpty || getModel(context).step == null){
       Func.showMessage('请先配置状态再提交');
@@ -60,7 +66,7 @@ class _StepPageState extends State<StepPage>{
       _tips = null;
     });
 
-    await Future.delayed(Duration(seconds: 0));
+    await Future.delayed(Duration(seconds: 8));
 
     try{
       List<ImageData> list = _key.currentState.getImages();
@@ -85,19 +91,25 @@ class _StepPageState extends State<StepPage>{
       List<UploadFileInfo> lists = new List();
 
       var postStep = () async {
-        _manager?.stop();
-        Map response = await getApi(context).postStep(getModel(context).step, lists);
-        StepsResult result = new StepsResult.fromJson(response);
-        if(result.code != 0) {
-          Func.showMessage(result.message);
-        } else {
-          Func.showMessage('提交成功');
-          Navigator.popUntil(context, ModalRoute.withName(StepPage.path));
-          Navigator.pop(context, true);
-          return;
+        try {
+          _manager?.stop();
+          Map response = await getApi(context).postStep(
+              getModel(context).step, lists);
+          StepsResult result = new StepsResult.fromJson(response);
+          if (result.code != 0) {
+            Func.showMessage(result.message);
+          } else {
+            Func.showMessage('提交成功');
+            Navigator.popUntil(context, ModalRoute.withName(StepPage.path));
+            Navigator.pop(context, true);
+            return;
+          }
+        } catch (e){
+          print(e);
+          Func.showMessage('网络出现异常, 步骤提交失败');
         }
 
-        setState(() {
+        setMountState(() {
           _show = false;
         });
       };
@@ -107,7 +119,7 @@ class _StepPageState extends State<StepPage>{
         _manager = new CalculationManager(
             images: images,
             onProgressListener: (int step){
-              setState(() {
+              setMountState(() {
                 _tips = '图片$step处理中';
               });
             },
@@ -115,7 +127,7 @@ class _StepPageState extends State<StepPage>{
               print('onResultListener ....len=${files.length}');
               lists = files;
 
-              setState(() {
+              setMountState(() {
                 _tips = '上传中';
               });
               postStep();
@@ -127,15 +139,8 @@ class _StepPageState extends State<StepPage>{
       } else {
         postStep();
       }
-
-
-    }  catch(e) {
-
-      setState(() {
-        _show = false;
-      });
+    } catch(e) {
       print(e);
-      Func.showMessage('网络出现异常, 步骤提交失败');
     }
 
   }
@@ -287,6 +292,7 @@ class _StepPageState extends State<StepPage>{
     return new LoadingView(
       show: _show,
       tips: _tips,
+      confirm: true,
       child: new Scaffold(
           resizeToAvoidBottomPadding: false,
           appBar: new AppBar(
