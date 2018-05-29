@@ -47,7 +47,7 @@ class _StepPageState extends State<StepPage> {
   bool _show = false;
 
   Future<bool> _postStep() async {
-    if(_status.isEmpty){
+    if(_status.isEmpty || getModel(context).step == null){
       Func.showMessage('请先配置状态再提交');
       return false;
     }
@@ -74,8 +74,33 @@ class _StepPageState extends State<StepPage> {
           getModel(context).stepsList[widget.index] = getModel(context).step;
         }
 
+        List<String> images = getModel(context).step.getUploadImages();
 
-        Map response = await getApi(context).postStep(getModel(context).step);
+        print('found len=${images.length}  upload');
+        List<UploadFileInfo> lists = new List();
+
+
+        if(images.length > 0) {
+          CalculationManager manager = new CalculationManager(
+              images: images,
+              onResultListener: (List<UploadFileInfo> files){
+                print('onResultListener ....len=${files.length}');
+                lists = files;
+              });
+
+          manager.start();
+
+          while(lists.length == 0){
+//            print('等待 ....');
+
+            await Future.delayed(new Duration(milliseconds: 200));
+          }
+
+          manager.stop();
+        }
+
+
+        Map response = await getApi(context).postStep(getModel(context).step, lists);
         StepsResult result = new StepsResult.fromJson(response);
         if(result.code != 0) {
           Func.showMessage(result.message);
@@ -85,10 +110,8 @@ class _StepPageState extends State<StepPage> {
           return;
         }
 
-      } on DioError catch(e) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx and is also not 304.
-        print('${e.response.data}, ${e.message}, ${e.stackTrace}');
+      }  catch(e) {
+        print(e);
         Func.showMessage('网络出现异常, 步骤提交失败');
       }
 

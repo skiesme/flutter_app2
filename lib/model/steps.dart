@@ -1,12 +1,171 @@
 import 'dart:io' as Io;
+import 'package:meta/meta.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:image/image.dart';
 
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
+
+
+typedef void OnResultListener(List<UploadFileInfo> result);
+
+class Calculator {
+  Calculator({ @required this.onResultListener, this.data })
+      : assert(onResultListener != null);
+
+  final OnResultListener onResultListener;
+  final List<String> data;
+
+  void run() {
+
+    List<UploadFileInfo> list = [];
+
+    for(int i= 0, len = data.length; i < len; i++) {
+      String f = data[i];
+      try {
+        String path = f;
+        if (f.contains(',')) {
+          path = f.split(',')[0];
+        }
+        if(path.startsWith('/')){
+
+          List<int> bytes =  new Io.File(path).readAsBytesSync();
+
+          Image image = decodeImage(bytes);
+
+          String cachePath = dirname(path)+ '${i+1}.png';
+
+          Io.File file = new Io.File(cachePath);
+          if(file.existsSync()){
+            file.deleteSync();
+          }
+
+          // Save the thumbnail as a PNG.
+          new Io.File(cachePath).writeAsBytesSync(encodeJpg(image, quality: 80));
+
+
+          list.add(new UploadFileInfo(new Io.File(cachePath), basename(cachePath), contentType: Io.ContentType.BINARY));
+        }
+      } catch(e){
+        print(e);
+      }
+    }
+
+
+    onResultListener(list);
+
+  }
+
+
+}
+
+class DecodeMessage {
+  DecodeMessage(this.data, this.sendPort);
+  List<String> data;
+  SendPort sendPort;
+}
+
+enum CalculationState {
+  idle,
+  loading,
+  calculating
+}
+
+class CalculationManager {
+  CalculationManager({ @required this.onResultListener, @required this.images})
+      : assert(onResultListener != null),
+        _receivePort = new ReceivePort() {
+    _receivePort.listen(_handleMessage);
+  }
+
+  CalculationState _state = CalculationState.idle;
+  CalculationState get state => _state;
+  bool get isRunning => _state != CalculationState.idle;
+
+  final OnResultListener onResultListener;
+  List<String> images;
+
+  // Start the background computation.
+  //
+  // Does nothing if the computation is already running.
+  void start() {
+    if (!isRunning) {
+      _state = CalculationState.loading;
+      _runCalculation();
+    }
+  }
+
+  // Stop the background computation.
+  //
+  // Kills the isolate immediately, if spawned. Does nothing if the
+  // computation is not running.
+  void stop() {
+    if (isRunning) {
+      _state = CalculationState.idle;
+      if (_isolate != null) {
+        _isolate.kill(priority: Isolate.immediate);
+        _isolate = null;
+      }
+    }
+  }
+
+  final ReceivePort _receivePort;
+  Isolate _isolate;
+
+  void _runCalculation() {
+    // Load the JSON string. Note that this is done in the main isolate; at the
+    // moment, spawned isolates do not have access to Mojo services, including
+    // the root bundle (see https://github.com/flutter/flutter/issues/3294).
+    // However, the loading process is asynchronous, so the UI will not block
+    // while the file is loaded.
+
+      if (isRunning) {
+
+        final DecodeMessage message = new DecodeMessage(this.images, _receivePort.sendPort);
+        // Spawn an isolate to JSON-parse the file contents. The JSON parsing
+        // is synchronous, so if done in the main isolate, the UI would block.
+        Isolate.spawn(_calculate, message).then<Null>((Isolate isolate) {
+          if (!isRunning) {
+            isolate.kill(priority: Isolate.immediate);
+          } else {
+            _state = CalculationState.calculating;
+            _isolate = isolate;
+          }
+        });
+      }
+  }
+
+  void _handleMessage(dynamic message) {
+    onResultListener(message);
+
+  }
+
+  // Main entry point for the spawned isolate.
+  //
+  // This entry point must be static, and its (single) argument must match
+  // the message passed in Isolate.spawn above. Typically, some part of the
+  // message will contain a SendPort so that the spawned isolate can
+  // communicate back to the main isolate.
+  //
+  // Static and global variables are initialized anew in the spawned isolate,
+  // in a separate memory space.
+  static void _calculate(DecodeMessage message) {
+    print('44444');
+
+    final SendPort sender = message.sendPort;
+    final Calculator calculator = new Calculator(
+        onResultListener: sender.send,
+        data: message.data
+    );
+    calculator.run();
+  }
+}
+
 
 class StepsResult {
   int code;
@@ -141,6 +300,26 @@ class OrderStep {
       catch(e){
       }
     }
+
+    return list;
+  }
+
+  List<String> getUploadImages() {
+    List<String> list = [];
+    if(images == null) return  list;
+
+    images.forEach( (String f)  {
+      try {
+        String path = f;
+        if (f.contains(',')) {
+          path = f.split(',')[0];
+        }
+        if(path.startsWith('/')){
+          list.add(f);
+        }
+      } catch(e){
+      }
+    });
 
     return list;
   }

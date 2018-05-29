@@ -12,13 +12,16 @@
 
   Dio _dio = new Dio();
 
-  class SamexApi {
-    static const String BASE = '192.168.60.18:40001';
 
-  //  static const String BASE = '172.19.1.30:40001';
-  //  static const String BASE = '192.168.50.162:40001';
-    static const String BASE_URL = 'http://$BASE/app/api';
+  class SamexApi {
+    static String ipAndPort = '192.168.60.18:40001';
+
+//    static String ipAndPort = '172.19.1.30:40001';
+//    static String ipAndPort = '192.168.50.162:40001';
+    static String baseUrl = 'http://$ipAndPort/app/api';
     static Options _option;
+
+
 
     Options _options({int connectTimeout = 6000, receiveTimeout = 3000, Map<String, dynamic> headers }){
       if(_option == null){
@@ -41,11 +44,11 @@
     }
 
     String getImageUrl(String docinfoid){
-      return 'http://$BASE/static/stepimage/${Cache.instance.site}/$docinfoid';
+      return 'http://$ipAndPort/static/stepimage/${Cache.instance.site}/$docinfoid';
     }
 
     Future<Map> login(String userName, String password) async {
-      Response response =  await _dio.post(BASE_URL+'/login', data: json.encode({
+      Response response =  await _dio.post(baseUrl+'/login', data: json.encode({
         'username': userName,
         'password': password
       }));
@@ -59,7 +62,7 @@
 
       try {
 
-        String url = BASE_URL+'/user' +(onlyCount ? '/count':'');
+        String url = baseUrl+'/user' +(onlyCount ? '/count':'');
 
         Response response = await _dio.get(url, options: _options());
         print('user: ${response.data}');
@@ -89,7 +92,7 @@
 
     Future<Map> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
       DateTime now = new DateTime.now();
-      Uri uri = new Uri.http(BASE, '/app/api/order', {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/order', {
         'worktype': type,
         'time': '$time',
         'count': '$count',
@@ -105,7 +108,7 @@
     }
 
     Future<Map> orderDetail(String orderId, [int time]) async {
-      Uri uri = new Uri.http(BASE, '/app/api/order/$orderId', {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/order/$orderId', {
         'time': '${time?? '0'}',
       });
 
@@ -117,7 +120,7 @@
     }
 
     Future<Map> steps({String sopnum, String wonum, String site}) async {
-      Uri uri = new Uri.http(BASE, '/app/api/orderstep', {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/orderstep', {
         'sopnum': sopnum,
         'wonum': wonum,
         'site': site
@@ -131,7 +134,7 @@
     }
 
     Future<Map> historyXj(String sopnum) async {
-      Uri uri = new Uri.http(BASE, '/app/api/ordernews/$sopnum');
+      Uri uri = new Uri.http(ipAndPort, '/app/api/ordernews/$sopnum');
 
       Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -141,7 +144,7 @@
     }
 
     Future<Map> postStep2(OrderStep step) async {
-      Uri uri = new Uri.http(BASE, '/app/api/orderstep/upload');
+      Uri uri = new Uri.http(ipAndPort, '/app/api/orderstep/upload');
 
 
       FormData formData = new FormData.from(step.toJson());
@@ -166,8 +169,8 @@
 
     }
 
-    Future<Map> postStep(OrderStep step) async {
-      Uri uri =  Uri.parse(BASE_URL+ '/orderstep/upload');
+    Future<Map> postStep(OrderStep step, List<UploadFileInfo> files) async {
+      Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
 
       var request = new http.MultipartRequest("POST", uri);
 
@@ -176,7 +179,7 @@
       print('${uri.toString()}: ${formData.toString()}');
 
 
-      List<UploadFileInfo> list = await step.getUploadImage();
+//      List<UploadFileInfo> list = await step.getUploadImage();
 
       request.fields.addAll(formData);
 
@@ -185,8 +188,8 @@
       });
 
 
-      for(int i =0, len = list.length; i< len; i++){
-        request.files.add( http.MultipartFile.fromBytes('files', await list[i].file.readAsBytes(), filename: list[i].fileName));
+      for(int i =0, len = files.length; i< len; i++){
+        request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
       }
 
       http.StreamedResponse response = await request.send();
@@ -200,7 +203,7 @@
 
 
     Future<Map> postXJ(String woNum) async {
-      Response response =  await _dio.post(BASE_URL+'/order/xj/$woNum', options: _options());
+      Response response =  await _dio.post(baseUrl+'/order/xj/$woNum', options: _options());
       print('postXJ: ${response.data}');
       return response.data;
     }

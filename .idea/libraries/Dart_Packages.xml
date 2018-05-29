@@ -117,7 +117,7 @@
         <entry key="dio">
           <value>
             <list>
-              <option value="$PROJECT_DIR$/../dio/lib" />
+              <option value="$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dio-0.0.14/lib" />
             </list>
           </value>
         </entry>
@@ -546,6 +546,7 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/csslib-0.14.4/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-0.1.2/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dart2_constant-1.0.1+dart2/lib" />
+      <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/dio-0.0.14/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/flutter_cache_manager-0.1.1/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/fluttertoast-2.0.3/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/front_end-0.1.0-alpha.12/lib" />
@@ -600,7 +601,6 @@
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/web_socket_channel-1.0.7/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/xml-3.0.0/lib" />
       <root url="file://$USER_HOME$/.pub-cache/hosted/pub.dartlang.org/yaml-2.1.13/lib" />
-      <root url="file://$PROJECT_DIR$/../dio/lib" />
       <root url="file://$USER_HOME$/git/flutter/bin/cache/pkg/sky_engine/lib" />
       <root url="file://$USER_HOME$/git/flutter/packages/flutter/lib" />
       <root url="file://$USER_HOME$/git/flutter/packages/flutter_localizations/lib" />
