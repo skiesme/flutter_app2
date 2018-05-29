@@ -7,7 +7,6 @@ import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/data/root_model.dart';
-import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/page/task_page.dart';
 import 'package:after_layout/after_layout.dart';
 

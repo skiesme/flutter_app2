@@ -103,8 +103,6 @@ class OrderStep {
 
     var path = join(documentsDirectory.path, thumbnail);
 
-    print(documentsDirectory);
-
     // make sure the folder exists
     if (!await new Io.Directory(dirname(path)).exists()) {
       try {
@@ -150,29 +148,25 @@ class OrderStep {
   Future<List<UploadFileInfo>> getUploadImage() async {
     List<UploadFileInfo> list = [];
     if(images == null) return list;
-    for(int i =0, len = images.length; i < len; i++){
-      String f = images[i];
+
+    int i = 0;
+    await Future.forEach(images, (String f) async {
       try {
         String path = f;
         if (f.contains(',')) {
           path = f.split(',')[0];
         }
         if(path.startsWith('/')){
-//          print('${new DateTime.now()} 111111111');
 
-          List<int> bytes = await new Future.delayed(new Duration(milliseconds: 0), (){
-            return new Io.File(path).readAsBytesSync();
+          List<int> bytes = await new Future.delayed(Duration.zero, (){
+            return new Io.File(path).readAsBytes();
           });
 
-          Image image = await new Future.delayed(new Duration(milliseconds: 200), (){
+          Image image = await new Future.delayed(Duration.zero, (){
             return  decodeImage(bytes);
           });
 
-//          print('${new DateTime.now()} 22222222');
-
-
-          String cachePath = await _getThumbPath('${i+1}.png');
-          print('cachePath = $cachePath');
+          String cachePath = await _getThumbPath('${i++}.png');
 
           Io.File file = new Io.File(cachePath);
           if(await file.exists()){
@@ -180,32 +174,27 @@ class OrderStep {
           }
 
           // Save the thumbnail as a PNG.
-          await new Future.delayed(new Duration(milliseconds: 50), (){
-//            image = copyResize(image, 1280);
-//            image = copyRotate(image, 90);
-            new Io.File(cachePath).writeAsBytes(encodeJpg(image, quality: 80));
-          });
-
-//          print('${new DateTime.now()} 333333');
+          await  new Io.File(cachePath).writeAsBytes(encodeJpg(image, quality: 80));
 
           list.add(new UploadFileInfo(new Io.File(cachePath), basename(cachePath), contentType: Io.ContentType.BINARY));
         }
       } catch(e){
       }
-    }
+    });
+
 
     return list;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['stepno'] = this.stepno;
+  Map<String, String> toJson() {
+    final Map<String, String> data = new Map<String, String>();
+    data['stepno'] = this.stepno.toString();
     data['description'] = this.description;
     data['wonum'] = this.wonum;
     data['assetnum'] = this.assetnum;
     data['asset_description'] = this.assetDescription;
     data['status'] = this.status;
-    data['statusdate'] = this.statusdate;
+//    data['statusdate'] = this.statusdate.toString();
     data['remark'] = this.remark;
     data['executor'] = this.executor;
     String images = _getImages();

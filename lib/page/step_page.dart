@@ -64,13 +64,16 @@ class _StepPageState extends State<StepPage> {
           getModel(context).step.images.add(list[i].toString());
         }
 
-        getModel(context).step.status = _status;
-        double time = DateTime.now().millisecondsSinceEpoch / 1000;
-        getModel(context).step.statusdate =  time.toInt();
-        getModel(context).step.remark = _controller.text;
-        getModel(context).step.executor = getModel(context).user.displayname;
+        if(getModel(context).step != null){
+          getModel(context).step.status = _status;
+          double time = DateTime.now().millisecondsSinceEpoch / 1000;
+          getModel(context).step.statusdate =  time.toInt();
+          getModel(context).step.remark = _controller.text;
+          getModel(context).step.executor = getModel(context).user.displayname;
 
-        getModel(context).stepsList[widget.index] = getModel(context).step;
+          getModel(context).stepsList[widget.index] = getModel(context).step;
+        }
+
 
         Map response = await getApi(context).postStep(getModel(context).step);
         StepsResult result = new StepsResult.fromJson(response);

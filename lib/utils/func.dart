@@ -65,6 +65,8 @@ class Func {
   }
 
   static void showMessage(String value) {
+    if(value == null ) return;
+
     Fluttertoast.showToast(
         msg: value,
         toastLength: Toast.LENGTH_SHORT,
