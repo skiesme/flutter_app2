@@ -44,8 +44,7 @@ class LoadingView extends StatelessWidget {
       children.add(Container(
         color: Colors.black87.withOpacity(0.4),
         child: new Center(
-          child: new Container(
-                width: 100.0,
+          child: new SizedBox(
                 height: 100.0,
                 child: new RaisedButton(
                   onPressed: null,
@@ -53,8 +52,8 @@ class LoadingView extends StatelessWidget {
                   disabledElevation: 4.0,
                   shape: RoundedRectangleBorder(borderRadius:  BorderRadius.all( Radius.circular(10.0))),
                   padding: new EdgeInsets.all(8.0),
-                  color: Colors.black54,
-                  highlightColor: Colors.black54,
+                  color: Colors.black87,
+                  highlightColor: Colors.black87,
                   child:new Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
