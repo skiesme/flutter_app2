@@ -48,14 +48,16 @@ class _SettingsPageState extends State<SettingsPage> {
 
     GalleryTextScaleValue textScaleFactor = GalleryTextScaleValue(null, '系统默认');
     double _scale = Cache.instance.textScaleFactor;
-    for(int i = 0; i < kAllGalleryTextScaleValues.length ; i++){
-      if(kAllGalleryTextScaleValues[i].scale == _scale){
-        textScaleFactor = kAllGalleryTextScaleValues[i];
-        break;
+    if(_scale != null){
+      for(int i = 1; i < kAllGalleryTextScaleValues.length ; i++){
+        if((kAllGalleryTextScaleValues[i].scale * 10).toInt() == (_scale*10).toInt()){
+          textScaleFactor = kAllGalleryTextScaleValues[i];
+          break;
+        }
       }
     }
 
-    print('${textScaleFactor.scale??0} - ${textScaleFactor.label}');
+    print('_scale=$_scale, ${textScaleFactor.scale??0} - ${textScaleFactor.label}');
 
     return new Scaffold(
       appBar: new AppBar(

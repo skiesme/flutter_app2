@@ -17,7 +17,7 @@ dependencies:
   after_layout: 1.0.2
   sembast: ^1.8.0
   barcode_scan: ^0.0.4
-  image_picker: ^0.4.1
+  image_picker: 0.4.1
   cached_network_image: ^0.4.1
   dio: ^0.0.14
   image: ^2.0.1

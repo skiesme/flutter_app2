@@ -169,43 +169,47 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return
+      WillPopScope(
+          onWillPop: (){
+            return new Future.value(false);
+          },
+          child: new Scaffold(
+            body: new RefreshIndicator(
+                key: _refreshKey,
+                onRefresh: _handlerRefresh,
+                child: new CustomScrollView(
+                    physics: new AlwaysScrollableScrollPhysics(),
+                    slivers: <Widget>[
+                      SliverAppBar(
+                        title: const Text('深水光明移动工单系统'),
+                        pinned: true,
+                        actions: <Widget>[
+                          IconButton(
+                              icon: Icon(Icons.settings),
+                              tooltip: '设置',
+                              onPressed: openSettings),
+                        ],
+                      ),
+                      SliverList(
+                        delegate: new SliverChildListDelegate(buildSliverList()),
+                      )
 
-      body: new RefreshIndicator(
-          key: _refreshKey,
-          onRefresh: _handlerRefresh,
-          child: new CustomScrollView(
-              physics: new AlwaysScrollableScrollPhysics(),
-              slivers: <Widget>[
-                SliverAppBar(
-                  title: const Text('深水光明移动工单系统'),
-                  pinned: true,
-                  actions: <Widget>[
-                    IconButton(
-                        icon: Icon(Icons.settings),
-                        tooltip: '设置',
-                        onPressed: openSettings),
-                  ],
-                ),
-                SliverList(
-                  delegate: new SliverChildListDelegate(buildSliverList()),
-                )
+                    ])),
 
-              ])),
+            floatingActionButton: new FloatingActionButton(
+              onPressed: () async{
+                Cache.instance.remove(KEY_TOKEN);
 
-      floatingActionButton: new FloatingActionButton(
-        onPressed: () async{
-          Cache.instance.remove(KEY_TOKEN);
-
-          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
-        },
-        backgroundColor: Colors.redAccent,
-        child: const Icon(
-          Icons.lock_open,
-          semanticLabel: '注销',
-        ),
-      ),
-    );
+                Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
+              },
+              backgroundColor: Colors.redAccent,
+              child: const Icon(
+                Icons.lock_open,
+                semanticLabel: '注销',
+              ),
+            ),
+          ));
   }
 
   Future<Null> _handlerRefresh() async {
