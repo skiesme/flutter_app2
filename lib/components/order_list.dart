@@ -165,6 +165,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                     if(result != null) {
                       widget.helper.datas?.removeAt(index);
 
+
                       setState(() {
 
                       });
@@ -200,6 +201,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                                 Text('标题: ${info.description}'),
                                 Text('位置: ${info.locationDescription}'),
                                 Text('设备: ${info.assetDescription}'),
+                                widget.type == OrderType.ALL ?
+                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}'):
                                 Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
                               ],
                             ))

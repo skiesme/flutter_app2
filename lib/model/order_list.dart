@@ -37,6 +37,7 @@ class OrderShortInfo {
   String status;
   String worktype;
   int reportDate;
+  int actfinish;
 
   OrderShortInfo(
       {this.wonum,
@@ -46,6 +47,7 @@ class OrderShortInfo {
         this.assetnum,
         this.assetDescription,
         this.status,
+        this.actfinish = 0,
         this.worktype});
 
   OrderShortInfo.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class OrderShortInfo {
     status = json['status'];
     worktype = json['worktype'];
     reportDate = json['reportdate'];
+    actfinish = json['actfinish'];
   }
 
   Map<String, dynamic> toJson() {
@@ -71,6 +74,7 @@ class OrderShortInfo {
     data['status'] = this.status;
     data['worktype'] = this.worktype;
     data['reportdate'] = this.reportDate;
+    data['actfinish'] = this.actfinish;
     return data;
   }
 }

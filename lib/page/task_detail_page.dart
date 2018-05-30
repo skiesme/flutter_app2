@@ -194,6 +194,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         Text('汇报人员: ${_data?.reportedby ??''}'),
         Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'),
       ]);
+
+      if(_info != null && _info.actfinish > 0 && !getModel(context).isTask){
+        list.add(Text('完成时间: ${Func.getFullTimeString( _info?.actfinish)}'));
+      }
       if(_type != OrderType.XJ){
         list.addAll(<Widget>[
           Text('优先等级: ${_data?.wopriority ?? ''}'),
@@ -202,6 +206,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           Text('联系电话: ${_data?.phone ?? ''}'),
         ]);
       }
+
 
 //      list.add(Text('站点编号: ${_data?.lead ?? ''}'));
 
