@@ -78,16 +78,21 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       int time = 0;
 
       if(widget.helper.itemCount() > 0){
-        time = widget.helper.datas[0].reportDate;
+        var data = widget.helper.datas[0];
+        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
       }
 
       if(older == 1 && widget.helper.itemCount() > 0){
-        time = widget.helper.datas[widget.helper.itemCount() - 1].reportDate;
+        var data = widget.helper.datas[widget.helper.itemCount() - 1];
+
+        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
         if(_canLoadMore) _canLoadMore = false;
         else {
           print('已经在loadMore了...');
         }
       }
+
+
 
       Map response = await getApi(context).orderList(
           type:_getWorkType(),

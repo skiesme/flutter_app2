@@ -14,7 +14,7 @@
 
 
   class SamexApi {
-    static String ipAndPort = '192.168.60.18:40001';
+    static String ipAndPort = '192.168.60.15:40001';
 
 //    static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.162:40001';
