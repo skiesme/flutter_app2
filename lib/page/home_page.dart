@@ -158,7 +158,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
   void initState() {
     super.initState();
 
-    _menus.add(new _Menu(image: ImageAssets.home_order, title: '工单邮箱'));
+    _menus.add(new _Menu(image: ImageAssets.home_order, title: '工单箱'));
     _menus.add(new _Menu(image: ImageAssets.home_assets, title: '资产扫描'));
     _menus.add(new _Menu(image: ImageAssets.home_material, title: '库存查询'));
     _menus.add(new _Menu(image: ImageAssets.home_history, title: '历史记录'));

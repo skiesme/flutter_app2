@@ -68,8 +68,13 @@ class _StepPageState extends State<StepPage>{
 
     await Future.delayed(Duration(seconds: 0));
 
+    List<String> origin = new List();
+    origin.addAll(getModel(context).step.images ?? []);
+
     try{
       List<ImageData> list = _key.currentState.getImages();
+
+
 
       for(int i =0, len = list.length; i< len; i++){
         getModel(context).step.images.add(list[i].toString());
@@ -105,6 +110,8 @@ class _StepPageState extends State<StepPage>{
             return;
           }
         } catch (e){
+          getModel(context).step.images.clear();
+          getModel(context).step.images.addAll(origin);
           print(e);
           Func.showMessage('网络出现异常, 步骤提交失败');
         }

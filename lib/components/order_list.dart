@@ -6,6 +6,7 @@ import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
+import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/page/task_detail_page.dart';
 import 'package:samex_app/components/simple_button.dart';
@@ -15,6 +16,7 @@ import 'package:after_layout/after_layout.dart';
 
 const double _padding = 16.0;
 const TextStyle _status_style = TextStyle(color: Colors.red);
+bool _isReversed = true;
 
 class OrderList extends StatefulWidget {
 
@@ -77,15 +79,22 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
       int time = 0;
 
+      if(_isReversed){
+        older = older == 0 ? 1 : 0;
+      }
+
       if(widget.helper.itemCount() > 0){
         var data = widget.helper.datas[0];
-        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
+//        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
+        time = data.reportDate;
       }
 
       if(older == 1 && widget.helper.itemCount() > 0){
         var data = widget.helper.datas[widget.helper.itemCount() - 1];
 
-        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
+//        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
+        time = data.reportDate;
+
         if(_canLoadMore) _canLoadMore = false;
         else {
           print('已经在loadMore了...');
@@ -144,9 +153,20 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             new Image.asset(ImageAssets.order_no_sync, height: 40.0,),
-            Text(widget.type == OrderType.ALL ? '已完成' : '未同步')
+            Text(widget.type == OrderType.ALL ? '已完成' : '未完成')
           ],
         ));
+  }
+
+  Color getColor(OrderShortInfo info){
+    switch (getOrderType(info.worktype)){
+      case OrderType.XJ:
+        return Style.primaryColor;
+      case OrderType.CM:
+        return Colors.redAccent;
+      default:
+        return Colors.deepOrangeAccent;
+    }
   }
 
   Widget _getCell(OrderShortInfo info, int index){
@@ -154,6 +174,10 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          Container(
+            height: Style.separateHeight/2,
+            color: getColor(info),
+          ),
           new Container(
               color: Colors.white,
               child: new SimpleButton(
@@ -186,8 +210,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text('工单${index+1} : ${info.wonum}'),
-                            Text(info.status, style: _status_style,)
+                            Text('工单 : ${info.wonum}',style: TextStyle(fontWeight: FontWeight.w700)),
+                            Text(info.changeby??'', )
                           ],
                         ),
                       ),
@@ -203,11 +227,12 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text('标题: ${info.description}'),
-                                Text('位置: ${info.locationDescription}'),
+                                Text('标题: ${info.description}', style: TextStyle(color: Style.primaryColor, fontWeight: FontWeight.w700),),
+//                                Text('位置: ${info.locationDescription}'),
                                 Text('设备: ${info.assetDescription}'),
                                 widget.type == OrderType.ALL ?
-                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}'):
+//                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
+                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
                                 Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
                               ],
                             ))
@@ -218,12 +243,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                     ],
                   )
               )),
-          Divider(height: 1.0,),
+//          Divider(height: 1.0,),
 
-          Container(
-            height: 6.0,
-            color: Colors.transparent,
-          )
         ]
     );
   }
@@ -233,11 +254,33 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     return widget.helper.datas.where((i) => i.wonum.contains(_query?.toUpperCase())).toList();
   }
 
+  List<OrderShortInfo> getList(){
+    List<OrderShortInfo> list = filter();
+    if(_isReversed){
+      return list.reversed.toList();
+    } else {
+      return list;
+    }
+  }
+
+  void removeAt(int index) {
+    if(widget.helper.datas == null) return;
+
+    if(_isReversed){
+      widget.helper.datas.removeAt(widget.helper.datas.length - index - 1);
+    } else {
+      widget.helper.datas.removeAt(index);
+    }
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
 //    print('${widget.type} ... build');
 
-    List<OrderShortInfo> list = filter();
+    List<OrderShortInfo> list = filter().reversed.toList();
 
     Widget view = new ListView.builder(
 
@@ -245,7 +288,13 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         controller: widget.helper.createController(),
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index){
-          return _getCell(list[index], index);
+          return Container(
+              color: Colors.transparent,
+              padding: Style.pagePadding2,
+              child: Material(
+                  borderRadius: new BorderRadius.circular(4.0),
+                  elevation: 2.0,
+                  child:_getCell(list[index], index)));
         });
 
     List<Widget> children = <Widget>[
