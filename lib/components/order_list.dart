@@ -18,6 +18,9 @@ const double _padding = 16.0;
 const TextStyle _status_style = TextStyle(color: Colors.red);
 bool _isReversed = true;
 
+const force_refresh = 'FORCEREFRESH';
+const force_scroller_head = 'force_scroller_head';
+
 class OrderList extends StatefulWidget {
 
   final PageHelper<OrderShortInfo> helper;
@@ -36,20 +39,42 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   bool _canLoadMore = true;
 
+  ScrollController _scrollController;
   @override
   void afterFirstLayout(BuildContext context) {
 //    print('afterFirstLayout... type=${widget.type}');
     getModel(context).addListener(hashCode, (String query){
 
-      setState(() {
-        _query = query;
-      });
+      if(query == force_scroller_head){
+        if(_scrollController != null){
+          _scrollController.animateTo(1.0,  duration: Duration(milliseconds: 400),  curve: Curves.decelerate);
+        }
+        return;
+      }
+
+      if(query == force_refresh){
+        widget.helper.clear();
+
+        setState(() {
+          _handleRefresh();
+          _query = '';
+          _first = true;
+        });
+      } else {
+        setState(() {
+          _query = query;
+        });
+      }
+
 
     });
 
     if(widget.helper.itemCount() == 0){
+
+
       _handleRefresh();
     }
+
   }
 
   String _getWorkType(){
@@ -67,7 +92,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   String _getQueryStatus() {
     if(widget.type == OrderType.ALL){
-      return 'inactive';
+      return '';
     } else {
       return 'active';
     }
@@ -100,8 +125,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           print('已经在loadMore了...');
         }
       }
-
-
 
       Map response = await getApi(context).orderList(
           type:_getWorkType(),
@@ -192,8 +215,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                         settings: RouteSettings(name: TaskDetailPage.path)
                     ));
                     if(result != null) {
-                      widget.helper.datas?.removeAt(index);
-
+                      removeAt(index);
 
                       setState(() {
 
@@ -274,18 +296,24 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
 
-
-
   @override
   Widget build(BuildContext context) {
-//    print('${widget.type} ... build');
+//    print('${widget.type} ... build, ${widget.helper.itemCount()}');
 
     List<OrderShortInfo> list = filter().reversed.toList();
+    _scrollController = widget.helper.createController();
+    _scrollController.addListener((){
+      if(_scrollController.offset > context.size.height){
+        getModel(context).boolChanges(ChangeBool_Scroll, true);
+      } else {
+        getModel(context).boolChanges(ChangeBool_Scroll, false);
+      }
+    });
 
-    Widget view = new ListView.builder(
+    Widget view = Scrollbar(child: new ListView.builder(
 
         physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
-        controller: widget.helper.createController(),
+        controller: _scrollController,
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index){
           return Container(
@@ -295,7 +323,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                   borderRadius: new BorderRadius.circular(4.0),
                   elevation: 2.0,
                   child:_getCell(list[index], index)));
-        });
+        }));
 
     List<Widget> children = <Widget>[
       _query.isEmpty ? new RefreshIndicator(
@@ -312,7 +340,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     if(list.length == 0){
       children.add(
           new Center(
-              child: _first ? CircularProgressIndicator() : Text('没发现任务')
+              child: (_first && _query.isEmpty) ? CircularProgressIndicator() : Text('没发现任务')
           ));
     }
 

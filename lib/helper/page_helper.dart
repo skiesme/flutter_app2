@@ -13,6 +13,7 @@ class PageHelper<Data>{
     if (notification is ScrollUpdateNotification) {
       _offset = notification.metrics.extentBefore;
     }
+
     return false;
   }
 
@@ -29,6 +30,10 @@ class PageHelper<Data>{
       initFunction();
       inital = true;
     }
+  }
+
+  void toHeader(){
+    _offset = 0.0;
   }
 
   int itemCount() {

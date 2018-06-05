@@ -33,6 +33,8 @@ RootModel getModel(BuildContext context){
 
 typedef  QueryListener(String value);
 
+typedef  CallBackListener(bool show);
+
 enum OrderType {
   ALL,            //全部
   PM,             //保养
@@ -47,6 +49,8 @@ OrderType getOrderType(String type){
 
   return OrderType.ALL;
 }
+
+const ChangeBool_Scroll = 'changevoid_scroll';
 
 class RootModel {
   RootModel({this.userName, this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new Sembast();
@@ -80,15 +84,34 @@ class RootModel {
   final Sembast db;
 
   Map<int, QueryListener> _listeners = new Map();
+  Map<String, Map<int, CallBackListener>> _listeners2 = new Map<String, Map<int, CallBackListener>>();
 
   void addListener(int key, QueryListener listener){
       _listeners[key] = listener;
+  }
+
+  void addBoolListener(String key, int key2, CallBackListener listener){
+    if(_listeners2.containsKey(key)){
+      _listeners2[key][key2] = listener;
+    } else {
+      Map<int, CallBackListener> map = new Map();
+      map[key2] = listener;
+      _listeners2[key] = map;
+    }
   }
 
   void queryChanges(String query){
 //    print('queryChanges... $query, ${_listeners.length}');
     try{
       _listeners.map((int key, QueryListener value) => value(query));
+    } catch(e){
+
+    }
+  }
+
+  void boolChanges(String key, bool show){
+    try{
+      _listeners2[key].map((int key, CallBackListener value) => value(show));
     } catch(e){
 
     }
@@ -101,6 +124,14 @@ class RootModel {
   void removeListener(int key){
     _listeners.remove(key);
   }
+
+  void removeBoolListener(String key){
+    if(_listeners2.containsKey(key)){
+      _listeners2[key].clear();
+      _listeners2.remove(key);
+    }
+  }
+
 }
 
 class RootModelWidget extends InheritedWidget {

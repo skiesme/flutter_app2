@@ -7,6 +7,7 @@ import 'package:samex_app/components/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/data/root_model.dart';
+import 'package:after_layout/after_layout.dart';
 
 class TaskPage extends StatefulWidget {
 
@@ -20,12 +21,13 @@ class TaskPage extends StatefulWidget {
 
 List<PageHelper<OrderShortInfo> > taskPageHelpers = new List();
 
-class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin {
+class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin, AfterLayoutMixin<TaskPage> {
 
   int _tabIndex = 1;
   TabController _controller;
   TextEditingController _searchQuery;
   bool _isSearching = false;
+  bool _showFloatActionButton = false;
 
   @override
   void initState() {
@@ -118,7 +120,15 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     return <Widget>[
       new IconButton(
         icon: const Icon(Icons.search),
+        tooltip: '工单搜索',
         onPressed: _startSearch,
+      ),
+      new IconButton(
+        icon: const Icon(Icons.refresh),
+        tooltip: '强制刷新',
+        onPressed: (){
+          getModel(context).queryChanges(force_refresh);
+        },
       ),
     ];
   }
@@ -163,7 +173,21 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
           });
         },
       ) : null,
+      floatingActionButton: _showFloatActionButton ?new FloatingActionButton(
+
+          onPressed: (){
+            getModel(context).queryChanges(force_scroller_head);
+          },
+        child: Icon(Icons.navigation),
+      ) : null,
     );
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
+    getModel(context).removeBoolListener(ChangeBool_Scroll);
+
   }
 
   @override
@@ -173,4 +197,16 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     _controller?.dispose();
     _searchQuery?.dispose();
   }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    getModel(context).addBoolListener(ChangeBool_Scroll,hashCode, (bool show){
+      if(show == _showFloatActionButton) return;
+      setState(() {
+        _showFloatActionButton = show;
+      });
+    });
+  }
 }
+
+
