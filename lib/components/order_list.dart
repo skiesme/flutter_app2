@@ -35,14 +35,12 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   String _query = '';
 
-  bool _first = true;
-
   bool _canLoadMore = true;
 
   ScrollController _scrollController;
   @override
   void afterFirstLayout(BuildContext context) {
-//    print('afterFirstLayout... type=${widget.type}');
+    print('afterFirstLayout... type=${widget.type}');
     globalListeners.addListener(hashCode, (String query){
 
       if(query == force_scroller_head){
@@ -58,7 +56,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         setState(() {
           _handleRefresh();
           _query = '';
-          _first = true;
+          widget.helper.inital = true;
         });
       } else {
         setState(() {
@@ -69,9 +67,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     });
 
-    if(widget.helper.itemCount() == 0){
-
-
+    if(widget.helper.itemCount() == 0 && widget.helper.inital){
       _handleRefresh();
     }
 
@@ -155,7 +151,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       Func.showMessage('网络出现异常, 获取工单列表失败');
     }
 
-    if(_first) _first = false;
+    if(widget.helper.inital) widget.helper.inital = false;
 
     try {
       setState(() {
@@ -349,7 +345,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     if(list.length == 0){
       children.add(
           new Center(
-              child: (_first && _query.isEmpty) ? CircularProgressIndicator() : Text('没发现任务')
+              child: (widget.helper.inital && _query.isEmpty) ? CircularProgressIndicator() : Text('没发现任务')
           ));
     }
 

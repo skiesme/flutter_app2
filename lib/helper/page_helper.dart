@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class PageHelper<Data>{
   List<Data> datas = new List();
   int page = 0;
-  bool inital = false;
+  bool inital = true;
   double _offset = 0.0;
   String snm = '';
   bool isFinish = false;
@@ -25,12 +25,12 @@ class PageHelper<Data>{
     return new ScrollController(initialScrollOffset: _offset);
   }
 
-  void init(Function initFunction)  {
-    if (!inital) {
-      initFunction();
-      inital = true;
-    }
-  }
+//  void init(Function initFunction)  {
+//    if (!inital) {
+//      initFunction();
+//      inital = true;
+//    }
+//  }
 
   void toHeader(){
     _offset = 0.0;
