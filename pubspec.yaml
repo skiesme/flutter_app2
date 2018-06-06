@@ -16,7 +16,9 @@ dependencies:
   fluttertoast: ^2.0.3
   after_layout: 1.0.2
   sembast: ^1.8.0
-  barcode_scan: ^0.0.4
+#  barcode_scan: ^0.0.4
+  barcode_scan:
+    path: ../flutter_barcode_reader
   image_picker: 0.4.1
   cached_network_image: ^0.4.1
   dio: ^0.0.14

@@ -62,7 +62,7 @@ class OrderDetailData {
         this.targstartdate,
         this.targcompdate,
         this.actstart,
-        this.actfinish,
+        this.actfinish = 0,
         this.lead,
         this.reportedby,
         this.phone,

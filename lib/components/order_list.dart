@@ -167,7 +167,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   }
 
-  Widget _getSyncStatus(){
+  Widget _getSyncStatus(OrderShortInfo info){
     return  Container(
         padding: new EdgeInsets.only(right: _padding),
         decoration: new BoxDecoration(border: new Border(right: new BorderSide(width: 0.5, color: Theme.of(context).dividerColor))),
@@ -175,8 +175,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            new Image.asset(ImageAssets.order_no_sync, height: 40.0,),
-            Text(widget.type == OrderType.ALL ? '已完成' : '未完成')
+            info.actfinish == 0 ?  new Image.asset( ImageAssets.order_no_sync , height: 40.0,)
+            : new CircleAvatar(child: Icon(Icons.done, size: 30.0,)),
+            Text(info.actfinish != 0 ? '已完成' : '未完成')
           ],
         ));
   }
@@ -192,6 +193,14 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     }
   }
 
+  String getLeadName(OrderShortInfo info){
+    if(info.actfinish == 0 && getOrderType(info.worktype) == OrderType.XJ){
+      return '';
+    } else  {
+      return info.lead ?? info.changeby??'';
+    }
+  }
+
   Widget _getCell(OrderShortInfo info, int index){
     return new Column (
         mainAxisAlignment: MainAxisAlignment.start,
@@ -202,11 +211,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
             color: getColor(info),
           ),
           new Container(
-              color: Colors.white,
+              color: info.actfinish == 0 ? Colors.white : Colors.cyan.withOpacity(0.2),
               child: new SimpleButton(
                   onTap: () async {
                     getModel(context).order = info;
-                    getModel(context).isTask = widget.type != OrderType.ALL;
+                    getModel(context).isTask = info.actfinish == 0;
                     getModel(context).orderDetailData = null;
                     getModel(context).clearOrderDetailCache();
 
@@ -233,7 +242,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text('工单 : ${info.wonum}',style: TextStyle(fontWeight: FontWeight.w700)),
-                            Text(info.changeby??'', )
+                            Text(getLeadName(info), )
                           ],
                         ),
                       ),
@@ -242,7 +251,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: <Widget>[
-                            _getSyncStatus(),
+                            _getSyncStatus(info),
 
                             SizedBox(width: _padding,),
                             Expanded(child: Column(
@@ -252,9 +261,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                                 Text('标题: ${info.description}', style: TextStyle(color: Style.primaryColor, fontWeight: FontWeight.w700),),
 //                                Text('位置: ${info.locationDescription}'),
                                 Text('设备: ${info.assetDescription}'),
-                                widget.type == OrderType.ALL ?
+//                                widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
-                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
+//                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
                                 Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
                               ],
                             ))
@@ -317,7 +326,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index){
           return Container(
-              color: Colors.transparent,
+              color:  Colors.transparent,
               padding: Style.pagePadding2,
               child: Material(
                   borderRadius: new BorderRadius.circular(4.0),
