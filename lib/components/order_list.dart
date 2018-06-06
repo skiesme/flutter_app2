@@ -43,7 +43,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   @override
   void afterFirstLayout(BuildContext context) {
 //    print('afterFirstLayout... type=${widget.type}');
-    getModel(context).addListener(hashCode, (String query){
+    globalListeners.addListener(hashCode, (String query){
 
       if(query == force_scroller_head){
         if(_scrollController != null){
@@ -304,9 +304,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     _scrollController = widget.helper.createController();
     _scrollController.addListener((){
       if(_scrollController.offset > context.size.height){
-        getModel(context).boolChanges(ChangeBool_Scroll, true);
+        globalListeners.boolChanges(ChangeBool_Scroll, true);
       } else {
-        getModel(context).boolChanges(ChangeBool_Scroll, false);
+        globalListeners.boolChanges(ChangeBool_Scroll, false);
       }
     });
 
@@ -351,15 +351,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-    getModel(context).removeListener(hashCode);
-
-  }
-
-  @override
   void dispose() {
     super.dispose();
+
+    globalListeners.removeListener(hashCode);
+
   }
 
 

@@ -127,7 +127,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         icon: const Icon(Icons.refresh),
         tooltip: '强制刷新',
         onPressed: (){
-          getModel(context).queryChanges(force_refresh);
+          globalListeners.queryChanges(force_refresh);
         },
       ),
     ];
@@ -149,7 +149,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
 
   void _updateSearchQuery(String newQuery) {
 //    print('_updateSearchQuery $newQuery');
-    getModel(context).queryChanges(newQuery??'');
+    globalListeners.queryChanges(newQuery??'');
   }
 
   @override
@@ -176,31 +176,30 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       floatingActionButton: _showFloatActionButton ?new FloatingActionButton(
 
           onPressed: (){
-            getModel(context).queryChanges(force_scroller_head);
+            globalListeners.queryChanges(force_scroller_head);
           },
         child: Icon(Icons.navigation),
       ) : null,
     );
   }
 
+
   @override
   void deactivate() {
     super.deactivate();
-    getModel(context).removeBoolListener(ChangeBool_Scroll);
-
   }
 
   @override
   void dispose() {
     super.dispose();
-
     _controller?.dispose();
     _searchQuery?.dispose();
+    globalListeners.removeBoolListener(ChangeBool_Scroll);
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
-    getModel(context).addBoolListener(ChangeBool_Scroll,hashCode, (bool show){
+    globalListeners.addBoolListener(ChangeBool_Scroll,hashCode, (bool show){
       if(show == _showFloatActionButton) return;
       setState(() {
         _showFloatActionButton = show;
