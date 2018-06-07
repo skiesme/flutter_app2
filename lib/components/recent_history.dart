@@ -110,24 +110,28 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
     }
 
-      List<Widget> children ;
-      switch( getType()){
-        case OrderType.XJ:
-          children = getXJHistoryWidget();
-          break;
-        case OrderType.CM:
-          children = getCMHistoryWidget();
-          break;
-        case OrderType.PM:
-          children = getCMHistoryWidget();
-          break;
-        default:
-          break;
-      }
+    List<Widget> children ;
+    switch( getType()){
+      case OrderType.XJ:
+        children = getXJHistoryWidget();
+        break;
+      case OrderType.CM:
+        children = getCMHistoryWidget();
+        break;
+      case OrderType.PM:
+        children = getCMHistoryWidget();
+        break;
+      default:
+        break;
+    }
 
-      return Column(
-          children: children
-      );
+    if(children.length == 0){
+      return Center(child: Text('没有发现历史记录'));
+    }
+
+    return Column(
+        children: children
+    );
 
   }
 
