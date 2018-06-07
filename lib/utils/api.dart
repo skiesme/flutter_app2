@@ -150,6 +150,16 @@
       return response.data;
     }
 
+    Future<Map> OrderStatus(String wonum) async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/status/order/$wonum');
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
     Future<Map> postStep(OrderStep step, List<UploadFileInfo> files) async {
       Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
 

@@ -116,7 +116,12 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     switch(_tabIndex){
       case 0:
         String str = (_type == OrderType.PM) ? '保养' :(_type == OrderType.CM ? '维修' : '巡检');
-        children.add(Text('$str历史'));
+        if(_type == OrderType.CM && _data.actfinish != 0){
+          str = '$str记录';
+        } else {
+          str = '$str历史';
+        }
+        children.add(Text(str));
         break;
       case 1:
         children.add(Text('任务列表'));
@@ -301,7 +306,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           ),
         ));
   }
-
 
 
   void _selectMenu(OrderPostStyle style) async {

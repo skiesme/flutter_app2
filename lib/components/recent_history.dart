@@ -9,6 +9,7 @@ import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/model/cm_history.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/page/task_detail_page.dart';
+import 'package:samex_app/model/order_status.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -99,9 +100,40 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     return children;
   }
 
+  List<Widget> getOrderStatusWidget() {
+    List<OrderStatusData> list = getMemoryCache<List<OrderStatusData>>(
+        cacheKey);
+
+    List<Widget> children = <Widget>[];
+
+    for (int i = 0, len = list.length; i < len; i++) {
+      OrderStatusData f = list[i];
+      children.add(SimpleButton(
+        child: ListTile(
+              title: Text('操作人: ${f.changeby}'),
+              subtitle: Text('时间: '+Func.getFullTimeString(f.statusdate)),
+              trailing: Text(f.status),
+            ),
+//          child: Row(
+//              children: <Widget>[
+//                Text('记录:'),
+//                Text(f.changeby),
+//                Expanded(child: Text(Func.getFullTimeString(f.statusdate),
+//                  textAlign: TextAlign.center,)),
+//                Text(f.status),
+//              ]
+          ),
+      );
+      children.add(Divider(height: 1.0,));
+    }
+
+    return children;
+  }
+
   @override
   Widget build(BuildContext context) {
     String key = cacheKey;
+    print(widget.data.toJson().toString());
 
     var data = getMemoryCache(key);
     if(data == null){
@@ -116,7 +148,11 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
         children = getXJHistoryWidget();
         break;
       case OrderType.CM:
-        children = getCMHistoryWidget();
+        if(widget.data.actfinish == 0){
+          children = getCMHistoryWidget();
+        } else {
+          children = getOrderStatusWidget();
+        }
         break;
       case OrderType.PM:
         children = getCMHistoryWidget();
@@ -150,15 +186,27 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
           } else {
             setMemoryCache<List<HistoryData>>(cacheKey, result.response);
           }
-        } else if(type == OrderType.CM && data.assetnum != null && data.assetnum.length > 0){
-          Map response = await getApi(context).historyCM(data.assetnum);
-          CMHistoryResult result = new CMHistoryResult.fromJson(response);
+        } else if(type == OrderType.CM){
+          if(data.actfinish != 0) {
+            Map response = await getApi(context).OrderStatus(data.wonum);
+            OrderStatusResult result = new OrderStatusResult.fromJson(response);
 
-          if(result.code != 0){
-            Func.showMessage(result.message);
+            if (result.code != 0) {
+              Func.showMessage(result.message);
+            } else {
+              setMemoryCache<List<OrderStatusData>>(cacheKey, result.response);
+            }
           } else {
-            setMemoryCache<List<CMHistoryData>>(cacheKey, result.response);
+            if( data.assetnum != null && data.assetnum.length > 0) {
+              Map response = await getApi(context).historyCM(data.assetnum);
+              CMHistoryResult result = new CMHistoryResult.fromJson(response);
 
+              if (result.code != 0) {
+                Func.showMessage(result.message);
+              } else {
+                setMemoryCache<List<CMHistoryData>>(cacheKey, result.response);
+              }
+            }
           }
         }
 
@@ -183,6 +231,9 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     if(type == OrderType.XJ){
       return 'history_xj_${widget.data.sopnum}';
     } else if(type == OrderType.CM){
+      if(widget.data.actfinish != 0){
+        return 'history_cm2_${widget.data.wonum}';
+      }
       return 'history_cm_${widget.data.assetnum}';
     }
 
