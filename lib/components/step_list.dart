@@ -59,10 +59,12 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         if(result.code != 0){
           Func.showMessage(result.message);
         } else {
-          setState(() {
-            getModel(context).stepsList.clear();
-            getModel(context).stepsList.addAll(result.response.steps);
-          });
+          if(mounted) {
+            setState(() {
+              getModel(context).stepsList.clear();
+              getModel(context).stepsList.addAll(result.response.steps);
+            });
+          }
         }
 
       } catch (e){
@@ -70,14 +72,14 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         Func.showMessage('网络出现异常: 获取步骤列表失败');
       }
     }
-
   }
+
+  get cacheKey =>  'stepsList_${widget.data.wonum}';
 
   @override
   Widget build(BuildContext context) {
     List<OrderStep> list = getModel(context).stepsList;
     if(list.length == 0){
-      _getSteps();
       return Center(child: CircularProgressIndicator());
     } else {
       List<Widget> children = <Widget>[];

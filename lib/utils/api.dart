@@ -21,8 +21,6 @@
     static String baseUrl = 'http://$ipAndPort/app/api';
     static Options _option;
 
-
-
     Options _options({int connectTimeout = 6000, receiveTimeout = 3000, Map<String, dynamic> headers }){
       if(_option == null){
         _option = new Options();
@@ -134,6 +132,16 @@
 
     Future<Map> historyXj(String sopnum) async {
       Uri uri = new Uri.http(ipAndPort, '/app/api/ordernews/$sopnum');
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
+    Future<Map> historyCM(String assetnum) async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/ordercmnews/$assetnum');
 
       Response response = await _dio.get(uri.toString(), options: _options());
 

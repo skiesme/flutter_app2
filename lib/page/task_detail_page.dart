@@ -21,6 +21,9 @@ class TaskDetailPage extends StatefulWidget {
 
   static const String path = '/TaskDetailPage';
 
+  final OrderShortInfo info;
+  TaskDetailPage({this.info});
+
   @override
   _TaskDetailPageState createState() => new _TaskDetailPageState();
 }
@@ -57,7 +60,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         if(data != null){
           setState(() {
             _data = data;
-            getModel(context).orderDetailData = data;
           });
         }
       }
@@ -180,23 +182,23 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     list.addAll(<Widget>[
       Text('工单编号: ${_info.wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
-      Text('标题名称: ${_info.description}'),
+      Text('标题名称: ${_data?.description??''}'),
 //      Text('描述详细: '),
     ]);
 
     if(_expend){
       list.addAll(<Widget>[
-        Text('位置编号: ${_info.location??''}'),
-        Text('位置描述: ${_info.locationDescription??''}'),
-        Text('资产编号: ${_info.assetnum??''}'),
-        Text('资产描述: ${_info.assetDescription??''}'),
-        Text('工单状态: ${_info.status}'),
+        Text('位置编号: ${_data?.location??''}'),
+        Text('位置描述: ${_data?.locationDescription??''}'),
+        Text('资产编号: ${_data?.assetnum??''}'),
+        Text('资产描述: ${_data?.assetDescription??''}'),
+        Text('工单状态: ${_data?.status}'),
         Text('汇报人员: ${_data?.reportedby ??''}'),
         Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'),
       ]);
 
-      if(_info != null && _info.actfinish > 0 && !getModel(context).isTask){
-        list.add(Text('完成时间: ${Func.getFullTimeString( _info?.actfinish)}'));
+      if(_data != null && _data.actfinish > 0){
+        list.add(Text('完成时间: ${Func.getFullTimeString( _data?.actfinish)}'));
       }
       if(_type != OrderType.XJ){
         list.addAll(<Widget>[
@@ -206,6 +208,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           Text('联系电话: ${_data?.phone ?? ''}'),
         ]);
       }
+
+
 
 
 //      list.add(Text('站点编号: ${_data?.lead ?? ''}'));
@@ -414,7 +418,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   void afterFirstLayout(BuildContext context) {
 
     setState(() {
-      _info = getModel(context).order;
+      _info = widget.info;
       _type = getOrderType(_info.worktype);
       _getOrderDetail();
     });

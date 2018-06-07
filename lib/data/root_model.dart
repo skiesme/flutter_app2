@@ -54,6 +54,34 @@ const ChangeBool_Scroll = 'changevoid_scroll';
 
 GlobListeners globalListeners = new GlobListeners();
 
+class TimeCache<T> {
+  int time =  DateTime.now().millisecondsSinceEpoch;
+  T data;
+
+  TimeCache({this.data});
+}
+
+Map<String, TimeCache> _memoryCache = new Map();
+
+T getMemoryCache<T>(String key){
+  if(key == null || key.length == 0) return null;
+  if(!_memoryCache.containsKey(key)) return null;
+  TimeCache<T> cache = _memoryCache[key];
+  int diff = DateTime.now().millisecondsSinceEpoch - cache.time;
+//  print('key=$key, time = $diff');
+  if( diff > 10 * 60 * 1000){
+    _memoryCache.remove(key);
+    return null;
+  }
+
+  return cache.data;
+}
+
+void setMemoryCache<T>(String key, T data){
+  TimeCache<T> cache = new TimeCache<T>(data: data);
+  _memoryCache[key] = cache;
+}
+
 class GlobListeners {
 
   Map<String, Map<int, CallBackListener>> _listeners2 = new Map<String,
@@ -114,25 +142,20 @@ class RootModel {
   String userName;
   String token;
 
-  OrderShortInfo order;
   OrderStep step;
 
   bool isTask = true;
 
-  OrderDetailData orderDetailData;
 
   UserInfo user;
 
-  List<HistoryData> historyList = new List();
   List<OrderStep> stepsList = new List();
 
   final ValueChanged<double> onTextScaleChanged;
 
 
   void clearOrderDetailCache(){
-    historyList.clear();
     stepsList.clear();
-    orderDetailData = null;
     step = null;
   }
 

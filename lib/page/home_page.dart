@@ -8,6 +8,7 @@ import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/page/task_page.dart';
+import 'package:samex_app/page/order_new_page.dart';
 import 'package:after_layout/after_layout.dart';
 
 var _textStyle = new TextStyle(color: Colors.white, fontSize: 16.0);
@@ -185,6 +186,13 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                         title: const Text('深水光明移动工单系统'),
                         pinned: true,
                         actions: <Widget>[
+                          IconButton(
+                              icon: Icon(Icons.add),
+                              tooltip: '新增工单',
+                              onPressed: () {
+                                Navigator.push(context, new MaterialPageRoute(
+                                    builder: (_)=> new OrderNewPage()));
+                              }),
                           IconButton(
                               icon: Icon(Icons.settings),
                               tooltip: '设置',
