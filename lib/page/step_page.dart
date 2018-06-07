@@ -56,7 +56,7 @@ class _StepPageState extends State<StepPage>{
   }
 
   void _postStep() async {
-    if(_status.isEmpty || getModel(context).step == null){
+    if(_status.isEmpty || widget.data == null){
       Func.showMessage('请先配置状态再提交');
       return;
     }
@@ -69,28 +69,28 @@ class _StepPageState extends State<StepPage>{
     await Future.delayed(Duration(seconds: 0));
 
     List<String> origin = new List();
-    origin.addAll(getModel(context).step.images ?? []);
+    origin.addAll(widget.data?.images ?? []);
 
     try{
       List<ImageData> list = _key.currentState.getImages();
 
-
-
       for(int i =0, len = list.length; i< len; i++){
-        getModel(context).step.images.add(list[i].toString());
+        widget.data.images.add(list[i].toString());
       }
 
-      if(getModel(context).step != null){
-        getModel(context).step.status = _status;
-        double time = DateTime.now().millisecondsSinceEpoch / 1000;
-        getModel(context).step.statusdate =  time.toInt();
-        getModel(context).step.remark = _controller.text;
-        getModel(context).step.executor = getModel(context).user.displayname;
+      widget.data.status = _status;
+      double time = DateTime.now().millisecondsSinceEpoch / 1000;
+      widget.data.statusdate =  time.toInt();
+      widget.data.remark = _controller.text;
+      widget.data.executor = getModel(context).user.displayname;
 
-        getModel(context).stepsList[widget.index] = getModel(context).step;
+      List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey);
+
+      if(widget.index < data.length){
+        data[widget.index] = widget.data;
       }
 
-      List<String> images = getModel(context).step.getUploadImages();
+      List<String> images = widget.data.getUploadImages();
 
       print('found len=${images.length}  upload');
       List<UploadFileInfo> lists = new List();
@@ -99,7 +99,7 @@ class _StepPageState extends State<StepPage>{
         try {
           _manager?.stop();
           Map response = await getApi(context).postStep(
-              getModel(context).step, lists);
+              widget.data, lists);
           StepsResult result = new StepsResult.fromJson(response);
           if (result.code != 0) {
             Func.showMessage(result.message);
@@ -110,8 +110,8 @@ class _StepPageState extends State<StepPage>{
             return;
           }
         } catch (e){
-          getModel(context).step.images.clear();
-          getModel(context).step.images.addAll(origin);
+          widget.data.images.clear();
+          widget.data.images.addAll(origin);
           print(e);
           Func.showMessage('网络出现异常, 步骤提交失败');
         }
@@ -198,7 +198,7 @@ class _StepPageState extends State<StepPage>{
                           ],
                         ),
 
-                        getModel(context).isTask ? new Expanded(
+                        widget.isTask ? new Expanded(
                             child:new PopupMenuButton<_StatusSelect>(
                               tooltip:'请选择巡检状态',
 
@@ -307,5 +307,11 @@ class _StepPageState extends State<StepPage>{
           ),
           body: _getBody()),
     );
+  }
+
+  get cacheKey {
+    var key = widget.data?.wonum ??'';
+    if(key.isEmpty) return '';
+    return 'stepsList_$key';
   }
 }

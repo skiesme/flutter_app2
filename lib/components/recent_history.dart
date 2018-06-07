@@ -33,7 +33,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   List<Widget> getXJHistoryWidget() {
     List<Widget> children = <Widget>[];
-    List<HistoryData> _historyList = getMemoryCache<List<HistoryData>>(getMemoryKey());
+    List<HistoryData> _historyList = getMemoryCache<List<HistoryData>>(cacheKey);
     for (int i = 0, len = _historyList.length; i < len; i++) {
       HistoryData f = _historyList[i];
       children.add(SimpleButton(child: new Padding(
@@ -68,8 +68,8 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   }
 
   List<Widget> getCMHistoryWidget(){
-    List<CMHistoryData> _cmHistoryList = getMemoryCache<List<CMHistoryData>>(getMemoryKey());
-    print('getCMHistoryWidget, length=${_cmHistoryList.length}');
+    List<CMHistoryData> _cmHistoryList = getMemoryCache<List<CMHistoryData>>(cacheKey);
+//    print('getCMHistoryWidget, length=${_cmHistoryList.length}');
 
     List<Widget> children = <Widget>[];
     for (int i = 0, len = _cmHistoryList.length; i < len; i++) {
@@ -101,7 +101,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   @override
   Widget build(BuildContext context) {
-    String key = getMemoryKey();
+    String key = cacheKey;
 
     var data = getMemoryCache(key);
     if(data == null){
@@ -144,7 +144,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
           if(result.code != 0){
             Func.showMessage(result.message);
           } else {
-            setMemoryCache<List<HistoryData>>(getMemoryKey(), result.response);
+            setMemoryCache<List<HistoryData>>(cacheKey, result.response);
           }
         } else if(type == OrderType.CM && data.assetnum != null && data.assetnum.length > 0){
           Map response = await getApi(context).historyCM(data.assetnum);
@@ -153,7 +153,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
           if(result.code != 0){
             Func.showMessage(result.message);
           } else {
-            setMemoryCache<List<CMHistoryData>>(getMemoryKey(), result.response);
+            setMemoryCache<List<CMHistoryData>>(cacheKey, result.response);
 
           }
         }
@@ -174,7 +174,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   }
 
-  String getMemoryKey(){
+  String  get cacheKey {
     OrderType type = getType();
     if(type == OrderType.XJ){
       return 'history_xj_${widget.data.sopnum}';
@@ -182,7 +182,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       return 'history_cm_${widget.data.assetnum}';
     }
 
-    return 'NONE';
+    return '';
   }
 
   @override

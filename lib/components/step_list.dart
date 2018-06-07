@@ -23,15 +23,17 @@ class StepList extends StatefulWidget {
 class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
 
-  Future<Null> gotoStep(String asset) async {
-    List<OrderStep> list = getModel(context).stepsList;
+  bool _first = true;
 
-    if(list !=null){
+  Future<Null> gotoStep(String asset) async {
+    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey);
+
+
+    if(list !=null && widget.data != null){
       for(int i = 0, len = list.length; i< len; i++){
         if(asset == list[i].assetnum ){
-          getModel(context).step = list[i];
           final result = await Navigator.push(context, new MaterialPageRoute(
-              builder: (_) => new StepPage(index: i, data: list[i], isTask: getModel(context).isTask,),
+              builder: (_) => new StepPage(index: i, data: list[i], isTask: widget.data.actfinish != 0,),
               settings: new RouteSettings(name: StepPage.path)
           ));
           if(result != null) {
@@ -40,7 +42,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
           break;
         }
 
-        if(i == len - 1){
+        if(i == (len - 1)){
           Func.showMessage('资产: $asset, 未发现');
         }
       }
@@ -61,8 +63,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         } else {
           if(mounted) {
             setState(() {
-              getModel(context).stepsList.clear();
-              getModel(context).stepsList.addAll(result.response.steps);
+              setMemoryCache<List<OrderStep>>(cacheKey, result.response.steps);
             });
           }
         }
@@ -74,48 +75,57 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     }
   }
 
-  get cacheKey =>  'stepsList_${widget.data.wonum}';
+  get cacheKey {
+    var key = widget.data?.wonum ??'';
+    if(key.isEmpty) return '';
+    return 'stepsList_$key';
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<OrderStep> list = getModel(context).stepsList;
-    if(list.length == 0){
-      return Center(child: CircularProgressIndicator());
-    } else {
-      List<Widget> children = <Widget>[];
-      for(int i = 0, len = list.length; i < len; i++){
-        OrderStep f = list[i];
-        List<Widget> children2 = <Widget>[];
-
-        children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
-        children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
-        children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
-        children2.add(Text('状态: ${f.status??'未处理'}'));
-        children2.add(Divider(height: 1.0,));
-
-        children.add(
-            SimpleButton(
-              padding: new EdgeInsets.only(top: 6.0),
-              onDoubleTap: (){
-                gotoStep(f.assetnum);
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: children2,
-              ),));
+    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey);
+    if(list == null){
+      if(_first) {
+        _getSteps();
+        return Center(child: CircularProgressIndicator());
+      } else {
+        return Center(child: Text('没有发现步骤'));
       }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      );
+
     }
+
+    List<Widget> children = <Widget>[];
+    for(int i = 0, len = list.length; i < len; i++){
+      OrderStep f = list[i];
+      List<Widget> children2 = <Widget>[];
+
+      children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
+      children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
+      children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
+      children2.add(Text('状态: ${f.status??'未处理'}'));
+      children2.add(Divider(height: 1.0,));
+
+      children.add(
+          SimpleButton(
+            padding: new EdgeInsets.only(top: 6.0),
+            onDoubleTap: (){
+              gotoStep(f.assetnum);
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: children2,
+            ),));
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: children,
+    );
+
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
-//    List<OrderStep> list = getModel(context).stepsList;
-//    if(list.length == 0){
-//      _getSteps();
-//    }
+    _first = false;
   }
 }
+

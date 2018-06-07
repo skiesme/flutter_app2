@@ -237,7 +237,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                   SimpleButton(
                     onTap: (){
                       Navigator.push(context, new MaterialPageRoute(
-                          builder: (_) => new AttachmentPage(wonum: _info.wonum, data: getModel(context).stepsList)));
+                          builder: (_) => new AttachmentPage(wonum: _info.wonum, data: [])));
                     },
                     child: Row(
                       children: <Widget>[
@@ -369,7 +369,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           child: new Scaffold(
             appBar: new AppBar(
               title: Text(_info?.wonum ?? '',),
-              actions: getModel(context).isTask ?  <Widget>[
+              actions: widget.info.actfinish == 0 ?  <Widget>[
                 new PopupMenuButton<OrderPostStyle>(
                   onSelected: _selectMenu,
                   itemBuilder: (BuildContext context) => <PopupMenuItem<OrderPostStyle>>[

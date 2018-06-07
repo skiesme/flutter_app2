@@ -210,9 +210,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
               color: info.actfinish == 0 ? Colors.white : Colors.cyan.withOpacity(0.2),
               child: new SimpleButton(
                   onTap: () async {
-                    getModel(context).isTask = info.actfinish == 0;
-                    getModel(context).clearOrderDetailCache();
-
                     final result  = await Navigator.push(context, new MaterialPageRoute(
                         builder: (_) => new TaskDetailPage(info:  info,),
                         settings: RouteSettings(name: TaskDetailPage.path)

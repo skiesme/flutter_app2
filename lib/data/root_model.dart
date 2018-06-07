@@ -78,6 +78,7 @@ T getMemoryCache<T>(String key){
 }
 
 void setMemoryCache<T>(String key, T data){
+  if(key == null || key.isEmpty) return;
   TimeCache<T> cache = new TimeCache<T>(data: data);
   _memoryCache[key] = cache;
 }
@@ -142,22 +143,9 @@ class RootModel {
   String userName;
   String token;
 
-  OrderStep step;
-
-  bool isTask = true;
-
-
   UserInfo user;
 
-  List<OrderStep> stepsList = new List();
-
   final ValueChanged<double> onTextScaleChanged;
-
-
-  void clearOrderDetailCache(){
-    stepsList.clear();
-    step = null;
-  }
 
   final SamexApi api;
   final Sembast db;

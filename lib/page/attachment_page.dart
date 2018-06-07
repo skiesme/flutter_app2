@@ -31,8 +31,10 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
   void initState() {
     super.initState();
 
-    _data = widget.data;
-    if(_data.length == 0) _data = null;
+    _data = widget.data??[];
+    if(_data.length == 0) {
+      _data = getMemoryCache<List<OrderStep>>(cacheKey);
+    }
 
   }
 
@@ -98,7 +100,6 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
                 );
               })),
 
-
     );
   }
 
@@ -115,8 +116,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
           setState(() {
             _data = result.response.steps;
 
-            getModel(context).stepsList.clear();
-            getModel(context).stepsList.addAll(result.response.steps);
+            setMemoryCache(cacheKey, _data);
           });
         }
 
@@ -126,6 +126,12 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
       }
     }
 
+  }
+
+  get cacheKey {
+    var key = widget.wonum ??'';
+    if(key.isEmpty) return '';
+    return 'stepsList_$key';
   }
 
   @override
