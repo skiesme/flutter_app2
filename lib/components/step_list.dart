@@ -39,8 +39,14 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
           }
           break;
         }
+
+        if(i == len - 1){
+          Func.showMessage('资产: $asset, 未发现');
+        }
       }
     }
+
+
   }
 
   void _getSteps() async {

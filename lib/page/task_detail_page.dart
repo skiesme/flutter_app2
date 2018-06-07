@@ -392,7 +392,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 onPressed: () async {
                   String result = await Func.scan();
 
-                  if(result.isNotEmpty){
+                  if(result != null && result.isNotEmpty && result.length > 0){
                     _stepKey.currentState?.gotoStep(result);
                   }
 
