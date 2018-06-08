@@ -46,6 +46,8 @@ class OrderDetailData {
   String wopriority;
   String supervisor;
   String sopnum;
+  List<Actions> actions;
+  int ownerid;
 
   OrderDetailData(
       {this.wonum,
@@ -66,8 +68,10 @@ class OrderDetailData {
         this.lead,
         this.reportedby,
         this.phone,
+        this.actions,
         this.wopriority,
         this.supervisor,
+        this.ownerid,
         this.sopnum});
 
   OrderDetailData.fromJson(Map<String, dynamic> json) {
@@ -92,6 +96,13 @@ class OrderDetailData {
     wopriority = json['wopriority'];
     supervisor = json['supervisor'];
     sopnum = json['sopnum'];
+    ownerid = json['ownerid'];
+    if (json['actions'] != null) {
+      actions = new List<Actions>();
+      json['actions'].forEach((v) {
+        actions.add(new Actions.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -117,6 +128,35 @@ class OrderDetailData {
     data['wopriority'] = this.wopriority;
     data['supervisor'] = this.supervisor;
     data['sopnum'] = this.sopnum;
+    data['ownerid'] = this.ownerid;
+    if (this.actions != null) {
+      data['actions'] = this.actions.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Actions {
+  String actionid;
+  int isdefault;
+  String sequence;
+  String instruction;
+
+  Actions({this.actionid, this.isdefault, this.sequence, this.instruction});
+
+  Actions.fromJson(Map<String, dynamic> json) {
+    actionid = json['actionid'];
+    isdefault = json['isdefault'];
+    sequence = json['sequence'];
+    instruction = json['instruction'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['actionid'] = this.actionid;
+    data['isdefault'] = this.isdefault;
+    data['sequence'] = this.sequence;
+    data['instruction'] = this.instruction;
     return data;
   }
 }

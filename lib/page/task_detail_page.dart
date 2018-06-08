@@ -13,6 +13,7 @@ import 'package:samex_app/components/step_list.dart';
 import 'package:samex_app/components/people_material_list.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/page/attachment_page.dart';
+import 'package:samex_app/page/order_post.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -306,7 +307,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   }
 
 
-  void _selectMenu(OrderPostStyle style) async {
+  void _selectMenu(String style) async {
     switch(style){
       case OrderPostStyle.Post:
 
@@ -346,19 +347,66 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           Func.showMessage('提交工单功能暂只支持巡检工单');
         }
 
-        break;
+        return;
       case OrderPostStyle.Redirect:
         Func.showMessage('该功能还未支持');
-        break;
+        return;
       case OrderPostStyle.Refresh:
         setState(() {
           _show = true;
         });
 
         _getOrderDetail();
+        return;
+    }
+
+    _data.actions?.forEach((Actions f) async {
+      if(f.actionid == style){
+        final result = await Navigator.push(context,
+            new MaterialPageRoute(builder:(_) =>  new OrderPostPage(id: _data.ownerid, action: f, wonum: _data.wonum)));
+
+        if(result != null) {
+          _getOrderDetail();
+        }
+      }
+    });
+  }
+
+  List<PopupMenuItem<String>> getPopupMenuButton(){
+    List<PopupMenuItem<String>> list = new List();
+    switch(getOrderType(widget.info.worktype)){
+      case OrderType.XJ:
+        list.addAll(
+            <PopupMenuItem<String>>[
+              const PopupMenuItem<String>(
+                value: OrderPostStyle.Post,
+                child: const Text('提交工作流'),
+              ),
+              const PopupMenuItem<String>(
+                value: OrderPostStyle.Redirect,
+                child: const Text('转移工作流'),
+              )]
+        );
+        break;
+      case OrderType.CM:
+      case OrderType.PM:
+
+        _data?.actions?.forEach((Actions f){
+          list.add(PopupMenuItem<String>(
+            value: f.actionid,
+            child: Text(f.instruction),
+          ));
+        });
 
         break;
+      default:
+        break;
     }
+    list.add(PopupMenuItem<String>(
+      value: OrderPostStyle.Refresh,
+      child: const Text('刷新工作流'),
+    ));
+    return list;
   }
 
   @override
@@ -372,22 +420,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
             appBar: new AppBar(
               title: Text(_info?.wonum ?? '',),
               actions: widget.info.actfinish == 0 ?  <Widget>[
-                new PopupMenuButton<OrderPostStyle>(
+                new PopupMenuButton<String>(
                   onSelected: _selectMenu,
-                  itemBuilder: (BuildContext context) => <PopupMenuItem<OrderPostStyle>>[
-                    const PopupMenuItem<OrderPostStyle>(
-                      value: OrderPostStyle.Post,
-                      child: const Text('提交工作流'),
-                    ),
-                    const PopupMenuItem<OrderPostStyle>(
-                      value: OrderPostStyle.Redirect,
-                      child: const Text('转移工作流'),
-                    ),
-                    const PopupMenuItem<OrderPostStyle>(
-                      value: OrderPostStyle.Refresh,
-                      child: const Text('刷新工作流'),
-                    ),
-                  ],
+                  itemBuilder: (BuildContext context) => getPopupMenuButton(),
                 ),
               ] : null,
             ),
@@ -416,7 +451,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       );
   }
 
-   String get cacheKey {
+  String get cacheKey {
     return 'task_detail_${widget.info.wonum}';
   }
 
@@ -438,8 +473,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
 }
 
-enum OrderPostStyle {
-  Post,
-  Redirect,
-  Refresh
+class OrderPostStyle {
+  static const String Post = '__POST';
+  static const String Redirect = '__REDIECT';
+  static const String Refresh ='__REFRESH';
 }

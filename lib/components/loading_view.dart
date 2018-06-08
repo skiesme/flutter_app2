@@ -60,7 +60,7 @@ class LoadingView extends StatelessWidget {
                   children: <Widget>[
                     new CircularProgressIndicator(),
                     new SizedBox(height: 8.0,),
-                    Text(tips??'加载中...', style: TextStyle(color: Colors.white),)
+                    Text(tips??'请稍后...', style: TextStyle(color: Colors.white),)
                   ],
                 ),
               )),
