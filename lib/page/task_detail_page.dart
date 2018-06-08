@@ -45,6 +45,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   @override
   void initState() {
     super.initState();
+    _data = getMemoryCache(cacheKey, expired: false);
   }
 
 
@@ -57,6 +58,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       } else {
         OrderDetailData data = result.response;
         if(data != null){
+
+          setMemoryCache<OrderDetailData>(cacheKey, data);
           setState(() {
             _data = data;
           });
@@ -411,6 +414,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
             ),
           )
       );
+  }
+
+   String get cacheKey {
+    return 'task_detail_${widget.info.wonum}';
   }
 
   @override
