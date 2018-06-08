@@ -26,7 +26,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   bool _first = true;
 
   Future<Null> gotoStep(String asset) async {
-    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey);
+    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
 
 
     if(list !=null && widget.data != null){
@@ -83,10 +83,11 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
   @override
   Widget build(BuildContext context) {
-    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey);
+    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, callback: (){
+      _getSteps();
+    });
     if(list == null){
       if(_first) {
-        _getSteps();
         return Center(child: CircularProgressIndicator());
       } else {
         return Center(child: Text('没有发现步骤'));

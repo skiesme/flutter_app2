@@ -63,15 +63,27 @@ class TimeCache<T> {
 
 Map<String, TimeCache> _memoryCache = new Map();
 
-T getMemoryCache<T>(String key){
-  if(key == null || key.length == 0) return null;
-  if(!_memoryCache.containsKey(key)) return null;
+T getMemoryCache<T>(String key, {bool expired = true, VoidCallback callback}){
+  if(key == null || key.length == 0 || !_memoryCache.containsKey(key)){
+    if(callback != null){
+      callback();
+    }
+
+    return null;
+  }
   TimeCache<T> cache = _memoryCache[key];
   int diff = DateTime.now().millisecondsSinceEpoch - cache.time;
 //  print('key=$key, time = $diff');
   if( diff > 10 * 60 * 1000){
-    _memoryCache.remove(key);
-    return null;
+    if(callback != null){
+      callback();
+    }
+
+    if(expired){
+      _memoryCache.remove(key);
+      return null;
+    }
+
   }
 
   return cache.data;

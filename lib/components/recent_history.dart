@@ -34,7 +34,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   List<Widget> getXJHistoryWidget() {
     List<Widget> children = <Widget>[];
-    List<HistoryData> _historyList = getMemoryCache<List<HistoryData>>(cacheKey);
+    List<HistoryData> _historyList = getMemoryCache<List<HistoryData>>(cacheKey, expired: false);
     for (int i = 0, len = _historyList.length; i < len; i++) {
       HistoryData f = _historyList[i];
       children.add(SimpleButton(child: new Padding(
@@ -69,7 +69,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   }
 
   List<Widget> getCMHistoryWidget(){
-    List<CMHistoryData> _cmHistoryList = getMemoryCache<List<CMHistoryData>>(cacheKey);
+    List<CMHistoryData> _cmHistoryList = getMemoryCache<List<CMHistoryData>>(cacheKey, expired: false);
 //    print('getCMHistoryWidget, length=${_cmHistoryList.length}');
 
     List<Widget> children = <Widget>[];
@@ -101,8 +101,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   }
 
   List<Widget> getOrderStatusWidget() {
-    List<OrderStatusData> list = getMemoryCache<List<OrderStatusData>>(
-        cacheKey);
+    List<OrderStatusData> list = getMemoryCache<List<OrderStatusData>>(cacheKey, expired: false);
 
     List<Widget> children = <Widget>[];
 
@@ -110,7 +109,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       OrderStatusData f = list[i];
       children.add(SimpleButton(
         child: ListTile(
-              title: Text('操作人: ${f.changeby}'),
+              title: Text('操作人: ${f.changeby}', style: TextStyle(fontSize: 16.0),),
               subtitle: Text('时间: '+Func.getFullTimeString(f.statusdate)),
               trailing: Text(f.status),
             ),
@@ -132,12 +131,13 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   @override
   Widget build(BuildContext context) {
-    String key = cacheKey;
-    print(widget.data.toJson().toString());
+//    print('cacheKey:$cacheKey, data:${widget.data.toJson()}');
 
-    var data = getMemoryCache(key);
+    var data = getMemoryCache(cacheKey, callback: (){
+      _getHistory();
+    });
     if(data == null){
-      if(_first) _getHistory();
+//      if(_first) _getHistory();
       return Center(child: _first ? CircularProgressIndicator() : Text('没有发现历史记录')) ;
 
     }
@@ -229,12 +229,12 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   String  get cacheKey {
     OrderType type = getType();
     if(type == OrderType.XJ){
-      return 'history_xj_${widget.data.sopnum}';
+      return 'history_xj_${widget.data.wonum}_${widget.data.sopnum}';
     } else if(type == OrderType.CM){
       if(widget.data.actfinish != 0){
         return 'history_cm2_${widget.data.wonum}';
       }
-      return 'history_cm_${widget.data.assetnum}';
+      return 'history_cm_${widget.data.wonum}_${widget.data.assetnum}';
     }
 
     return '';
@@ -243,12 +243,16 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   @override
   void didUpdateWidget(RecentHistory oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(!_first) _getHistory();
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
 //    _getHistory();
     _first = false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

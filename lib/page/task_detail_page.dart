@@ -32,7 +32,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   OrderShortInfo _info;
   OrderType _type;
-  static OrderDetailData _data;
+  OrderDetailData _data;
 
   int _tabIndex = 0;
 
@@ -45,7 +45,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   @override
   void initState() {
     super.initState();
-    _data = null;
   }
 
 
@@ -146,18 +145,17 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   }
 
   Widget _getBody2(){
-
     Widget widget = Container();
     switch (_tabIndex){
       case 0:
-        widget = RecentHistory(data: _data,);
+        widget = new RecentHistory(data: _data,);
         break;
       case 1:
-        widget = StepList(key: _stepKey, data: _data,);
+        widget = new StepList(key: _stepKey, data: _data,);
         break;
       case 2:
       case 3:
-        widget = PeopleAndMaterialList(isPeople: _tabIndex == 2,);
+        widget = new PeopleAndMaterialList(isPeople: _tabIndex == 2,);
         break;
     }
 
@@ -213,9 +211,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           Text('联系电话: ${_data?.phone ?? ''}'),
         ]);
       }
-
-
-
 
 //      list.add(Text('站点编号: ${_data?.lead ?? ''}'));
 
@@ -440,5 +435,4 @@ enum OrderPostStyle {
   Post,
   Redirect,
   Refresh
-
 }

@@ -84,7 +84,7 @@ class _StepPageState extends State<StepPage>{
       widget.data.remark = _controller.text;
       widget.data.executor = getModel(context).user.displayname;
 
-      List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey);
+      List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
 
       if(widget.index < data.length){
         data[widget.index] = widget.data;
