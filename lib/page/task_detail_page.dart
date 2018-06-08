@@ -50,9 +50,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   }
 
 
-  Future _getOrderDetail() async{
+  Future _getOrderDetail({bool force = false}) async{
     try{
-      final response = await getApi(context).orderDetail(_info.wonum, _data?.changedate);
+      final response = await getApi(context).orderDetail(_info.wonum, force ? 0: _data?.changedate);
       OrderDetailResult result = new OrderDetailResult.fromJson(response);
       if(result.code != 0){
         Func.showMessage(result.message);
@@ -356,7 +356,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           _show = true;
         });
 
-        _getOrderDetail();
+        _getOrderDetail(force: true);
         return;
     }
 

@@ -213,16 +213,16 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       } else {
 
       }
+      if(mounted){
+        setState(() {
+
+        });
+      }
     } catch (e){
       print (e);
       Func.showMessage('网络出现异常: 获取巡检历史失败');
     }
 
-    if(mounted){
-      setState(() {
-
-      });
-    }
 
   }
 
