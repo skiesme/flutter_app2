@@ -3,10 +3,6 @@ import 'package:meta/meta.dart';
 
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
-import 'package:samex_app/model/order_list.dart';
-import 'package:samex_app/model/order_detail.dart';
-import 'package:samex_app/model/history.dart';
-import 'package:samex_app/model/steps.dart';
 
 import 'package:samex_app/data/sembast.dart';
 
@@ -95,6 +91,19 @@ void setMemoryCache<T>(String key, T data){
   _memoryCache[key] = cache;
 }
 
+void clearMemoryCacheWithKeys(String key){
+  if(key == null || key.isEmpty) return;
+  _memoryCache.forEach((String key2, TimeCache t) {
+    if(key2.contains(key)){
+      t.time = 0;
+    }
+  });
+}
+
+void clearMemoryCache(){
+  _memoryCache.clear();
+}
+
 class GlobListeners {
 
   Map<String, Map<int, CallBackListener>> _listeners2 = new Map<String,
@@ -150,9 +159,8 @@ class GlobListeners {
 }
 
 class RootModel {
-  RootModel({this.userName, this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new Sembast();
+  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new Sembast();
 
-  String userName;
   String token;
 
   UserInfo user;

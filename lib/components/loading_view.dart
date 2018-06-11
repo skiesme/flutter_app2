@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LoadingView extends StatelessWidget {
@@ -10,27 +11,27 @@ class LoadingView extends StatelessWidget {
   WillPopCallback _onWillPop(BuildContext context) {
     if(show == false || !confirm) return null;
     return (){
-//      return Future.value(false);
-       showDialog(
-        context: context,
-        builder:(BuildContext context)=> new AlertDialog(
-          title: new Text('警告'),
-          content: new Text('强行取消提交容易出现异常, 请谨慎操作'),
-          actions: <Widget>[
-            new FlatButton(
-              onPressed: () {
-                Navigator.of(context).pop(false);
-                Navigator.of(context).pop(false);
-              },
-              child: new Text('退出'),
-            ),
-            new FlatButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: new Text('我点错了', style: TextStyle(color: Colors.redAccent),),
-            ),
-          ],
-        ),
-      ) ?? false;
+      return Future.value(false);
+//       showDialog(
+//        context: context,
+//        builder:(BuildContext context)=> new AlertDialog(
+//          title: new Text('警告'),
+//          content: new Text('强行取消提交容易出现异常, 请谨慎操作'),
+//          actions: <Widget>[
+//            new FlatButton(
+//              onPressed: () {
+//                Navigator.of(context).pop(false);
+//                Navigator.of(context).pop(false);
+//              },
+//              child: new Text('退出'),
+//            ),
+//            new FlatButton(
+//              onPressed: () => Navigator.of(context).pop(true),
+//              child: new Text('我点错了', style: TextStyle(color: Colors.redAccent),),
+//            ),
+//          ],
+//        ),
+//      ) ?? false;
     };
 
   }

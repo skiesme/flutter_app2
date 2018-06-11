@@ -29,6 +29,8 @@ class UserInfo {
   String icon;
   String defsite;
   String description;
+  String title;
+  String department;
   int orders;
   Permission permission;
 
@@ -38,6 +40,8 @@ class UserInfo {
         this.defsite,
         this.description,
         this.orders,
+        this.title,
+        this.department,
         this.permission});
 
   UserInfo.fromJson(Map<String, dynamic> json) {
@@ -46,6 +50,8 @@ class UserInfo {
     defsite = json['defsite'];
     description = json['description'];
     orders = json['orders'];
+    title = json['title'] ??'';
+    department = json['department'] ??'';
     permission = json['permission'] != null
         ? new Permission.fromJson(json['permission'])
         : null;
@@ -58,6 +64,8 @@ class UserInfo {
     data['defsite'] = this.defsite;
     data['description'] = this.description;
     data['orders'] = this.orders;
+    data['title'] = this.title;
+    data['department'] = this.department;
     if (this.permission != null) {
       data['permission'] = this.permission.toJson();
     }

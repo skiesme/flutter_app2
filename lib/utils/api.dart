@@ -54,6 +54,20 @@
       return response.data;
     }
 
+    Future<Map> submit({String assigncode = "", int ownerid = 0, String notes = "", String actionid=""}) async{
+      final data = json.encode({
+        'assigncode': assigncode,
+        'ownerid': ownerid,
+        "notes": notes,
+        "actionid": actionid
+      });
+      print('submit post: $data');
+
+      Response response =  await _dio.post(baseUrl+'/workflow/submit', data: data, options: _options());
+      print('submit: ${response.data}');
+      return response.data;
+    }
+
     Future<UserInfo> user([bool onlyCount = false]) async {
 
       UserInfo info;
@@ -150,7 +164,7 @@
       return response.data;
     }
 
-    Future<Map> OrderStatus(String wonum) async {
+    Future<Map> orderStatus(String wonum) async {
       Uri uri = new Uri.http(ipAndPort, '/app/api/status/order/$wonum');
 
       Response response = await _dio.get(uri.toString(), options: _options());

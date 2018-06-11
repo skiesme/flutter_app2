@@ -47,6 +47,7 @@ class _LoginPageState extends State<LoginPage> {
         _controller2.clear();
         Func.showMessage(result.message);
       } else {
+        getModel(context).user = null;
         Cache.instance.setStringValue(KEY_USERNAME, _controller.text);
         Cache.instance.setStringValue(KEY_TOKEN, result.response.accessToken);
 

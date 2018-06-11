@@ -366,7 +366,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
             new MaterialPageRoute(builder:(_) =>  new OrderPostPage(id: _data.ownerid, action: f, wonum: _data.wonum)));
 
         if(result != null) {
-          _getOrderDetail();
+          clearMemoryCacheWithKeys(_data.wonum);
+
+          Navigator.pop(context, 'done');
         }
       }
     });

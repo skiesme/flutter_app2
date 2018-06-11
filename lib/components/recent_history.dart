@@ -188,7 +188,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
           }
         } else if(type == OrderType.CM){
           if(data.actfinish != 0) {
-            Map response = await getApi(context).OrderStatus(data.wonum);
+            Map response = await getApi(context).orderStatus(data.wonum);
             OrderStatusResult result = new OrderStatusResult.fromJson(response);
 
             if (result.code != 0) {

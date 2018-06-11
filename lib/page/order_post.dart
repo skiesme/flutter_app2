@@ -3,6 +3,8 @@ import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/func.dart';
+import 'package:samex_app/model/user.dart';
+import 'package:samex_app/utils/cache.dart';
 
 class OrderPostPage extends StatefulWidget {
 
@@ -28,6 +30,40 @@ class _OrderPostPageState extends State<OrderPostPage> {
     _controller = new TextEditingController();
   }
 
+  void _submit() async {
+    setState(() {
+      _show = true;
+    });
+
+    try {
+      Map response = await getModel(context).api.submit(
+        assigncode: _assigncode?? Cache.instance.userName,
+        actionid: widget.action.actionid,
+        notes:  _controller.text,
+        ownerid: widget.id
+      );
+
+      UserResult result = new UserResult.fromJson(response);
+      if(result.code != 0){
+        Func.showMessage(result.message);
+
+      } else {
+        Navigator.pop(context, 'done');
+        Func.showMessage('提交成功');
+      }
+
+    } catch (e){
+
+    }
+
+    if(mounted){
+      setState(() {
+        _show = false;
+      });
+    }
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -38,7 +74,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
               icon: Icon(Icons.done),
               tooltip: '提交',
               onPressed: (){
-
+                  _submit();
               },
             )
           ],

@@ -22,7 +22,6 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return new RootModelWidget(
         model: new RootModel(
-            userName: Cache.instance.userName,
             token: Cache.instance.token,
             onTextScaleChanged: (double textScale){
               _key.currentState.setTextScale(textScale);
