@@ -38,9 +38,19 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   bool _canLoadMore = true;
 
   ScrollController _scrollController;
+
+  bool needAutoScroller;
+
   @override
   void afterFirstLayout(BuildContext context) {
     print('afterFirstLayout... type=${widget.type}');
+
+    if(_scrollController.initialScrollOffset > 0){
+      Future.delayed(new Duration(milliseconds: 100), () {
+        _scrollController.jumpTo(_scrollController.initialScrollOffset + 0.1);
+      });
+    }
+
     globalListeners.addListener(hashCode, (String query){
 
       if(query == force_scroller_head){
@@ -346,8 +356,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     return new Container(
         color: const Color(0xFFF0F0F0),
-        child: new Stack( children: children));
-
+        child: new Stack(children: children));
   }
 
   @override

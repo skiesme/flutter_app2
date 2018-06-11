@@ -367,8 +367,11 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
         if(result != null) {
           clearMemoryCacheWithKeys(_data.wonum);
-
+          if(getModel(context).user.orders > 0){
+            getModel(context).user.orders -= 1;
+          }
           Navigator.pop(context, 'done');
+
         }
       }
     });
