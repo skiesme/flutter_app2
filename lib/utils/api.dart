@@ -54,9 +54,9 @@
       return response.data;
     }
 
-    Future<Map> submit({String assigncode = "", int ownerid = 0, String notes = "", String actionid=""}) async{
+    Future<Map> submit({String assigncode, int ownerid = 0, String notes = "", String actionid=""}) async{
       final data = json.encode({
-        'assigncode': assigncode,
+        'assigncode': assigncode ??  Cache.instance.userName,
         'ownerid': ownerid,
         "notes": notes,
         "actionid": actionid
@@ -92,9 +92,19 @@
         Func.showMessage('网络出现异常: 获取用户数据失败!');
       }
 
-
       return info;
     }
+
+    Future<Map> userAll() async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/user/all');
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
 
     Future<int> orderCount() async {
       UserInfo info = await user(true);
@@ -209,6 +219,5 @@
       print('postXJ: ${response.data}');
       return response.data;
     }
-
 
   }

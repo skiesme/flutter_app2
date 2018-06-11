@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/components/loading_view.dart';
@@ -5,6 +6,8 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
+import 'package:samex_app/page/people_page.dart';
+import 'package:samex_app/model/people.dart';
 
 class OrderPostPage extends StatefulWidget {
 
@@ -21,6 +24,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
   bool _show = false;
   String _assigncode;
+  PeopleData _data;
   TextEditingController _controller;
 
   @override
@@ -31,13 +35,17 @@ class _OrderPostPageState extends State<OrderPostPage> {
   }
 
   void _submit() async {
+    Func.closeKeyboard(context);
+    await new Future.delayed(new Duration(milliseconds: 200), (){});
+
     setState(() {
       _show = true;
     });
 
+
     try {
       Map response = await getModel(context).api.submit(
-        assigncode: _assigncode?? Cache.instance.userName,
+        assigncode: _data?.hrid?? Cache.instance.userName,
         actionid: widget.action.actionid,
         notes:  _controller.text,
         ownerid: widget.id
@@ -66,6 +74,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    _assigncode = _data?.displayname;
     return new Scaffold(
         appBar: new AppBar(
           title: Text(widget.action.instruction ?? '提交工作流'),
@@ -79,7 +88,13 @@ class _OrderPostPageState extends State<OrderPostPage> {
             )
           ],
         ),
-
+//        floatingActionButton: new FloatingActionButton(
+//            child: Icon(Icons.done),
+//            backgroundColor: Colors.redAccent,
+//            tooltip: '提交',
+//            onPressed: (){
+//              _submit();
+//            }),
         body: new GestureDetector(
           onTap: (){
             Func.closeKeyboard(context);
@@ -94,8 +109,16 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     title: Text('流程指派'),
                     subtitle: Text(_assigncode?? '请选择人员'),
                     trailing: Icon(Icons.edit),
-                    onTap: (){
+                    onTap: () async{
+                        final  result = await Navigator.push(context,
+                          new MaterialPageRoute(builder: (_)=> PeoplePage(req: new RegExp(r'维修'),) )
+                        );
 
+                        if(result != null) {
+                          setState(() {
+                            _data = result;
+                          });
+                        }
                     },
                   ),
                   ListTile(

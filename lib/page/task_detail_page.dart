@@ -13,7 +13,7 @@ import 'package:samex_app/components/step_list.dart';
 import 'package:samex_app/components/people_material_list.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/page/attachment_page.dart';
-import 'package:samex_app/page/order_post.dart';
+import 'package:samex_app/page/order_post_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
