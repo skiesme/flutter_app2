@@ -25,20 +25,29 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
   bool _first = true;
 
-  Future<Null> gotoStep(String asset) async {
+  Future<Null> gotoStep(String asset, [int index = -1]) async {
     List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
 
 
     if(list !=null && widget.data != null){
+      final goo = (int i) async {
+        final result = await Navigator.push(context, new MaterialPageRoute(
+            builder: (_) => new StepPage(index: i, data: list[i], isTask: widget.data.actfinish == 0, isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,),
+            settings: new RouteSettings(name: StepPage.path)
+        ));
+        if(result != null) {
+          getSteps();
+        }
+      };
+
+      if(index > 0  && index < list.length){
+        goo(index);
+        return;
+      }
+      
       for(int i = 0, len = list.length; i< len; i++){
         if(asset == list[i].assetnum ){
-          final result = await Navigator.push(context, new MaterialPageRoute(
-              builder: (_) => new StepPage(index: i, data: list[i], isTask: widget.data.actfinish != 0,),
-              settings: new RouteSettings(name: StepPage.path)
-          ));
-          if(result != null) {
-            _getSteps();
-          }
+          goo(i);
           break;
         }
 
@@ -51,7 +60,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
   }
 
-  void _getSteps() async {
+  void getSteps() async {
     OrderDetailData data = widget.data;
     if(data != null){
       try{
@@ -81,10 +90,18 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     return 'stepsList_$key';
   }
 
+  int get  steps {
+    final list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
+    return list == null ? 0 : list.length;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+//    print('orderdata ; ${widget.data.toJson()}');
+
     List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, callback: (){
-      _getSteps();
+      getSteps();
     });
     if(list == null){
       if(_first) {
@@ -100,7 +117,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       OrderStep f = list[i];
       List<Widget> children2 = <Widget>[];
 
-      children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: f.status == null?  Style.primaryColor : Colors.grey),));
+      children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: (f.status == null || f.status.isEmpty)?  Style.primaryColor : Colors.grey),));
       children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
       children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
       children2.add(Text('状态: ${f.status??'未处理'}'));
@@ -109,8 +126,14 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       children.add(
           SimpleButton(
             padding: new EdgeInsets.only(top: 6.0),
+            onTap: () {
+              if(getOrderType(widget.data.worktype) == OrderType.CM){
+                gotoStep(f.assetnum, i);
+
+              }
+            },
             onDoubleTap: (){
-              gotoStep(f.assetnum);
+              gotoStep(f.assetnum, i);
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

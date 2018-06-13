@@ -14,7 +14,7 @@ import 'package:samex_app/components/people_material_list.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/page/attachment_page.dart';
 import 'package:samex_app/page/order_post_page.dart';
-
+import 'package:samex_app/page/step_new_page.dart';
 import 'package:after_layout/after_layout.dart';
 
 
@@ -116,6 +116,22 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   Widget _getHeader2(){
     List<Widget> children = <Widget>[];
 
+    final newButton = (String name, VoidCallback cb) {
+      return SimpleButton(
+        onTap: cb,
+        elevation: 4.0,
+        shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(4.0)),
+        padding: EdgeInsets.all(6.0),
+        color: Style.primaryColor,
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.add, color: Colors.white,size: 16.0,),
+            Text(name, style: TextStyle(color: Colors.white),)
+          ],
+        ),
+      );
+    };
+
     switch(_tabIndex){
       case 0:
         String str = (_type == OrderType.PM) ? '保养' :(_type == OrderType.CM ? '维修' : '巡检');
@@ -128,17 +144,37 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         break;
       case 1:
         children.add(Text('任务列表'));
-        if(_type != OrderType.XJ){
-          children.add(new RaisedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('新增任务')));
+        if(_type != OrderType.XJ && _data.actfinish == 0){
+          children.add(newButton('新增任务', () async {
+            if(_stepKey.currentState == null) return;
+            final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
+              return new StepNewPage(data: _data, number: _stepKey.currentState.steps + 1);
+            }));
+
+            if(result != null) {
+              _stepKey.currentState.getSteps();
+            }
+
+          }));
         }
         break;
       case 2:
         children.add(Text('人员列表'));
-        children.add(new RaisedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('新增人员')));
+        if(_data.actfinish == 0){
+          children.add(newButton('新增人员', (){
+
+          }));
+        }
+
         break;
       case 3:
         children.add(Text('物料列表'));
-        children.add(new RaisedButton.icon(onPressed: (){}, icon: Icon(Icons.add), label: Text('新增物料')));
+        if(_data.actfinish == 0){
+          children.add(newButton('新增物料', (){
+
+          }));
+        }
+
         break;
     }
 
@@ -362,6 +398,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
     _data.actions?.forEach((Actions f) async {
       if(f.actionid == style){
+
         final result = await Navigator.push(context,
             new MaterialPageRoute(builder:(_) =>  new OrderPostPage(id: _data.ownerid, action: f, wonum: _data.wonum)));
 

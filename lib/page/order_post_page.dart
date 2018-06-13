@@ -8,6 +8,7 @@ import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/page/people_page.dart';
 import 'package:samex_app/model/people.dart';
+import 'package:samex_app/model/steps.dart';
 
 class OrderPostPage extends StatefulWidget {
 
@@ -44,6 +45,23 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
 
     try {
+      if(widget.action.instruction == '完成报验收'){
+        Map response = await getApi(context).steps(sopnum: '', wonum: widget.wonum, site: Cache.instance.site);
+        StepsResult result = new StepsResult.fromJson(response);
+
+        if(result.code != 0){
+          Func.showMessage(result.message);
+        } else {
+          List<OrderStep> list = result.response.steps??[];
+          for(int i= 0, len = list.length ; i < len ; i++){
+            if(list[i].status == null || list[i].status.isEmpty){
+              throw(new Exception('发现未提交任务'));
+            }
+          }
+        }
+      }
+
+
       Map response = await getModel(context).api.submit(
         assigncode: _data?.hrid?? Cache.instance.userName,
         actionid: widget.action.actionid,
@@ -61,7 +79,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
       }
 
     } catch (e){
-
+      Func.showMessage('提交失败: ${e.toString()}');
     }
 
     if(mounted){

@@ -2,23 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
-import 'package:samex_app/model/people.dart';
+import 'package:samex_app/model/description.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/components/simple_button.dart';
+import 'package:samex_app/utils/assets.dart';
 
-class PeoplePage extends StatefulWidget {
+// 资产选择
+class ChooseAssetPage extends StatefulWidget {
 
-  final RegExp req;
-  PeoplePage({this.req});
+  final String location;
+
+  ChooseAssetPage({this.location});
 
   @override
-  _PeoplePageState createState() => _PeoplePageState();
+  _ChooseAssetPageState createState() => _ChooseAssetPageState();
 }
 
-class _PeoplePageState extends State<PeoplePage> {
-
+class _ChooseAssetPageState extends State<ChooseAssetPage> {
   TextEditingController _scroller;
   bool _loading = true;
+  bool _request = false;
 
   @override
   void initState() {
@@ -36,25 +39,36 @@ class _PeoplePageState extends State<PeoplePage> {
   Widget build(BuildContext context) {
 
     final list = getMemoryCache(cacheKey, callback: (){
-      _getUsers();
+      _getAsset();
     });
 
     if(list != null) _loading = false;
 
     return new Scaffold(
       appBar: new AppBar(
-        title: Text('人员选择'),
+        title: Text('资产选择'),
         actions: <Widget>[
           new IconButton(
               icon: Icon(Icons.refresh),
               tooltip: '数据刷新',
               onPressed: (){
                 if(!_loading){
-                  _getUsers();
+                  _getAsset();
                 }
               })
         ],
       ),
+      floatingActionButton: new FloatingActionButton(
+          child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
+          backgroundColor: Colors.redAccent,
+          onPressed: () async {
+            String result = await Func.scan();
+
+            if(result != null && result.isNotEmpty && result.length > 0){
+              _scroller.text = result;
+            }
+
+          }),
       body: new Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -65,7 +79,7 @@ class _PeoplePageState extends State<PeoplePage> {
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  hintText: "仅支持用户拼音搜索",
+                  hintText: "请输入资产号进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
@@ -83,18 +97,13 @@ class _PeoplePageState extends State<PeoplePage> {
     );
   }
 
-  List<PeopleData> _filters(List<PeopleData> data){
+  List<DescriptionData> _filters(List<DescriptionData> data){
     if(data == null) return null;
 
-    return data.where((PeopleData f) {
-      if(widget.req != null) {
-        bool req = widget.req.hasMatch(f.department);
-//        print('req = ${widget.req}, f.department=${f.department}, result=$req');
-        if(!req) return false;
-      }
+    return data.where((DescriptionData f) {
 
       if(_scroller.text.length > 0){
-        return  f.hrid.contains(_scroller.text.toUpperCase());
+        return  f.assetnum.contains(_scroller.text.toUpperCase());
       }
 
       return  true;
@@ -104,31 +113,32 @@ class _PeoplePageState extends State<PeoplePage> {
   }
 
   Widget _getContent(){
-    List<PeopleData> data = getMemoryCache(cacheKey, expired: false);
+    List<DescriptionData> data = getMemoryCache(cacheKey, expired: false);
 
     data = _filters(data);
 
     if(data == null || data.length == 0){
-      return Center(child: Text('没有可选择的人员'),);
+      return Center(child: Text('没有可选择的资产'),);
     }
 
     return new ListView.builder(
       shrinkWrap: true,
       itemCount: data.length,
       itemBuilder: (_, int index){
-        PeopleData people = data[index];
+        DescriptionData asset = data[index];
         return new Container(
             child: new Column(
               children: <Widget>[
                 SimpleButton(
 
                   child:ListTile(
-                    title: Text(people.displayname),
-                    subtitle: Text(people.title),
-                    trailing: Text(people.department),
+                    leading:CircleAvatar(child: Text('${index+1}'),),
+                    title: Text('${asset.assetnum}'),
+                    subtitle: Text('描述:${asset.description??''}'),
+                    trailing: Text('位置:${asset.locationDescription}'),
                   ),
                   onTap: (){
-                    Navigator.pop(context, people);
+                    Navigator.pop(context, asset);
                   },
                 ),
 
@@ -141,27 +151,36 @@ class _PeoplePageState extends State<PeoplePage> {
     );
   }
 
-  String get cacheKey => '__${Cache.instance.site}_peolple';
+  String get cacheKey => '__${Cache.instance.site}_assets';
 
-  void _getUsers() async {
+  void _getAsset({String asset='', int count = 50000, bool queryOne}) async {
+    if(_request) return;
     setState(() {
       _loading = true;
     });
     try{
-      Map response = await getModel(context).api.userAll();
-      PeopleResult result = new PeopleResult.fromJson(response);
+      _request = true;
+      Map response = await getModel(context).api.getAssets(
+        location: widget.location,
+        count: count,
+        queryOne: queryOne,
+        asset: asset
+      );
+      DescriptionResult result = new DescriptionResult.fromJson(response);
       if(result.code != 0) {
         Func.showMessage(result.message);
       } else {
-        setMemoryCache<List<PeopleData>>(cacheKey, result.response);
+        setMemoryCache<List<DescriptionData>>(cacheKey, result.response);
       }
 
     } catch (e){
-      setMemoryCache<List<PeopleData>>(cacheKey, getMemoryCache(cacheKey)??[]);
+      print (e);
+      setMemoryCache<List<DescriptionData>>(cacheKey, getMemoryCache(cacheKey)??[]);
 
-      Func.showMessage('网络异常, 请求人员接口失败');
+      Func.showMessage('网络异常, 请求资产接口失败');
     }
 
+    _request = false;
     if(mounted){
       setState(() {
         _loading = false;

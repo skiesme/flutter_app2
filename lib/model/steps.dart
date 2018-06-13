@@ -242,9 +242,9 @@ class OrderStep {
         this.assetnum,
         this.assetDescription,
         this.status='',
-        this.statusdate,
-        this.remark,
-        this.executor,
+        this.statusdate=0,
+        this.remark='',
+        this.executor='',
         this.images});
 
   OrderStep.fromJson(Map<String, dynamic> json) {

@@ -191,7 +191,7 @@
 
       Map<String, dynamic> formData = step.toJson();
 
-      print('${uri.toString()}: ${formData.toString()}');
+      print('${uri.toString()}: ${formData.toString()}, length=${files?.length}');
 
       request.fields.addAll(formData);
 
@@ -217,6 +217,39 @@
     Future<Map> postXJ(String woNum) async {
       Response response =  await _dio.post(baseUrl+'/order/xj/$woNum', options: _options());
       print('postXJ: ${response.data}');
+      return response.data;
+    }
+
+    Future<Map> getAssets({String location='', int count = 50, bool queryOne = false, String asset='' }) async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/assetnums',{
+        'location': location,
+        'asset': asset,
+        'queryOne':'${queryOne??''}',
+        'count': '$count'
+      });
+
+      print(uri.toString());
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
+    Future<Map> getLocations({String location='', int count = 50, bool queryOne}) async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/locations',{
+        'location': location,
+        'queryOne':'$queryOne',
+        'count': '$count'
+      });
+
+      print(uri.toString());
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
       return response.data;
     }
 

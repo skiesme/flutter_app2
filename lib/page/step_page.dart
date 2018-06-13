@@ -30,10 +30,11 @@ class StepPage extends StatefulWidget {
   final int index;
   final OrderStep data;
   final bool isTask;
+  final bool isXJ;
 
   static const String path = '/StepPage';
 
-  StepPage({@required this.index, @required this.data, @required this.isTask});
+  StepPage({@required this.index, @required this.data, @required this.isTask, this.isXJ = true});
 
 
   @override
@@ -255,9 +256,10 @@ class _StepPageState extends State<StepPage>{
               ),
             ),)),
           widget.isTask ? new Positioned(left: 0.0, bottom: 20.0, right: 0.0, child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment:  MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
+            children:
+            widget.isXJ ? <Widget>[
               RaisedButton(
                 child: Text('异常报修', style: TextStyle(color: Colors.white),),
                 color: Colors.redAccent,
@@ -272,6 +274,15 @@ class _StepPageState extends State<StepPage>{
                   _postStep();
                 },
               )
+            ]
+                :
+            <Widget>[
+              RaisedButton(
+                  child: Text('提交保存', style: TextStyle(color: Colors.white),),
+                  color: Style.primaryColor,
+                  onPressed: () async{
+                    _postStep();
+                  }),
             ],
           )) : Positioned(left: 0.0, bottom: 0.0, right: 0.0, child: Text('')),
         ],
