@@ -142,7 +142,7 @@ class Actions {
   String sequence;
   String instruction;
 
-  Actions({this.actionid, this.isdefault, this.sequence, this.instruction});
+  Actions({this.actionid, this.isdefault, this.sequence, this.instruction = ''});
 
   Actions.fromJson(Map<String, dynamic> json) {
     actionid = json['actionid'];

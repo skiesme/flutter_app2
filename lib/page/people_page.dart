@@ -18,7 +18,7 @@ class PeoplePage extends StatefulWidget {
 class _PeoplePageState extends State<PeoplePage> {
 
   TextEditingController _scroller;
-  bool _loading = false;
+  bool _loading = true;
 
   @override
   void initState() {
@@ -35,6 +35,12 @@ class _PeoplePageState extends State<PeoplePage> {
   @override
   Widget build(BuildContext context) {
 
+    final list = getMemoryCache(cacheKey, callback: (){
+      _getUsers();
+    });
+
+    if(list != null) _loading = false;
+
     return new Scaffold(
       appBar: new AppBar(
         title: Text('人员选择'),
@@ -43,7 +49,9 @@ class _PeoplePageState extends State<PeoplePage> {
               icon: Icon(Icons.refresh),
               tooltip: '数据刷新',
               onPressed: (){
-                _getUsers();
+                if(!_loading){
+                  _getUsers();
+                }
               })
         ],
       ),
@@ -68,7 +76,7 @@ class _PeoplePageState extends State<PeoplePage> {
               ),
             ),
           ),
-          Expanded(child:_loading ? Center(child: CircularProgressIndicator(),) : _getContent(),)
+          Expanded(child: _loading ? Center(child: CircularProgressIndicator(),) : _getContent(),)
 
         ],
       ),
@@ -96,9 +104,7 @@ class _PeoplePageState extends State<PeoplePage> {
   }
 
   Widget _getContent(){
-    List<PeopleData> data = getMemoryCache(cacheKey, callback: (){
-      _getUsers();
-    });
+    List<PeopleData> data = getMemoryCache(cacheKey, expired: false);
 
     data = _filters(data);
 
@@ -122,7 +128,7 @@ class _PeoplePageState extends State<PeoplePage> {
                     trailing: Text(people.department),
                   ),
                   onTap: (){
-                      Navigator.pop(context, people);
+                    Navigator.pop(context, people);
                   },
                 ),
 
@@ -138,9 +144,9 @@ class _PeoplePageState extends State<PeoplePage> {
   String get cacheKey => '__${Cache.instance.site}_peolple';
 
   void _getUsers() async {
-    if(_loading) return;
-    _loading = true;
-
+    setState(() {
+      _loading = true;
+    });
     try{
       Map response = await getModel(context).api.userAll();
       PeopleResult result = new PeopleResult.fromJson(response);
@@ -148,15 +154,16 @@ class _PeoplePageState extends State<PeoplePage> {
         Func.showMessage(result.message);
       } else {
         setMemoryCache<List<PeopleData>>(cacheKey, result.response);
-        setState(() {
-
-        });
       }
 
     } catch (e){
       Func.showMessage('网络异常, 请求人员接口失败');
     }
 
-    _loading = false;
+    if(mounted){
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 }

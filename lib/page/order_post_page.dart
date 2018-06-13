@@ -105,8 +105,8 @@ class _OrderPostPageState extends State<OrderPostPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  ListTile(
-                    title: Text('流程指派'),
+                  widget.action.instruction.contains(new RegExp(r'[责任人|指派]')) ?  ListTile(
+                    title: Text('指派工单负责人'),
                     subtitle: Text(_assigncode?? '请选择人员'),
                     trailing: Icon(Icons.edit),
                     onTap: () async{
@@ -120,7 +120,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                           });
                         }
                     },
-                  ),
+                  ) : Container(),
                   ListTile(
                     title:Text('工单编号'),
                     subtitle: Text(widget.wonum),
