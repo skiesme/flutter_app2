@@ -33,12 +33,14 @@ class PeopleData {
   int statusdate;
   String title;
   String department;
+  String trade;
 
   PeopleData(
       {this.hrid,
         this.displayname,
         this.statusdate,
         this.title,
+        this.trade,
         this.department});
 
   PeopleData.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,7 @@ class PeopleData {
     statusdate = json['statusdate'];
     title = json['title'];
     department = json['department'];
+    trade = json['trade'];
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +59,7 @@ class PeopleData {
     data['statusdate'] = this.statusdate;
     data['title'] = this.title;
     data['department'] = this.department;
+    data['trade'] = this.trade;
     return data;
   }
 }

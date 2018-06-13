@@ -45,7 +45,9 @@ class _StepNewPageState extends State<StepNewPage> {
           Expanded(child: content)
         ],
       ),
-      decoration: new BoxDecoration(border: new Border(
+      decoration: new BoxDecoration(
+        color: Colors.white,
+          border: new Border(
           bottom: Divider.createBorderSide(context, width: 1.0)
       )),
     );
@@ -130,7 +132,6 @@ class _StepNewPageState extends State<StepNewPage> {
           child:  LoadingView(
             show: _show,
             child: Container(
-              padding: EdgeInsets.all(8.0),
               color: Style.backgroundColor,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

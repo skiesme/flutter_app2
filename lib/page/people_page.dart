@@ -123,6 +123,7 @@ class _PeoplePageState extends State<PeoplePage> {
                 SimpleButton(
 
                   child:ListTile(
+
                     title: Text(people.displayname),
                     subtitle: Text(people.title),
                     trailing: Text(people.department),
