@@ -8,6 +8,7 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/page/step_page.dart';
+import 'package:samex_app/page/step_new_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -56,11 +57,20 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         }
       }
     }
-
-
   }
 
-  void getSteps() async {
+  Future<Null> gotoStep2(int index) async {
+    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
+
+    OrderStep step = list[index];
+    final result = await Navigator.push(context, new MaterialPageRoute(builder: (_)=> new StepNewPage(step: step)));
+    if(result != null) {
+      getSteps();
+    }
+  }
+
+
+    void getSteps() async {
     OrderDetailData data = widget.data;
     if(data != null){
       try{
@@ -96,6 +106,14 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   }
 
 
+  bool _isModify(OrderStep f){
+    if(getOrderType(widget.data?.worktype) == OrderType.CM){
+      return false;
+    } else {
+      return (f.status == null || f.status.isEmpty);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 //    print('orderdata ; ${widget.data.toJson()}');
@@ -117,10 +135,13 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       OrderStep f = list[i];
       List<Widget> children2 = <Widget>[];
 
-      children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: (f.status == null || f.status.isEmpty)?  Style.primaryColor : Colors.grey),));
+      children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: _isModify(f) ?  Style.primaryColor : Colors.grey),));
       children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
       children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
-      children2.add(Text('状态: ${f.status??'未处理'}'));
+
+      if(getOrderType(widget.data?.worktype) != OrderType.CM){
+        children2.add(Text('状态: ${f.status??'未处理'}'));
+      }
       children2.add(Divider(height: 1.0,));
 
       children.add(
@@ -128,12 +149,13 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
             padding: new EdgeInsets.only(top: 6.0),
             onTap: () {
               if(getOrderType(widget.data.worktype) == OrderType.CM){
-                gotoStep(f.assetnum, i);
-
+                gotoStep2(i);
               }
             },
             onDoubleTap: (){
-              gotoStep(f.assetnum, i);
+              if(getOrderType(widget.data.worktype) != OrderType.CM) {
+                gotoStep(f.assetnum, i);
+              }
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

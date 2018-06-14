@@ -16,6 +16,7 @@ import 'package:samex_app/page/attachment_page.dart';
 import 'package:samex_app/page/order_post_page.dart';
 import 'package:samex_app/page/step_new_page.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:samex_app/model/steps.dart';
 
 
 class TaskDetailPage extends StatefulWidget {
@@ -148,7 +149,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           children.add(newButton('新增任务', () async {
             if(_stepKey.currentState == null) return;
             final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
-              return new StepNewPage(data: _data, number: _stepKey.currentState.steps + 1);
+              return new StepNewPage(step: new OrderStep(
+                stepno: (_stepKey.currentState.steps + 1) * 10,
+                assetnum: _data.assetnum,
+                assetDescription: _data.assetDescription,
+                executor: getModel(context).user?.displayname,
+                wonum: _data.wonum
+              ));
             }));
 
             if(result != null) {
@@ -469,7 +476,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
               ] : null,
             ),
             body: _info== null? Text(''): _getBody(),
-            floatingActionButton: _tabIndex == 1 ? new FloatingActionButton(
+            floatingActionButton: _tabIndex == 1 && getOrderType(_info?.worktype) != OrderType.CM ? new FloatingActionButton(
                 child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
                 backgroundColor: Colors.redAccent,
                 onPressed: () async {
