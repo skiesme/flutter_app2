@@ -219,10 +219,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
               child: _getHeader2(),
             ),
             Divider(height: 1.0,),
-            new Padding(
-              padding: Style.pagePadding2,
-              child: widget,
-            ),
+            widget,
           ]),
     );
   }

@@ -117,7 +117,7 @@ class _StepNewPageState extends State<StepNewPage> {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: Text('新增任务'),
+          title: Text(_controller.text.isEmpty ? '新增任务':'任务填写'),
         ),
 
         body: new GestureDetector(

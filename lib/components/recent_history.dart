@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:samex_app/utils/func.dart';
@@ -10,6 +9,7 @@ import 'package:samex_app/model/cm_history.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/page/task_detail_page.dart';
 import 'package:samex_app/model/order_status.dart';
+import 'package:samex_app/utils/style.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -38,7 +38,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     for (int i = 0, len = _historyList.length; i < len; i++) {
       HistoryData f = _historyList[i];
       children.add(SimpleButton(child: new Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
+        padding: Style.pagePadding,
         child: Row(
             children: <Widget>[
               Text('记录:'),
@@ -77,7 +77,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       CMHistoryData f = _cmHistoryList[i];
       children.add(SimpleButton(
         child: new Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          padding: Style.pagePadding,
           child: Row(
               children: <Widget>[
                 Text('记录:'),
@@ -108,19 +108,12 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     for (int i = 0, len = list.length; i < len; i++) {
       OrderStatusData f = list[i];
       children.add(SimpleButton(
+        padding: Style.pagePadding,
         child: ListTile(
               title: Text('操作人: ${f.changeby}', style: TextStyle(fontSize: 16.0),),
               subtitle: Text('时间: '+Func.getFullTimeString(f.statusdate)),
               trailing: Text(f.status),
             ),
-//          child: Row(
-//              children: <Widget>[
-//                Text('记录:'),
-//                Text(f.changeby),
-//                Expanded(child: Text(Func.getFullTimeString(f.statusdate),
-//                  textAlign: TextAlign.center,)),
-//                Text(f.status),
-//              ]
           ),
       );
       children.add(Divider(height: 1.0,));

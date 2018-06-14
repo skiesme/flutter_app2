@@ -142,11 +142,10 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       if(getOrderType(widget.data?.worktype) != OrderType.CM){
         children2.add(Text('状态: ${f.status??'未处理'}'));
       }
-      children2.add(Divider(height: 1.0,));
 
       children.add(
           SimpleButton(
-            padding: new EdgeInsets.only(top: 6.0),
+            padding: Style.pagePadding,
             onTap: () {
               if(getOrderType(widget.data.worktype) == OrderType.CM){
                 gotoStep2(i);
@@ -161,6 +160,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: children2,
             ),));
+      children.add(Divider(height: 1.0,));
+
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
