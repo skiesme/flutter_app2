@@ -5,10 +5,13 @@ import 'package:meta/meta.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/model/steps.dart';
+import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/components/picture_list.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:dio/dio.dart';
+import 'package:samex_app/page/order_new_page.dart';
+
 
 final List<_StatusSelect> _statusList = <_StatusSelect>[
   _StatusSelect(0, '正常'),
@@ -31,10 +34,11 @@ class StepPage extends StatefulWidget {
   final OrderStep data;
   final bool isTask;
   final bool isXJ;
+  final OrderDetailData info;
 
   static const String path = '/StepPage';
 
-  StepPage({@required this.index, @required this.data, @required this.isTask, this.isXJ = true});
+  StepPage({@required this.index, @required this.data, @required this.isTask, this.isXJ = true, this.info});
 
 
   @override
@@ -56,7 +60,7 @@ class _StepPageState extends State<StepPage>{
     }
   }
 
-  void _postStep() async {
+  void _postStep([bool newOrder = false]) async {
     if(_status.isEmpty || widget.data == null){
       Func.showMessage('请先配置状态再提交');
       return;
@@ -106,8 +110,27 @@ class _StepPageState extends State<StepPage>{
             Func.showMessage(result.message);
           } else {
             Func.showMessage('提交成功');
-            Navigator.popUntil(context, ModalRoute.withName(StepPage.path));
-            Navigator.pop(context, true);
+            if(!newOrder){
+              Navigator.popUntil(context, ModalRoute.withName(StepPage.path));
+              Navigator.pop(context, true);
+            } else {
+              Navigator.pushReplacement(context, new MaterialPageRoute( builder:
+                (_) {
+                  print('${widget.info.toJson().toString()}');
+
+                  return new OrderNewPage(
+                    data: new OrderPostData(
+                      description: widget.data.description+' '+_status,
+                      assetnum: widget.data.assetnum,
+                      location: widget.info?.location,
+                      locationDescription: widget.info?.locationDescription,
+                      assetDescription: widget.data.assetDescription,
+                      images: result.response.images
+                    )
+                  );
+              }));
+            }
+
             return;
           }
         } catch (e){
@@ -264,7 +287,11 @@ class _StepPageState extends State<StepPage>{
                 child: Text('异常报修', style: TextStyle(color: Colors.white),),
                 color: Colors.redAccent,
                 onPressed: (){
-
+                  if(_status == '正常'){
+                    Func.showMessage('正常状态不需要报修');
+                    return;
+                  }
+                  _postStep(true);
                 },
               ),
               RaisedButton(

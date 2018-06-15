@@ -33,7 +33,12 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     if(list !=null && widget.data != null){
       final goo = (int i) async {
         final result = await Navigator.push(context, new MaterialPageRoute(
-            builder: (_) => new StepPage(index: i, data: list[i], isTask: widget.data.actfinish == 0, isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,),
+            builder: (_) => new StepPage(
+              index: i,
+              data: list[i],
+              info: widget.data,
+              isTask: widget.data.actfinish == 0,
+              isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,),
             settings: new RouteSettings(name: StepPage.path)
         ));
         if(result != null) {

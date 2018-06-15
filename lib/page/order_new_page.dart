@@ -31,14 +31,15 @@ class OrderPostData {
   String reportedby;
   String assetDescription;
   String locationDescription;
-  String images;
+  List<String> images;
+
+  OrderPostData({this.images, this.description, this.assetnum, this.assetDescription, this.location, this.locationDescription});
 }
 
 class _OrderNewPageState extends State<OrderNewPage> {
   bool _show = false;
 
   OrderPostData _data;
-  List<String> _images;
   GlobalKey<PictureListState> _key = new GlobalKey<PictureListState>();
   CalculationManager _manager;
 
@@ -50,11 +51,11 @@ class _OrderNewPageState extends State<OrderNewPage> {
   void initState() {
     super.initState();
 
+
+
     _data = widget.data ?? new OrderPostData();
     _controller =
         new TextEditingController(text: widget.data?.description ?? '');
-
-    _images = _data.images?.split(',');
 
     _manager?.stop();
   }
@@ -101,11 +102,11 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
     try {
       List<String> origin = new List();
-      origin.addAll(_images ?? []);
+      origin.addAll(_data.images ?? []);
 
       String images = '';
-      for (int i = 0, len = _images?.length ?? 0; i < len; i++) {
-        images += _images[i];
+      for (int i = 0, len = _data.images?.length ?? 0; i < len; i++) {
+        images += _data.images[i];
         if (i != len - 1) {
           images += ',';
         }
@@ -136,8 +137,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
             return;
           }
         } catch (e) {
-          _images?.clear();
-          _images?.addAll(origin);
+          _data.images?.clear();
+          _data.images?.addAll(origin);
           print(e);
           Func.showMessage('出现异常, 新建工单失败');
         }
@@ -341,7 +342,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                   preText: '照片:',
                                   content: PictureList(
                                     canAdd: true,
-                                    images: _images,
+                                    images: _data.images,
                                     key: _key,
                                   )),
                               _getMenus(

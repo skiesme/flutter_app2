@@ -199,12 +199,14 @@ class StepsResult {
 
 class StepsData {
   int changedate;
+  List<String> images;
   List<OrderStep> steps;
 
   StepsData({this.changedate, this.steps});
 
   StepsData.fromJson(Map<String, dynamic> json) {
     changedate = json['changedate'];
+    images = json['images']?.cast<String>() ?? [];
     if (json['steps'] != null) {
       steps = new List<OrderStep>();
       json['steps'].forEach((v) {
