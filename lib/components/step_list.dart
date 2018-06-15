@@ -12,6 +12,7 @@ import 'package:samex_app/page/step_new_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
+
 class StepList extends StatefulWidget {
 
   StepList({Key key, @required this.data}) : super(key:key);
@@ -22,7 +23,6 @@ class StepList extends StatefulWidget {
 }
 
 class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
-
 
   bool _first = true;
 
@@ -45,7 +45,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         goo(index);
         return;
       }
-      
+
       for(int i = 0, len = list.length; i< len; i++){
         if(asset == list[i].assetnum ){
           goo(i);
@@ -63,14 +63,15 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
 
     OrderStep step = list[index];
-    final result = await Navigator.push(context, new MaterialPageRoute(builder: (_)=> new StepNewPage(step: step)));
+    final result = await Navigator.push(context, new MaterialPageRoute(
+        builder: (_)=> new StepNewPage(step: step, read: widget.data.actfinish != 0,)));
     if(result != null) {
       getSteps();
     }
   }
 
 
-    void getSteps() async {
+  void getSteps() async {
     OrderDetailData data = widget.data;
     if(data != null){
       try{
@@ -123,9 +124,15 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     });
     if(list == null){
       if(_first) {
-        return Center(child: CircularProgressIndicator());
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(child: CircularProgressIndicator()),
+        );
       } else {
-        return Center(child: Text('没有发现步骤'));
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(child: Text('没有发现步骤')),
+        );
       }
 
     }
@@ -169,6 +176,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     );
 
   }
+
 
   @override
   void afterFirstLayout(BuildContext context) {

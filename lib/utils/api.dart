@@ -7,6 +7,7 @@
   import 'package:samex_app/model/steps.dart';
   import 'package:samex_app/utils/func.dart';
   import 'package:samex_app/model/user.dart';
+  import 'package:samex_app/model/work_time.dart';
 
   import 'package:http/http.dart' as http;
 
@@ -253,4 +254,27 @@
       return response.data;
     }
 
+    Future<Map> getWorkTime(String wonum) async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/worktime/$wonum');
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
+    Future<Map> postWorkTime(WorkTimeData params) async {
+      Response response =  await _dio.post(baseUrl+'/worktime',
+          data: json.encode(params.toJson()), options: _options());
+      print('postWorkTime: ${response.data}');
+      return response.data;
+    }
+
+    Future<Map> delWorkTime(int id) async {
+      Response response =  await _dio.delete(baseUrl+'/worktime/$id', options: _options());
+      print('delWorkTime: ${response.data}');
+      return response.data;
+    }
+    
   }

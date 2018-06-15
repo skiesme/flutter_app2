@@ -11,8 +11,9 @@ import 'package:samex_app/model/steps.dart';
 class StepNewPage extends StatefulWidget {
 
   final OrderStep step;
+  final bool read;
 
-  StepNewPage({@required this.step});
+  StepNewPage({@required this.step, @required this.read = false});
 
   @override
   _StepNewPageState createState() => _StepNewPageState();
@@ -64,22 +65,19 @@ class _StepNewPageState extends State<StepNewPage> {
   void dispose() {
     super.dispose();
     _controller?.dispose();
+    _controller2?.dispose();
+
   }
 
   void postStep() async{
     Func.closeKeyboard(context);
-    print('postStep : ${_controller.text}');
+//    print('postStep : ${_controller.text}');
 
     if(_controller.text == null || _controller.text.length == 0){
 
       Func.showMessage('请填写任务描述再提交');
       return;
     }
-
-//    if(_assetNum.isEmpty || _description.isEmpty){
-//      Func.showMessage('请选择资产再提交');
-//      return;
-//    }
 
     setState(() {
       _show = true;
@@ -140,6 +138,7 @@ class _StepNewPageState extends State<StepNewPage> {
                           _getMenus(preText: '描述:', content: TextField(
                             controller: _controller,
                             maxLines: 3,
+                            enabled: !widget.read,
                             decoration: new InputDecoration.collapsed(
                               hintText: '请输入任务描述',
                             ),
@@ -152,6 +151,7 @@ class _StepNewPageState extends State<StepNewPage> {
                               content: SimpleButton(
                                   padding: EdgeInsets.symmetric(vertical: 8.0),
                                   onTap: () async {
+                                    if(widget.read) return;
                                     final DescriptionData result = await Navigator.push(context,
                                       new MaterialPageRoute(
                                           builder:(_)=> new ChooseAssetPage())
@@ -177,6 +177,7 @@ class _StepNewPageState extends State<StepNewPage> {
                           _getMenus(preText: '备注:', content: TextField(
                             controller: _controller2,
                             maxLines: 3,
+                            enabled: !widget.read,
                             decoration: new InputDecoration.collapsed(
                               hintText: '请输入备注',
                             ),
@@ -190,7 +191,8 @@ class _StepNewPageState extends State<StepNewPage> {
                       ),
                     ),
                   ),
-                  Material(
+
+                  widget.read ? Container() : Material(
                     elevation: 6.0,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

@@ -17,7 +17,8 @@ import 'package:samex_app/page/order_post_page.dart';
 import 'package:samex_app/page/step_new_page.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/model/steps.dart';
-
+import 'package:samex_app/model/work_time.dart';
+import 'package:samex_app/page/work_time_page.dart';
 
 class TaskDetailPage extends StatefulWidget {
 
@@ -43,6 +44,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   bool _show = false;
 
   GlobalKey<StepListState> _stepKey = new GlobalKey<StepListState>();
+  GlobalKey<PeopleAndMaterialListState> _peopleAndMaterialKey = new GlobalKey<PeopleAndMaterialListState>();
 
   @override
   void initState() {
@@ -155,7 +157,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 assetDescription: _data.assetDescription,
                 executor: getModel(context).user?.displayname,
                 wonum: _data.wonum
-              ));
+              ), read: _data.actfinish != 0,);
             }));
 
             if(result != null) {
@@ -166,10 +168,18 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         }
         break;
       case 2:
-        children.add(Text('人员列表'));
+        children.add(Text('人员工时列表'));
         if(_data.actfinish == 0){
-          children.add(newButton('新增人员', (){
+          children.add(newButton('新增人员工时', () async {
+            final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
+              return new WorkTimePage(data: new WorkTimeData(
+                  refwo: _data.wonum
+              ), read: _data.actfinish != 0,);
+            }));
 
+            if(result != null) {
+              _peopleAndMaterialKey.currentState?.getData();
+            }
           }));
         }
 
@@ -202,7 +212,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         break;
       case 2:
       case 3:
-        widget = new PeopleAndMaterialList(isPeople: _tabIndex == 2,);
+        widget = new PeopleAndMaterialList(isPeople: _tabIndex == 2, data: _data, key: _peopleAndMaterialKey,);
         break;
     }
 

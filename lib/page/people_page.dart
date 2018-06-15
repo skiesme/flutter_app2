@@ -9,7 +9,8 @@ import 'package:samex_app/components/simple_button.dart';
 class PeoplePage extends StatefulWidget {
 
   final RegExp req;
-  PeoplePage({this.req});
+  final bool trade;
+  PeoplePage({this.req, this.trade = false});
 
   @override
   _PeoplePageState createState() => _PeoplePageState();
@@ -91,6 +92,12 @@ class _PeoplePageState extends State<PeoplePage> {
         bool req = widget.req.hasMatch(f.department);
 //        print('req = ${widget.req}, f.department=${f.department}, result=$req');
         if(!req) return false;
+      }
+
+      if(widget.trade){
+        if(f.trade == null || f.trade.isEmpty){
+          return false;
+        }
       }
 
       if(_scroller.text.length > 0){

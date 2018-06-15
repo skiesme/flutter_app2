@@ -131,7 +131,10 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     });
     if(data == null){
 //      if(_first) _getHistory();
-      return Center(child: _first ? CircularProgressIndicator() : Text('没有发现历史记录')) ;
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: _first ? CircularProgressIndicator() : Text('没有发现历史记录')),
+      ) ;
 
     }
 
