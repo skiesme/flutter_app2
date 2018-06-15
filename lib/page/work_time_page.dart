@@ -68,8 +68,19 @@ class _WorkTimePageState extends State<WorkTimePage> {
     int now = new DateTime.now().millisecondsSinceEpoch ~/ 1000;
     _data.starttime = _data.starttime?? now;
     _data.startdate = _data.startdate ?? now;
+
+    DateTime time1 = new DateTime.fromMillisecondsSinceEpoch(_data.startdate * 1000);
+    DateTime time2 = new DateTime.fromMillisecondsSinceEpoch(_data.starttime * 1000);
+
+    _data.startdate = (new DateTime(time1.year, time1.month, time1.day, time2.hour, time2.minute, 0).millisecondsSinceEpoch ~/ 1000).toInt();
     _data.finishtime = _data.finishtime ?? now;
     _data.finishdate = _data.finishdate ?? now;
+
+    time1 = new DateTime.fromMillisecondsSinceEpoch(_data.finishdate * 1000);
+    time2 = new DateTime.fromMillisecondsSinceEpoch(_data.finishtime * 1000);
+
+    _data.finishdate = (new DateTime(time1.year, time1.month, time1.day, time2.hour, time2.minute, 0).millisecondsSinceEpoch ~/ 1000).toInt();
+
   }
 
   @override
@@ -139,6 +150,9 @@ class _WorkTimePageState extends State<WorkTimePage> {
     _data.hrid = _people.hrid;
     _data.displayname = _people.displayname;
     _data.trade = _people.trade;
+    _data.starttime = _data.startdate;
+    _data.finishtime = _data.finishdate;
+
     _data.regularhrs = (_data.finishdate - _data.startdate) / (60*60);
 
     _data.actualhrs = double.parse(_controller.text);
@@ -169,6 +183,12 @@ class _WorkTimePageState extends State<WorkTimePage> {
 
   @override
   Widget build(BuildContext context) {
+    if(_data.finishdate > _data.startdate){
+      _data.regularhrs = (_data.finishdate - _data.startdate)  / (60*60);
+    } else {
+      _data.regularhrs = 0.0;
+    }
+
     return new Scaffold(
         appBar: new AppBar(
           title: Text(_controller.text.isEmpty ? '新增人员工时':'工时填写'),
@@ -260,8 +280,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                           _data.startdate * 1000);
                                       Func.selectDate(context, time, (DateTime date) {
                                         setState(() {
-                                          _data.startdate =
-                                              (date.millisecondsSinceEpoch ~/ 1000).toInt();
+                                          _data.startdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
                                         });
                                       });
                                     },
@@ -275,19 +294,15 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                 new InkWell(
                                     onTap: widget.read ? null : () {
                                       DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-                                          _data.starttime * 1000);
+                                          _data.startdate * 1000);
                                       Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
                                         setState(() {
-                                          _data.starttime =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-                                          DateTime time2 = new DateTime.fromMillisecondsSinceEpoch(
-                                              _data.startdate * 1000);
-                                          _data.startdate =  (new DateTime(time2.year, time2.month, time2.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-
+                                          _data.startdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
                                         });
                                       });
                                     },
                                     child:Row(
-                                        children: <Widget>[ new Text('${Func.getHourMin(_data.starttime * 1000)}'),
+                                        children: <Widget>[ new Text('${Func.getHourMin(_data.startdate * 1000)}'),
                                         Icon(Icons.arrow_drop_down)
                                         ])
                                 ),
@@ -313,8 +328,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                           _data.finishdate * 1000);
                                       Func.selectDate(context, time, (DateTime date) {
                                         setState(() {
-                                          _data.finishdate =
-                                              (date.millisecondsSinceEpoch ~/ 1000).toInt();
+                                          _data.finishdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
                                         });
                                       });
                                     },
@@ -328,19 +342,15 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                 new InkWell(
                                     onTap: widget.read ? null : () {
                                       DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-                                          _data.finishtime * 1000);
+                                          _data.finishdate * 1000);
                                       Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
                                         setState(() {
-                                          _data.finishtime =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-                                          DateTime time2 = new DateTime.fromMillisecondsSinceEpoch(
-                                              _data.finishdate * 1000);
-                                          _data.finishdate =  (new DateTime(time2.year, time2.month, time2.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-
+                                          _data.finishdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
                                         });
                                       });
                                     },
                                     child:Row(
-                                        children: <Widget>[ new Text('${Func.getHourMin(_data.finishtime * 1000)}'),
+                                        children: <Widget>[ new Text('${Func.getHourMin(_data.finishdate * 1000)}'),
                                         Icon(Icons.arrow_drop_down)
                                         ])
                                 ),
@@ -353,7 +363,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                     bottom: Divider.createBorderSide(context, width: 1.0)
                                 )),
                           ),
-
+                          _getMenus(preText: '参考工时:', content: Text('${_data.regularhrs??''}')),
                           _getMenus(preText: '实际工时:', content: TextField(
                             controller: _controller,
                             keyboardType: TextInputType.number,
