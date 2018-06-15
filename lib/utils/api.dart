@@ -1,15 +1,13 @@
   import 'dart:async';
-  import 'dart:convert';
+import 'dart:convert';
 
-  import 'package:samex_app/utils/cache.dart';
-
-  import 'package:dio/dio.dart';
-  import 'package:samex_app/model/steps.dart';
-  import 'package:samex_app/utils/func.dart';
-  import 'package:samex_app/model/user.dart';
-  import 'package:samex_app/model/work_time.dart';
-
-  import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
+import 'package:samex_app/model/steps.dart';
+import 'package:samex_app/model/user.dart';
+import 'package:samex_app/model/work_time.dart';
+import 'package:samex_app/utils/cache.dart';
+import 'package:samex_app/utils/func.dart';
 
   Dio _dio = new Dio();
 
@@ -214,6 +212,49 @@
       return json.decode(result);
     }
 
+    Future<Map> postOrder({
+      String worktype='CM',
+      String description,
+      String assetnum,
+      String location,
+      String reportedby,
+      String images,
+      List<UploadFileInfo> files}) async {
+      Uri uri =  Uri.parse(baseUrl+ '/ordernew');
+
+      var request = new http.MultipartRequest("POST", uri);
+
+      Map<String, String> formData = {
+        "worktype": worktype,
+        "description": description,
+        "assetnum":assetnum,
+        "location":location,
+        "reportedby": reportedby,
+        "images": images,
+      };
+
+      print('${uri.toString()}: ${formData.toString()}, length=${files?.length}');
+
+      request.fields.addAll(formData);
+
+      request.headers.addAll( {
+        'Authorization': Cache.instance.token
+      });
+
+
+      for(int i =0, len = files.length; i< len; i++){
+        request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
+      }
+
+      http.StreamedResponse response = await request.send();
+
+      String result = await response.stream.bytesToString();
+
+      print('${uri.toString()}: $result');
+
+      return json.decode(result);
+    }
+
 
     Future<Map> postXJ(String woNum) async {
       Response response =  await _dio.post(baseUrl+'/order/xj/$woNum', options: _options());
@@ -241,7 +282,7 @@
     Future<Map> getLocations({String location='', int count = 50, bool queryOne}) async {
       Uri uri = new Uri.http(ipAndPort, '/app/api/locations',{
         'location': location,
-        'queryOne':'$queryOne',
+        'queryOne':'${queryOne??''}',
         'count': '$count'
       });
 
@@ -276,5 +317,5 @@
       print('delWorkTime: ${response.data}');
       return response.data;
     }
-    
+
   }

@@ -17,11 +17,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class PictureList extends StatefulWidget {
 
-  final int index;
   final bool canAdd;
-  final OrderStep step;
+  final List<String> images;
 
-  PictureList({Key key, @required this.index, this.canAdd = true, @required  this.step}):super(key:key);
+  PictureList({Key key, this.canAdd = true,  this.images}):super(key:key);
 
   @override
   PictureListState createState() => new PictureListState();
@@ -80,12 +79,12 @@ class PictureListState extends State<PictureList> {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
             onTap: (){
 
-              if(widget.step != null && widget.step.images != null && widget.step.images.length > index){
-                widget.step.images.removeAt(index);
+              if(widget.images != null && widget.images != null && widget.images.length > index){
+                widget.images.removeAt(index);
               } else if(_images.length > 0){
                 int preIndex = 0;
-                if(widget.step != null && widget.step.images != null){
-                  preIndex = widget.step.images.length;
+                if(widget.images != null ){
+                  preIndex = widget.images.length;
                 }
 
                 _images.removeAt(index - preIndex);
@@ -114,9 +113,9 @@ class PictureListState extends State<PictureList> {
 
 //    print('show picture list: ${widget.step.toString()}');
 
-    if(widget.step.images != null){
-      for(int i = 0, len = widget.step.images.length; i < len; i++){
-        String id = widget.step.images[i];
+    if(widget.images != null){
+      for(int i = 0, len = widget.images.length; i < len; i++){
+        String id = widget.images[i];
         try {
           if(id.startsWith('/')) continue;
 
@@ -180,7 +179,7 @@ class PictureListState extends State<PictureList> {
   @override
   Widget build(BuildContext context) {
 
-    if(widget.step?.images != null && widget.step.images.length > 0){
+    if(widget.images != null && widget.images.length > 0){
       return _getImageList();
     } else {
 
@@ -222,12 +221,6 @@ class _PageSelector extends StatelessWidget {
   const _PageSelector({ this.icons });
 
   final List<ImageData> icons;
-
-//  void _handleArrowButtonPress(BuildContext context, int delta) {
-//    final TabController controller = DefaultTabController.of(context);
-//    if (!controller.indexIsChanging)
-//      controller.animateTo((controller.index + delta).clamp(0, icons.length - 1));
-//  }
 
   @override
   Widget build(BuildContext context) {

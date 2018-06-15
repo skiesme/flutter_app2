@@ -122,8 +122,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, callback: (){
       getSteps();
     });
-    if(list == null){
-      if(_first) {
+    if(list == null || list.isEmpty){
+      if(_first && list == null) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(child: CircularProgressIndicator()),

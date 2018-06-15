@@ -91,7 +91,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
                       child: Row(
                         children: <Widget>[
                           Text('照片: '),
-                          PictureList(index: index, step: step, canAdd: false,)
+                          PictureList(images: step.images, canAdd: false,)
                         ],
                       ) ,),
 

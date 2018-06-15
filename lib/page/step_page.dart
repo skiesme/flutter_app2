@@ -248,7 +248,7 @@ class _StepPageState extends State<StepPage>{
                   Padding(padding: Style.pagePadding2, child:Row(
                     children: <Widget>[
                       Text('照片: '),
-                      new PictureList(index: widget.index, canAdd: widget.isTask, step: widget.data, key: _key,)
+                      new PictureList(canAdd: widget.isTask, images: widget.data.images, key: _key,)
                     ],
                   )),
 

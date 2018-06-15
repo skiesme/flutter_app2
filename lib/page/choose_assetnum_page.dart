@@ -9,10 +9,10 @@ import 'package:samex_app/utils/assets.dart';
 
 // 资产选择
 class ChooseAssetPage extends StatefulWidget {
-
   final String location;
+  final bool chooseLocation;
 
-  ChooseAssetPage({this.location});
+  ChooseAssetPage({this.location, this.chooseLocation = false});
 
   @override
   _ChooseAssetPageState createState() => _ChooseAssetPageState();
@@ -27,161 +27,207 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   void initState() {
     super.initState();
 
-    _scroller = new  TextEditingController(text: '');
-    _scroller.addListener((){
-      setState(() {
-
-      });
+    _scroller = new TextEditingController(text: widget.location ?? '');
+    _scroller.addListener(() {
+      setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final list = getMemoryCache(cacheKey, callback: (){
+    final list = getMemoryCache(cacheKey, callback: () {
       _getAsset();
     });
 
-    if(list != null) _loading = false;
+    if (list != null) _loading = false;
 
     return new Scaffold(
       appBar: new AppBar(
-        title: Text('资产选择'),
+        title: Text(widget.chooseLocation ? '位置选择' : '资产选择'),
         actions: <Widget>[
           new IconButton(
               icon: Icon(Icons.refresh),
               tooltip: '数据刷新',
-              onPressed: (){
-                if(!_loading){
+              onPressed: () {
+                if (!_loading) {
                   _getAsset();
                 }
               })
         ],
       ),
       floatingActionButton: new FloatingActionButton(
-          child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
+          child: Tooltip(
+            child: new Image.asset(
+              ImageAssets.scan,
+              height: 20.0,
+            ),
+            message: '扫码',
+            preferBelow: false,
+          ),
           backgroundColor: Colors.redAccent,
           onPressed: () async {
             String result = await Func.scan();
 
-            if(result != null && result.isNotEmpty && result.length > 0){
+            if (result != null && result.isNotEmpty && result.length > 0) {
               _scroller.text = result;
             }
-
           }),
       body: new Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
-            color:Style.backgroundColor,
+            color: Style.backgroundColor,
             padding: const EdgeInsets.all(20.0),
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  hintText: "请输入资产号进行过滤",
+                  hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
                   border: new OutlineInputBorder(),
-                  suffixIcon: _scroller.text.isNotEmpty ? new IconButton(icon: Icon(Icons.clear), onPressed: (){
-                    _scroller.clear();
-                  }): null
-              ),
+                  suffixIcon: _scroller.text.isNotEmpty
+                      ? new IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            _scroller.clear();
+                          })
+                      : null),
             ),
           ),
-          Expanded(child: _loading ? Center(child: CircularProgressIndicator(),) : _getContent(),)
-
+          Expanded(
+            child: _loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : _getContent(),
+          )
         ],
       ),
     );
   }
 
-  List<DescriptionData> _filters(List<DescriptionData> data){
-    if(data == null) return null;
+  List<DescriptionData> _filters(List<DescriptionData> data) {
+    if (data == null) return null;
 
     return data.where((DescriptionData f) {
+      // if(!widget.chooseLocation && widget.location != null){
+      //   if(f.location != widget.location){
+      //     return false;
+      //   }
+      // }
 
-      if(_scroller.text.length > 0){
-        return  f.assetnum.contains(_scroller.text.toUpperCase());
+      if (_scroller.text.length > 0) {
+        if (!widget.chooseLocation) {
+          if (f.assetnum.contains(_scroller.text.toUpperCase())) {
+            return true;
+          }
+        }
+
+        if ((f.location??'').contains(_scroller.text.toUpperCase())) {
+          return true;
+        }
+
+        return false;
       }
 
-      return  true;
-
+      return true;
     }).toList();
-
   }
 
-  Widget _getContent(){
+  Widget _getContent() {
     List<DescriptionData> data = getMemoryCache(cacheKey, expired: false);
 
     data = _filters(data);
 
-    if(data == null || data.length == 0){
-      return Center(child: Text('没有可选择的资产'),);
+    if (data == null || data.length == 0) {
+      return Center(
+        child: Text('没有可选择的资产'),
+      );
     }
 
     return new ListView.builder(
       shrinkWrap: true,
       itemCount: data.length,
-      itemBuilder: (_, int index){
+      itemBuilder: (_, int index) {
         DescriptionData asset = data[index];
         return new Container(
             child: new Column(
-              children: <Widget>[
-                SimpleButton(
-
-                  child:ListTile(
-                    leading:CircleAvatar(child: Text('${index+1}'),),
-                    title: Text('${asset.assetnum}'),
-                    subtitle: Text('描述:${asset.description??''}'),
-                    trailing: Text('位置:${asset.locationDescription}'),
-                  ),
-                  onTap: (){
-                    Navigator.pop(context, asset);
-                  },
+          children: <Widget>[
+            SimpleButton(
+              child: ListTile(
+                leading: CircleAvatar(
+                  child: Text('${index+1}'),
                 ),
-
-                Divider(height: 1.0,)
-              ],
+                title: Text(widget.chooseLocation
+                    ? '${asset.location}'
+                    : '${asset.assetnum}'),
+                subtitle: Text('描述:${asset.description??''}'),
+                trailing: Text(widget.chooseLocation
+                    ? ''
+                    : '位置:${asset.location??''}\n${asset.locationDescription??''}', textAlign: TextAlign.right,),
+              ),
+              onTap: () {
+                Navigator.pop(context, asset);
+              },
+            ),
+            Divider(
+              height: 1.0,
             )
-        );
+          ],
+        ));
       },
-
     );
   }
 
-  String get cacheKey => '__${Cache.instance.site}_assets';
+  String get cacheKey =>
+      '__${Cache.instance.site}_${widget.chooseLocation ? '_locations': '_assets'}';
 
-  void _getAsset({String asset='', int count = 50000, bool queryOne}) async {
-    if(_request) return;
+  void _getAsset({String asset = '', int count = 50000, bool queryOne}) async {
+    if (_request) return;
     setState(() {
       _loading = true;
     });
-    try{
+    try {
       _request = true;
-      Map response = await getModel(context).api.getAssets(
-        location: widget.location,
-        count: count,
-        queryOne: queryOne,
-        asset: asset
-      );
-      DescriptionResult result = new DescriptionResult.fromJson(response);
-      if(result.code != 0) {
-        Func.showMessage(result.message);
+
+      if (!widget.chooseLocation) {
+        Map response = await getModel(context).api.getAssets(
+              location: widget.location,
+              count: count,
+              queryOne: queryOne,
+              asset: asset,
+            );
+        DescriptionResult result = new DescriptionResult.fromJson(response);
+        if (result.code != 0) {
+          Func.showMessage(result.message);
+        } else {
+          setMemoryCache<List<DescriptionData>>(cacheKey, result.response);
+        }
       } else {
-        setMemoryCache<List<DescriptionData>>(cacheKey, result.response);
+        Map response = await getModel(context).api.getLocations(
+              location: widget.location,
+              count: count,
+              queryOne: queryOne,
+            );
+        DescriptionResult result = new DescriptionResult.fromJson(response);
+        if (result.code != 0) {
+          Func.showMessage(result.message);
+        } else {
+          setMemoryCache<List<DescriptionData>>(cacheKey, result.response);
+        }
       }
+    } catch (e) {
+      print(e);
+      setMemoryCache<List<DescriptionData>>(
+          cacheKey, getMemoryCache(cacheKey) ?? []);
 
-    } catch (e){
-      print (e);
-      setMemoryCache<List<DescriptionData>>(cacheKey, getMemoryCache(cacheKey)??[]);
-
-      Func.showMessage('网络异常, 请求资产接口失败');
+      Func.showMessage('网络异常, 请求${widget.chooseLocation ? '位置' : '资产'}接口失败');
     }
 
     _request = false;
-    if(mounted){
+    if (mounted) {
       setState(() {
         _loading = false;
       });
