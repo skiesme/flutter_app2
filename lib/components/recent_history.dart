@@ -10,6 +10,7 @@ import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/page/task_detail_page.dart';
 import 'package:samex_app/model/order_status.dart';
 import 'package:samex_app/utils/style.dart';
+import 'package:samex_app/page/assetnum_detail_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
@@ -58,9 +59,19 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
                 title: Text(
                   '工单编号:${f.wonum}', style: TextStyle(fontSize: 18.0),),
                 children: f.error.map(
-                        (String str) =>
-                        Padding(padding: EdgeInsets.all(4.0), child: Text(str))
-                ).toList(),));
+                        (HistoryError str) =>
+                        Padding(padding: EdgeInsets.all(4.0), child: ListTile(
+                          onTap: (){
+                            Navigator.push(context, new MaterialPageRoute(builder: (_){
+                              return new AssetNumDetailPage(asset: str.assetnum);
+                            }));
+                          },
+                          leading: CircleAvatar(child: Text((str.stepno ~/ 10).toString(),)),
+                          title: Text(str.description),
+                          subtitle: Text("备注: "+str.remark),
+                          trailing: Text(str.status, style: TextStyle(color: Colors.redAccent),),
+                        )
+                        )).toList(),));
         },));
       children.add(Divider(height: 1.0,));
     }

@@ -31,7 +31,7 @@ class HistoryData {
   String wonum;
   String changby;
   int actfinish;
-  List<String> error;
+  List<HistoryError> error;
 
   HistoryData({this.wonum, this.changby, this.actfinish, this.error});
 
@@ -39,7 +39,12 @@ class HistoryData {
     wonum = json['wonum'];
     changby = json['changby'];
     actfinish = json['actfinish'];
-    error = json['error']?.cast<String>();
+    if (json['error'] != null) {
+      error = new List<HistoryError>();
+      json['error'].forEach((v) {
+        error.add(new HistoryError.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -47,7 +52,38 @@ class HistoryData {
     data['wonum'] = this.wonum;
     data['changby'] = this.changby;
     data['actfinish'] = this.actfinish;
-    data['error'] = this.error??[];
+    if (this.error != null) {
+      data['error'] = this.error.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class HistoryError {
+  int stepno;
+  String description;
+  String status;
+  String remark;
+  String assetnum;
+
+  HistoryError(
+      {this.stepno, this.description, this.status, this.remark, this.assetnum});
+
+  HistoryError.fromJson(Map<String, dynamic> json) {
+    stepno = json['stepno'];
+    description = json['description'];
+    status = json['status'];
+    remark = json['remark'];
+    assetnum = json['assetnum'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['stepno'] = this.stepno;
+    data['description'] = this.description;
+    data['status'] = this.status;
+    data['remark'] = this.remark;
+    data['assetnum'] = this.assetnum;
     return data;
   }
 }
