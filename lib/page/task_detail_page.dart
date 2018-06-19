@@ -291,7 +291,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                   SimpleButton(
                     onTap: (){
                       Navigator.push(context, new MaterialPageRoute(
-                          builder: (_) => new AttachmentPage(wonum: _info.wonum, data: [])));
+                          builder: (_) => new AttachmentPage(order: _info, data: [])));
                     },
                     child: Row(
                       children: <Widget>[

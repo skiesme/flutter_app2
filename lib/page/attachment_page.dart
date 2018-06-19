@@ -9,15 +9,17 @@ import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/components/picture_list.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:samex_app/model/order_list.dart';
+import 'package:samex_app/model/cm_attachments.dart';
 
 
 class AttachmentPage extends StatefulWidget {
 
-  final String wonum;
+  final OrderShortInfo order;
 
   final List<OrderStep> data;
 
-  AttachmentPage({@required this.wonum, this.data});
+  AttachmentPage({@required this.order, this.data });
 
   @override
   _AttachmentPageState createState() => new _AttachmentPageState();
@@ -25,122 +27,221 @@ class AttachmentPage extends StatefulWidget {
 
 class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<AttachmentPage> {
 
-  List<OrderStep> _data;
-
   @override
   void initState() {
     super.initState();
-
-    _data = widget.data??[];
-    if(_data.length == 0) {
-      _data = getMemoryCache<List<OrderStep>>(cacheKey);
-    }
-
   }
 
   Widget _getLoading() {
-    if(_data == null){
+    List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
+
+    if(data == null){
       return Center(child: CircularProgressIndicator());
     } else  {
       return Center(child: Text('没有附件信息'));
     }
   }
 
-  List<OrderStep> _filter() {
-    if(_data == null) return null;
-    return _data.where((i) => (i.images != null && i.images.length > 0)).toList();
+  List<OrderStep> _filter(List<OrderStep> data) {
+    if(data == null) return null;
+    return data.where((i) => (i.images != null && i.images.length > 0)).toList();
   }
+
+  Widget _getAttachmentsWidget(){
+
+    List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
+    data = _filter(data);
+
+    return  data == null || data.length == 0 ? _getLoading() : RefreshIndicator(
+        onRefresh:_getSteps,
+        child:ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (_, int index) {
+              OrderStep step = data[index];
+              return new Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+
+                  Padding(padding: Style.pagePadding,
+                    child: Text('步骤: ${step.stepno ~/ 10}') ,),
+                  Divider(height: 1.0,),
+
+                  Padding(padding: Style.pagePadding2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text('备注: '),
+                        Expanded(child:Text(step.description))
+                      ],
+                    ) ,),
+                  Divider(height: 1.0,),
+
+                  Padding(padding: Style.pagePadding2,
+                    child: Row(
+                      children: <Widget>[
+                        Text('照片: '),
+                        PictureList(images: step.images, canAdd: false,)
+                      ],
+                    ) ,),
+
+                  Container(height: Style.padding/2, color: Style.backgroundColor,)
+                ],
+              );
+            }));
+  }
+
+
+  Widget _getCMAttachmentsWidget(){
+
+    List<String> data = getMemoryCache<List<String>>(cacheKey, expired: false);
+
+
+    if(data == null) {
+
+      return  Center(child: CircularProgressIndicator());
+    }
+
+    if(data.length == 0) return Center(child: Text('没有附件信息'));
+
+    return new Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+
+          Padding(padding: Style.pagePadding2,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('描述: '),
+                Expanded(child:Text(widget.order.description))
+              ],
+            ) ,),
+          Divider(height: 1.0,),
+
+          Padding(padding: Style.pagePadding2,
+            child: Row(
+              children: <Widget>[
+                Text('照片: '),
+                PictureList(images: data, canAdd: false,)
+              ],
+            ) ,),
+
+          Container(height: Style.padding/2, color: Style.backgroundColor,)
+        ]);
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
 
-    List<OrderStep> data = _filter();
+    Widget child;
+
+    if(getOrderType(widget.order.worktype) != OrderType.CM){
+      getMemoryCache<List<String>>(cacheKey, callback: (){
+        _getSteps();
+      });
+
+      child = _getAttachmentsWidget();
+
+    } else {
+      getMemoryCache<List<String>>(cacheKey, callback: (){
+        _getCMAttachments();
+      });
+      child = _getCMAttachmentsWidget();
+
+    }
 
     return new Scaffold(
-      appBar: new AppBar(
-        title: Text('附件'),
-      ),
+        appBar: new AppBar(
+          title: Text('附件'),
 
-      body: data == null || data.length == 0 ? _getLoading() : RefreshIndicator(
-          onRefresh:_getSteps,
-          child:ListView.builder(
-              itemCount: data.length,
-              itemBuilder: (_, int index) {
-                OrderStep step = data[index];
-                return new Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
+          actions: <Widget>[
+            new IconButton(icon: Icon(Icons.refresh), onPressed: (){
+              if( getOrderType(widget.order.worktype) == OrderType.CM){
+                _getCMAttachments();
+              } else  {
+                _getSteps();
+              }
+            })
+          ],
+        ),
 
-                    Padding(padding: Style.pagePadding,
-                      child: Text('步骤: ${step.stepno ~/ 10}') ,),
-                    Divider(height: 1.0,),
-
-                    Padding(padding: Style.pagePadding2,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text('备注: '),
-                          Expanded(child:Text(step.description))
-                        ],
-                      ) ,),
-                    Divider(height: 1.0,),
-
-                    Padding(padding: Style.pagePadding2,
-                      child: Row(
-                        children: <Widget>[
-                          Text('照片: '),
-                          PictureList(images: step.images, canAdd: false,)
-                        ],
-                      ) ,),
-
-                    Container(height: Style.padding/2, color: Style.backgroundColor,)
-                  ],
-                );
-              })),
+        body: child
 
     );
   }
 
 
   Future<Null> _getSteps() async {
-    if(widget.wonum != null){
+    if(widget.order.wonum != null){
       try{
-        Map response = await getApi(context).steps(sopnum: '', wonum: widget.wonum, site: Cache.instance.site);
+        Map response = await getApi(context).steps(sopnum: '', wonum: widget.order.wonum, site: Cache.instance.site);
         StepsResult result = new StepsResult.fromJson(response);
 
         if(result.code != 0){
           Func.showMessage(result.message);
         } else {
-          setState(() {
-            _data = result.response.steps;
+          if(mounted){
+            setState(() {
+              setMemoryCache(cacheKey, result.response.steps);
+            });
+          }
 
-            setMemoryCache(cacheKey, _data);
-          });
         }
 
       } catch (e){
         print (e);
-        Func.showMessage('网络出现异常: 获取步骤列表失败');
+        Func.showMessage('出现异常: 获取步骤列表失败');
+      }
+    }
+
+  }
+
+  Future<Null> _getCMAttachments() async {
+    if(widget.order.wonum != null){
+      try{
+        Map response = await getApi(context).getCMAttachments(widget.order.ownerid);
+        CMAttachmentsResult result = new CMAttachmentsResult.fromJson(response);
+
+        print(result.toJson().toString());
+
+        if(result.code != 0){
+          Func.showMessage(result.message);
+        } else {
+          if(mounted){
+            setState(() {
+              setMemoryCache(cacheKey, result.response);
+            });
+          }
+
+        }
+
+      } catch (e){
+        print (e);
+        Func.showMessage('出现异常: 获取维修工单附件失败');
       }
     }
 
   }
 
   get cacheKey {
-    var key = widget.wonum ??'';
-    if(key.isEmpty) return '';
-    return 'stepsList_$key';
+    var key = widget.order.wonum ?? '';
+
+    if( getOrderType(widget.order.worktype) != OrderType.CM) {
+      if (key.isEmpty) return '';
+
+      return 'stepsList_$key';
+    } else  {
+      return 'cm_attachments+$key';
+    }
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
-
-    if(_data == null){
-      _getSteps();
-    }
-
   }
 
 }

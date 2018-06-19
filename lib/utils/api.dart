@@ -318,4 +318,14 @@ import 'package:samex_app/utils/func.dart';
       return response.data;
     }
 
+    Future<Map> getCMAttachments(int id) async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/cm/attactments/$id');
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
   }
