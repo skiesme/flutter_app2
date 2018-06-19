@@ -106,7 +106,14 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
       String images = '';
       for (int i = 0, len = _data.images?.length ?? 0; i < len; i++) {
-        images += _data.images[i];
+
+        String image = _data.images[i];
+
+        if(image.contains('_')){
+          images += image.split('_')[0];
+        } else {
+          images += _data.images[i];
+        }
         if (i != len - 1) {
           images += ',';
         }

@@ -147,7 +147,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         break;
       case 1:
         children.add(Text('任务列表'));
-        if(_type != OrderType.XJ && _data.actfinish == 0){
+        if(_type == OrderType.CM && _data.actfinish == 0){
           children.add(newButton('新增任务', () async {
             if(_stepKey.currentState == null) return;
             final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
@@ -155,7 +155,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 stepno: (_stepKey.currentState.steps + 1) * 10,
                 assetnum: _data.assetnum,
                 assetDescription: _data.assetDescription,
-                executor: getModel(context).user?.displayname,
+                executor: getModel(context).user?.displayname??'',
                 wonum: _data.wonum
               ), read: _data.actfinish != 0,);
             }));
