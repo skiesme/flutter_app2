@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/components/loading_view.dart';
@@ -45,10 +47,10 @@ class _StepNewPageState extends State<StepNewPage> {
         ],
       ),
       decoration: new BoxDecoration(
-        color: Colors.white,
+          color: Colors.white,
           border: new Border(
-          bottom: Divider.createBorderSide(context, width: 1.0)
-      )),
+              bottom: Divider.createBorderSide(context, width: 1.0)
+          )),
     );
   }
 
@@ -114,6 +116,7 @@ class _StepNewPageState extends State<StepNewPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: Text(_controller.text.isEmpty ? '新增任务':'任务填写'),
         ),
@@ -126,88 +129,89 @@ class _StepNewPageState extends State<StepNewPage> {
             show: _show,
             child: Container(
               color: Style.backgroundColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: Stack(
                 children: <Widget>[
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          _getMenus(preText: '工单:', content: Text(_step.wonum)),
-                          _getMenus(preText: '步骤:', content: Text('${_step.stepno ~/ 10}')),
-                          _getMenus(preText: '描述:', content: TextField(
-                            controller: _controller,
-                            maxLines: 3,
-                            enabled: !widget.read,
-                            decoration: new InputDecoration.collapsed(
-                              hintText: '请输入任务描述',
-                            ),
-                          ),
-                              crossAxisAlignment: CrossAxisAlignment.start
-                          ),
+              new Positioned(left: 0.0, top: 0.0, bottom: max(80.0, MediaQuery.of(context).viewInsets.bottom), right: 0.0,
+                child: SingleChildScrollView(
 
-                          _getMenus(preText: '资产:',
-                              padding: EdgeInsets.only(left: 8.0),
-                              content: SimpleButton(
-                                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                                  onTap: () async {
-                                    if(widget.read) return;
-                                    final DescriptionData result = await Navigator.push(context,
-                                      new MaterialPageRoute(
-                                          builder:(_)=> new ChooseAssetPage())
-                                    );
+                  child: Column(
+                    children: <Widget>[
+                      _getMenus(preText: '工单:', content: Text(_step.wonum)),
+                      _getMenus(preText: '步骤:', content: Text('${_step.stepno ~/ 10}')),
+                      _getMenus(preText: '描述:', content: TextField(
+                        controller: _controller,
+                        maxLines: 3,
+                        enabled: !widget.read,
+                        decoration: new InputDecoration.collapsed(
+                          hintText: '请输入任务描述',
+                        ),
+                      ),
+                          crossAxisAlignment: CrossAxisAlignment.start
+                      ),
 
-                                    if(result != null) {
-                                      setState(() {
-                                        _step.assetnum = result.assetnum;
-                                        _step.assetDescription = result.description;
-                                      });
-                                    }
+                      _getMenus(preText: '资产:',
+                          padding: EdgeInsets.only(left: 8.0),
+                          content: SimpleButton(
+                              padding: EdgeInsets.symmetric(vertical: 8.0),
+                              onTap: () async {
+                                if(widget.read) return;
+                                final DescriptionData result = await Navigator.push(context,
+                                    new MaterialPageRoute(
+                                        builder:(_)=> new ChooseAssetPage())
+                                );
 
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(_step.assetnum ?? '请选择资产', style: TextStyle(color: _step.assetnum == null ? Colors.grey: Colors.black),),
-                                      Icon(Icons.navigate_next, color: Colors.black87,),
-                                    ],
-                                  ))),
-                          _getMenus(preText: '描述:', content:  Text(_step.assetDescription ?? '资产描述', style: TextStyle(color: _step.assetnum == null ? Colors.grey: Colors.black))),
+                                if(result != null) {
+                                  setState(() {
+                                    _step.assetnum = result.assetnum;
+                                    _step.assetDescription = result.description;
+                                  });
+                                }
 
-                          _getMenus(preText: '备注:', content: TextField(
-                            controller: _controller2,
-                            maxLines: 3,
-                            enabled: !widget.read,
-                            decoration: new InputDecoration.collapsed(
-                              hintText: '请输入备注',
-                            ),
-                          ),
-                              crossAxisAlignment: CrossAxisAlignment.start
-                          ),
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(_step.assetnum ?? '请选择资产', style: TextStyle(color: _step.assetnum == null ? Colors.grey: Colors.black),),
+                                  Icon(Icons.navigate_next, color: Colors.black87,),
+                                ],
+                              ))),
+                      _getMenus(preText: '描述:', content:  Text(_step.assetDescription ?? '资产描述', style: TextStyle(color: _step.assetnum == null ? Colors.grey: Colors.black))),
 
-                          _getMenus(preText: '人员:', content:  Text(_step.executor??'')),
+                      _getMenus(preText: '备注:', content: TextField(
+                        controller: _controller2,
+                        maxLines: 3,
+                        enabled: !widget.read,
+                        decoration: new InputDecoration.collapsed(
+                          hintText: '请输入备注',
+                        ),
+                      ),
+                          crossAxisAlignment: CrossAxisAlignment.start
+                      ),
 
-                        ],
+                      _getMenus(preText: '人员:', content:  Text(_step.executor??'')),
+
+                    ],
+                  ),
+                ),
+              ),
+
+              widget.read ? Container() :  Positioned(left: 0.0, bottom: 0.0, right: 0.0,
+                child:Material(
+                  elevation: 6.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: RaisedButton(
+                        padding:EdgeInsets.symmetric(horizontal: 40.0),
+                        onPressed: (){
+                          postStep();
+                        },
+                        child: Text('提交', style: TextStyle( color: Colors.white, fontSize: 18.0),),
+                        color: Style.primaryColor,
                       ),
                     ),
                   ),
-
-                  widget.read ? Container() : Material(
-                    elevation: 6.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: RaisedButton(
-                          padding:EdgeInsets.symmetric(horizontal: 40.0),
-                          onPressed: (){
-                            postStep();
-                          },
-                          child: Text('提交', style: TextStyle( color: Colors.white, fontSize: 18.0),),
-                          color: Style.primaryColor,
-                        ),
-                      ),
-                    ),
-                  )
+                ))
                 ],
               ),
             ),

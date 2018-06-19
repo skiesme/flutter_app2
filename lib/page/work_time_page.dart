@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/work_time.dart';
 import 'package:samex_app/data/root_model.dart';
@@ -57,9 +59,9 @@ class _WorkTimePageState extends State<WorkTimePage> {
 
     if(_data.hrid != null){
       _people = new PeopleData(
-        hrid: _data.hrid,
-        displayname: _data.displayname,
-        trade: _data.trade
+          hrid: _data.hrid,
+          displayname: _data.displayname,
+          trade: _data.trade
       );
     }
 
@@ -190,14 +192,15 @@ class _WorkTimePageState extends State<WorkTimePage> {
     }
 
     return new Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: Text(_controller.text.isEmpty ? '新增人员工时':'工时填写'),
           actions: widget.read || widget.data.hrtransid == 0 ? null : <Widget>[
-              new  IconButton(
-                icon: Icon(Icons.delete),
-                tooltip: '删除工时',
-                onPressed: (){
-                  showDialog(
+            new  IconButton(
+              icon: Icon(Icons.delete),
+              tooltip: '删除工时',
+              onPressed: (){
+                showDialog(
                     context: context,
                     builder: ( (_) => new AlertDialog(
                       title: Text('警告'),
@@ -211,16 +214,16 @@ class _WorkTimePageState extends State<WorkTimePage> {
                         ),
                         new FlatButton(
                           onPressed: (){
-                              Navigator.of(context).pop(false);
-                              delete();
+                            Navigator.of(context).pop(false);
+                            delete();
                           },
                           child: Text('删除', style: TextStyle(color: Colors.redAccent),),
                         )
                       ],
                     ))
-                  );
-                },
-              )
+                );
+              },
+            )
           ],
         ),
 
@@ -232,153 +235,154 @@ class _WorkTimePageState extends State<WorkTimePage> {
             show: _show,
             child: Container(
               color: Style.backgroundColor,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              height: MediaQuery.of(context).size.height,
+
+              child: Stack(
                 children: <Widget>[
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          _getMenus(preText: '工单:', content: Text(_data.refwo)),
+                  new Positioned(left: 0.0, top: 0.0, bottom: max(80.0, MediaQuery.of(context).viewInsets.bottom), right: 0.0, child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        _getMenus(preText: '工单:', content: Text(_data.refwo)),
 
-                          _getMenus(preText: '人员:',
-                              padding: EdgeInsets.only(left: 8.0),
-                              content: SimpleButton(
-                                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                                  onTap: widget.read ? null : () async {
-                                    final PeopleData result = await Navigator.push(context,
-                                        new MaterialPageRoute(
-                                            builder:(_)=> new PeoplePage( trade: true,))
-                                    );
+                        _getMenus(preText: '人员:',
+                            padding: EdgeInsets.only(left: 8.0),
+                            content: SimpleButton(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                onTap: widget.read ? null : () async {
+                                  final PeopleData result = await Navigator.push(context,
+                                      new MaterialPageRoute(
+                                          builder:(_)=> new PeoplePage( trade: true,))
+                                  );
 
-                                    if(result != null) {
+                                  if(result != null) {
+                                    setState(() {
+                                      _people = result;
+                                    });
+                                  }
+
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(_people?.displayname  ?? '请选择人员', style: TextStyle(color: _people == null ? Colors.grey: Colors.black),),
+                                    Icon(Icons.navigate_next, color: Colors.black87,),
+                                  ],
+                                ))),
+                        _getMenus(preText: '技能:', content:  Text(_people?.trade ?? '', style: TextStyle(color: _people == null ? Colors.grey: Colors.black))),
+
+
+                        new Container(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text('开始时间: '),
+                              new SizedBox(width: 20.0,),
+                              new InkWell(
+                                  onTap: widget.read ? null : () {
+                                    DateTime time = new DateTime.fromMillisecondsSinceEpoch(
+                                        _data.startdate * 1000);
+                                    Func.selectDate(context, time, (DateTime date) {
                                       setState(() {
-                                        _people = result;
+                                        _data.startdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
                                       });
-                                    }
-
+                                    });
                                   },
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Text(_people?.displayname  ?? '请选择人员', style: TextStyle(color: _people == null ? Colors.grey: Colors.black),),
-                                      Icon(Icons.navigate_next, color: Colors.black87,),
-                                    ],
-                                  ))),
-                          _getMenus(preText: '技能:', content:  Text(_people?.trade ?? '', style: TextStyle(color: _people == null ? Colors.grey: Colors.black))),
-
-
-                          new Container(
-                            padding: EdgeInsets.all(8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Text('开始时间: '),
-                                new SizedBox(width: 20.0,),
-                                new InkWell(
-                                    onTap: widget.read ? null : () {
-                                      DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-                                          _data.startdate * 1000);
-                                      Func.selectDate(context, time, (DateTime date) {
-                                        setState(() {
-                                          _data.startdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-                                        });
+                                      children: <Widget>[
+                                        new Text('${Func.getYearMonthDay(_data.startdate * 1000)}'),
+                                        Icon(Icons.arrow_drop_down)]
+                                  )
+                              ),
+                              new SizedBox(width: 20.0,),
+                              new InkWell(
+                                  onTap: widget.read ? null : () {
+                                    DateTime time = new DateTime.fromMillisecondsSinceEpoch(
+                                        _data.startdate * 1000);
+                                    Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
+                                      setState(() {
+                                        _data.startdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
                                       });
-                                    },
-                                    child: Row(
-                                        children: <Widget>[
-                                          new Text('${Func.getYearMonthDay(_data.startdate * 1000)}'),
-                                          Icon(Icons.arrow_drop_down)]
-                                    )
-                                ),
-                                new SizedBox(width: 20.0,),
-                                new InkWell(
-                                    onTap: widget.read ? null : () {
-                                      DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-                                          _data.startdate * 1000);
-                                      Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
-                                        setState(() {
-                                          _data.startdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-                                        });
-                                      });
-                                    },
-                                    child:Row(
-                                        children: <Widget>[ new Text('${Func.getHourMin(_data.startdate * 1000)}'),
-                                        Icon(Icons.arrow_drop_down)
-                                        ])
-                                ),
-                              ],
-                            ),
-
-                            decoration: new BoxDecoration(
-                                color: Colors.white,
-                                border: new Border(
-                                    bottom: Divider.createBorderSide(context, width: 1.0)
-                                )),
+                                    });
+                                  },
+                                  child:Row(
+                                      children: <Widget>[ new Text('${Func.getHourMin(_data.startdate * 1000)}'),
+                                      Icon(Icons.arrow_drop_down)
+                                      ])
+                              ),
+                            ],
                           ),
 
-                          new Container(
-                            padding: EdgeInsets.all(8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Text('结束时间: '),
-                                new SizedBox(width: 20.0,),
-                                new InkWell(
-                                    onTap: widget.read ? null : () {
-                                      DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-                                          _data.finishdate * 1000);
-                                      Func.selectDate(context, time, (DateTime date) {
-                                        setState(() {
-                                          _data.finishdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-                                        });
-                                      });
-                                    },
-                                    child: Row(
-                                        children: <Widget>[
-                                          new Text('${Func.getYearMonthDay(_data.finishdate * 1000)}'),
-                                          Icon(Icons.arrow_drop_down)]
-                                    )
-                                ),
-                                new SizedBox(width: 20.0,),
-                                new InkWell(
-                                    onTap: widget.read ? null : () {
-                                      DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-                                          _data.finishdate * 1000);
-                                      Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
-                                        setState(() {
-                                          _data.finishdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
-                                        });
-                                      });
-                                    },
-                                    child:Row(
-                                        children: <Widget>[ new Text('${Func.getHourMin(_data.finishdate * 1000)}'),
-                                        Icon(Icons.arrow_drop_down)
-                                        ])
-                                ),
-                              ],
-                            ),
+                          decoration: new BoxDecoration(
+                              color: Colors.white,
+                              border: new Border(
+                                  bottom: Divider.createBorderSide(context, width: 1.0)
+                              )),
+                        ),
 
-                            decoration: new BoxDecoration(
-                                color: Colors.white,
-                                border: new Border(
-                                    bottom: Divider.createBorderSide(context, width: 1.0)
-                                )),
-                          ),
-                          _getMenus(preText: '参考工时:', content: Text('${_data.regularhrs??''}')),
-                          _getMenus(preText: '实际工时:', content: TextField(
-                            controller: _controller,
-                            keyboardType: TextInputType.number,
-                            enabled: !widget.read,
-                            decoration: new InputDecoration.collapsed(
-                              hintText: '请输入实际工时',
-                            ),
-                          ),
-                              crossAxisAlignment: CrossAxisAlignment.start
+                        new Container(
+                          padding: EdgeInsets.all(8.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text('结束时间: '),
+                              new SizedBox(width: 20.0,),
+                              new InkWell(
+                                  onTap: widget.read ? null : () {
+                                    DateTime time = new DateTime.fromMillisecondsSinceEpoch(
+                                        _data.finishdate * 1000);
+                                    Func.selectDate(context, time, (DateTime date) {
+                                      setState(() {
+                                        _data.finishdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
+                                      });
+                                    });
+                                  },
+                                  child: Row(
+                                      children: <Widget>[
+                                        new Text('${Func.getYearMonthDay(_data.finishdate * 1000)}'),
+                                        Icon(Icons.arrow_drop_down)]
+                                  )
+                              ),
+                              new SizedBox(width: 20.0,),
+                              new InkWell(
+                                  onTap: widget.read ? null : () {
+                                    DateTime time = new DateTime.fromMillisecondsSinceEpoch(
+                                        _data.finishdate * 1000);
+                                    Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
+                                      setState(() {
+                                        _data.finishdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
+                                      });
+                                    });
+                                  },
+                                  child:Row(
+                                      children: <Widget>[ new Text('${Func.getHourMin(_data.finishdate * 1000)}'),
+                                      Icon(Icons.arrow_drop_down)
+                                      ])
+                              ),
+                            ],
                           ),
 
-                        ],
-                      ),
+                          decoration: new BoxDecoration(
+                              color: Colors.white,
+                              border: new Border(
+                                  bottom: Divider.createBorderSide(context, width: 1.0)
+                              )),
+                        ),
+                        _getMenus(preText: '参考工时:', content: Text('${_data.regularhrs??''}')),
+                        _getMenus(preText: '实际工时:', content: TextField(
+                          controller: _controller,
+                          keyboardType: TextInputType.number,
+                          enabled: !widget.read,
+                          decoration: new InputDecoration.collapsed(
+                            hintText: '请输入实际工时',
+                          ),
+                        ),
+                            crossAxisAlignment: CrossAxisAlignment.start
+                        ),
+
+                      ],
                     ),
                   ),
+                  ),
+                  Positioned(left: 0.0, bottom: 0.0, right: 0.0, child:
                   Material(
                     elevation: 6.0,
                     child: Padding(
@@ -394,7 +398,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                         ),
                       ),
                     ),
-                  )
+                  ))
                 ],
               ),
             ),

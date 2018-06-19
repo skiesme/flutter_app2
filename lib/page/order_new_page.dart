@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:samex_app/data/root_model.dart';
@@ -55,7 +56,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
     _data = widget.data ?? new OrderPostData();
     _controller =
-        new TextEditingController(text: widget.data?.description ?? '');
+    new TextEditingController(text: widget.data?.description ?? '');
 
     _manager?.stop();
   }
@@ -122,7 +123,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
       List<UploadFileInfo> list = new List();
 
       List<String> uploadImages =
-          getUploadImages(_key.currentState.getImages());
+      getUploadImages(_key.currentState.getImages());
 
       var post = () async {
         try {
@@ -213,6 +214,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: Text('新增维修工单'),
         ),
@@ -225,143 +227,141 @@ class _OrderNewPageState extends State<OrderNewPage> {
               tips: _tips,
               child: Container(
                   color: Style.backgroundColor,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  height: MediaQuery.of(context).size.height,
+                  child: Stack(
                     children: <Widget>[
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: <Widget>[
-                              _getMenus(preText: '类型:', content: Text('维修单')),
-                              _getMenus(
-                                  preText: '描述:',
-                                  content: TextField(
-                                    controller: _controller,
-                                    maxLines: 3,
-                                    decoration: new InputDecoration.collapsed(
-                                      hintText: '请输入工单描述',
-                                    ),
+                      new Positioned(left: 0.0, top: 0.0, bottom: max(80.0, MediaQuery.of(context).viewInsets.bottom), right: 0.0, child: SingleChildScrollView(
+                        child: Column(
+                          children: <Widget>[
+                            _getMenus(preText: '类型:', content: Text('维修单')),
+                            _getMenus(
+                                preText: '描述:',
+                                content: TextField(
+                                  controller: _controller,
+                                  maxLines: 3,
+                                  decoration: new InputDecoration.collapsed(
+                                    hintText: '请输入工单描述',
                                   ),
-                                  crossAxisAlignment: CrossAxisAlignment.start),
-                              _getMenus(
-                                  preText: '资产:',
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  content: SimpleButton(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
-                                      onTap: () async {
-                                        final DescriptionData result =
-                                            await Navigator.push(
-                                                context,
-                                                new MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        new ChooseAssetPage(
-                                                          location:
-                                                              _data.location,
-                                                        )));
+                                ),
+                                crossAxisAlignment: CrossAxisAlignment.start),
+                            _getMenus(
+                                preText: '资产:',
+                                padding: EdgeInsets.only(left: 8.0),
+                                content: SimpleButton(
+                                    padding:
+                                    EdgeInsets.symmetric(vertical: 8.0),
+                                    onTap: () async {
+                                      final DescriptionData result =
+                                      await Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (_) =>
+                                              new ChooseAssetPage(
+                                                location:
+                                                _data.location,
+                                              )));
 
-                                        if (result != null) {
-                                          setState(() {
-                                            _data.assetnum = result.assetnum;
-                                            _data.assetDescription =
-                                                result.description;
-                                            _data.location = result.location;
-                                            _data.locationDescription =
-                                                result.locationDescription;
-                                          });
-                                        }
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            _data.assetnum ?? '请选择资产',
-                                            style: TextStyle(
-                                                color: _data.assetnum == null
-                                                    ? Colors.grey
-                                                    : Colors.black),
-                                          ),
-                                          Icon(
-                                            Icons.navigate_next,
-                                            color: Colors.black87,
-                                          ),
-                                        ],
-                                      ))),
-                              _getMenus(
-                                  preText: '描述:',
-                                  content: Text(
-                                      _data.assetDescription ?? '资产描述',
-                                      style: TextStyle(
-                                          color: _data.assetnum == null
-                                              ? Colors.grey
-                                              : Colors.black))),
-                              _getMenus(
-                                  preText: '位置:',
-                                  padding: EdgeInsets.only(left: 8.0),
-                                  content: SimpleButton(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8.0),
-                                      onTap: () async {
-                                        final DescriptionData result =
-                                            await Navigator.push(
-                                                context,
-                                                new MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        new ChooseAssetPage(
-                                                          chooseLocation: true,
-                                                        )));
+                                      if (result != null) {
+                                        setState(() {
+                                          _data.assetnum = result.assetnum;
+                                          _data.assetDescription =
+                                              result.description;
+                                          _data.location = result.location;
+                                          _data.locationDescription =
+                                              result.locationDescription;
+                                        });
+                                      }
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          _data.assetnum ?? '请选择资产',
+                                          style: TextStyle(
+                                              color: _data.assetnum == null
+                                                  ? Colors.grey
+                                                  : Colors.black),
+                                        ),
+                                        Icon(
+                                          Icons.navigate_next,
+                                          color: Colors.black87,
+                                        ),
+                                      ],
+                                    ))),
+                            _getMenus(
+                                preText: '描述:',
+                                content: Text(
+                                    _data.assetDescription ?? '资产描述',
+                                    style: TextStyle(
+                                        color: _data.assetnum == null
+                                            ? Colors.grey
+                                            : Colors.black))),
+                            _getMenus(
+                                preText: '位置:',
+                                padding: EdgeInsets.only(left: 8.0),
+                                content: SimpleButton(
+                                    padding:
+                                    EdgeInsets.symmetric(vertical: 8.0),
+                                    onTap: () async {
+                                      final DescriptionData result =
+                                      await Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (_) =>
+                                              new ChooseAssetPage(
+                                                chooseLocation: true,
+                                              )));
 
-                                        if (result != null) {
-                                          setState(() {
-                                            _data.location = result.location;
-                                            _data.locationDescription =
-                                                result.description;
-                                          });
-                                        }
-                                      },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(
-                                            _data.location ?? '请选择位置',
-                                            style: TextStyle(
-                                                color: _data.location == null
-                                                    ? Colors.grey
-                                                    : Colors.black),
-                                          ),
-                                          Icon(
-                                            Icons.navigate_next,
-                                            color: Colors.black87,
-                                          ),
-                                        ],
-                                      ))),
-                              _getMenus(
-                                  preText: '描述:',
-                                  content: Text(
-                                      _data.locationDescription ?? '位置描述',
-                                      style: TextStyle(
-                                          color: _data.location == null
-                                              ? Colors.grey
-                                              : Colors.black))),
-                              _getMenus(
-                                  preText: '照片:',
-                                  content: PictureList(
-                                    canAdd: true,
-                                    images: _data.images,
-                                    key: _key,
-                                  )),
-                              _getMenus(
-                                  preText: '上报人:',
-                                  content: Text(
-                                      getModel(context).user?.displayname ??
-                                          '')),
-                            ],
-                          ),
+                                      if (result != null) {
+                                        setState(() {
+                                          _data.location = result.location;
+                                          _data.locationDescription =
+                                              result.description;
+                                        });
+                                      }
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          _data.location ?? '请选择位置',
+                                          style: TextStyle(
+                                              color: _data.location == null
+                                                  ? Colors.grey
+                                                  : Colors.black),
+                                        ),
+                                        Icon(
+                                          Icons.navigate_next,
+                                          color: Colors.black87,
+                                        ),
+                                      ],
+                                    ))),
+                            _getMenus(
+                                preText: '描述:',
+                                content: Text(
+                                    _data.locationDescription ?? '位置描述',
+                                    style: TextStyle(
+                                        color: _data.location == null
+                                            ? Colors.grey
+                                            : Colors.black))),
+                            _getMenus(
+                                preText: '照片:',
+                                content: PictureList(
+                                  canAdd: true,
+                                  images: _data.images,
+                                  key: _key,
+                                )),
+                            _getMenus(
+                                preText: '上报人:',
+                                content: Text(
+                                    getModel(context).user?.displayname ??
+                                        '')),
+                          ],
                         ),
-                      ),
-                      Material(
+                      )),
+                      Positioned(left: 0.0, bottom: 0.0, right: 0.0, child:Material(
                         elevation: 6.0,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -380,7 +380,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                             ),
                           ),
                         ),
-                      )
+                      ))
                     ],
                   )),
             )));
