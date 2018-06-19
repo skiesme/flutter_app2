@@ -8,6 +8,7 @@ import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:samex_app/utils/cache.dart';
 
 class TaskPage extends StatefulWidget {
 
@@ -32,6 +33,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   @override
   void initState() {
     super.initState();
+
+
     _controller = new TabController(length: 3, vsync: this, initialIndex: _tabIndex);
     _searchQuery = new TextEditingController();
 
@@ -40,6 +43,11 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       taskPageHelpers.add(new PageHelper());
       taskPageHelpers.add(new PageHelper());
       taskPageHelpers.add(new PageHelper());
+    }
+
+    String title = Cache.instance.userTitle;
+    if(title != null && title.contains('部长')){
+      _tabIndex = 0;
     }
 
   }

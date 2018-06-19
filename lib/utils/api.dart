@@ -84,6 +84,8 @@ import 'package:samex_app/utils/func.dart';
           info = result.response;
           if(!onlyCount){
             Cache.instance.setStringValue(KEY_SITE, info.defsite);
+            Cache.instance.setStringValue(KEY_USER_TITLE, info.title);
+            Cache.instance.setStringValue(KEY_USER_DISPLAY_NAME, info.displayname);
           }
         }
       } catch (e){

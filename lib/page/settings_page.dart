@@ -94,7 +94,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     }).toList();
                   },
                   onSelected: (GalleryTextScaleValue scaleValue) {
-                    Cache.instance.setDoubleValue(KEY_FONTSIZE, scaleValue.scale);
+                    Cache.instance.setDoubleValue(KEY_FONT_SIZE, scaleValue.scale);
                     getModel(context).onTextScaleChanged(scaleValue.scale);
                     setState(() {
 

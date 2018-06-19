@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
         Func.showMessage(result.message);
       } else {
         getModel(context).user = null;
-        Cache.instance.setStringValue(KEY_USERNAME, _controller.text);
+        Cache.instance.setStringValue(KEY_USER_NAME, _controller.text);
         Cache.instance.setStringValue(KEY_TOKEN, result.response.accessToken);
 
         Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_) => new MainPage() ));

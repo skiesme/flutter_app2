@@ -168,7 +168,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     _menus.add(new _Menu(image: ImageAssets.home_history, title: '历史记录'));
     _menus.add(new _Menu(image: ImageAssets.home_notification, title: '通知公告'));
     _menus.add(new _Menu(image: ImageAssets.home_meter, title: '仪表抄表'));
-
   }
 
   @override

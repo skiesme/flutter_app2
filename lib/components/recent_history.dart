@@ -99,7 +99,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
               ]
           ),
         ),
-        onDoubleTap: (){
+        onTap: (){
           OrderShortInfo info = new OrderShortInfo(wonum: f.wonum, worktype: "CM");
           Navigator.push(context, new MaterialPageRoute(
               builder: (_) => new TaskDetailPage(info: info)));
@@ -119,7 +119,6 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     for (int i = 0, len = list.length; i < len; i++) {
       OrderStatusData f = list[i];
       children.add(SimpleButton(
-        padding: Style.pagePadding,
         child: ListTile(
               title: Text('操作人: ${f.changeby}', style: TextStyle(fontSize: 16.0),),
               subtitle: Text('时间: '+Func.getFullTimeString(f.statusdate)),
