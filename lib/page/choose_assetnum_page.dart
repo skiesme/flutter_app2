@@ -6,13 +6,16 @@ import 'package:samex_app/model/description.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/utils/assets.dart';
+import 'package:samex_app/page/assetnum_detail_page.dart';
 
 // 资产选择
 class ChooseAssetPage extends StatefulWidget {
   final String location;
   final bool chooseLocation;
 
-  ChooseAssetPage({this.location, this.chooseLocation = false});
+  final bool needReturn;
+
+  ChooseAssetPage({this.location, this.chooseLocation = false, this.needReturn = true});
 
   @override
   _ChooseAssetPageState createState() => _ChooseAssetPageState();
@@ -33,6 +36,14 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     });
   }
 
+  String _getTitle(){
+    if(!widget.needReturn){
+      return '资产扫描';
+    } else {
+      return widget.chooseLocation ? '位置选择' : '资产选择';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final list = getMemoryCache(cacheKey, callback: () {
@@ -43,7 +54,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
     return new Scaffold(
       appBar: new AppBar(
-        title: Text(widget.chooseLocation ? '位置选择' : '资产选择'),
+        title: Text(_getTitle()),
         actions: <Widget>[
           new IconButton(
               icon: Icon(Icons.refresh),
@@ -82,7 +93,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号进行过滤",
+                  hintText: "请输入${widget.chooseLocation ? '位置':'资产/位置'}编号进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
@@ -169,7 +180,12 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
                     : '位置:${asset.location??''}\n${asset.locationDescription??''}', textAlign: TextAlign.right,),
               ),
               onTap: () {
-                Navigator.pop(context, asset);
+                if(widget.needReturn){
+                  Navigator.pop(context, asset);
+                } else {
+                  Navigator.push(context, new MaterialPageRoute(builder:
+                  (_) => new AssetNumDetailPage(asset: asset.assetnum)));
+                }
               },
             ),
             Divider(

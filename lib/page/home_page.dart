@@ -10,6 +10,7 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/page/task_page.dart';
 import 'package:samex_app/page/order_new_page.dart';
 import 'package:after_layout/after_layout.dart';
+import 'package:samex_app/page/choose_assetnum_page.dart';
 
 var _textStyle = new TextStyle(color: Colors.white, fontSize: 16.0);
 
@@ -42,6 +43,8 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
   void _gotoPage(String menu){
     if(ImageAssets.home_order == menu){
       Navigator.push(context, new MaterialPageRoute(builder: (_) => new TaskPage(isTask: false,)));
+    } else if(ImageAssets.home_assets == menu) {
+      Navigator.push(context, new MaterialPageRoute(builder: (_) => new ChooseAssetPage(needReturn: false,)));
     }
   }
 
