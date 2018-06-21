@@ -239,8 +239,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     list.addAll(<Widget>[
       Text('工单编号: ${_info.wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
-      Text('标题名称: ${_info?.description??''}'),
-      Text('工单状态: ${_info?.status??''}'),
+      Text('标题名称: ${_data?.description??''}'),
+      Text('工单状态: ${_data?.status??''}'),
 //      Text('描述详细: '),
     ]);
 
