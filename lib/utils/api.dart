@@ -330,6 +330,16 @@ import 'package:samex_app/utils/func.dart';
       return response.data;
     }
 
+    Future<Map> getMaterials() async {
+      Uri uri = new Uri.http(ipAndPort, '/app/api/material');
+
+      Response response = await _dio.get(uri.toString(), options: _options());
+
+      print('${uri.toString()}: ${response.data}');
+
+      return response.data;
+    }
+
     Future<Map> getAssetDetail(String asset) async {
       Uri uri = new Uri.http(ipAndPort, '/app/api/asset/$asset');
 
