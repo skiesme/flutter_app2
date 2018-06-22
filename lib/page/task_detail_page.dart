@@ -402,6 +402,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         Func.showMessage('该功能还未支持');
         return;
       case OrderPostStyle.Refresh:
+        clearMemoryCacheWithKeys(_info.wonum);
         setState(() {
           _show = true;
         });

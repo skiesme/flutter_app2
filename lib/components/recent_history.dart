@@ -28,6 +28,7 @@ class RecentHistory extends StatefulWidget {
 class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<RecentHistory> {
 
   bool _first = true;
+  bool _request = false;
 
   OrderType getType() {
     return  getOrderType(widget.data?.worktype??'');
@@ -179,6 +180,8 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   void _getHistory() async {
 
+    if(_request) return;
+    _request = true;
     OrderDetailData data = widget.data;
 
     try {
@@ -229,7 +232,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       Func.showMessage('网络出现异常: 获取巡检历史失败');
     }
 
-
+    _request = false;
   }
 
   String  get cacheKey {

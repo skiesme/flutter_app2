@@ -25,6 +25,7 @@ class StepList extends StatefulWidget {
 class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
   bool _first = true;
+  bool _request = false;
 
   Future<Null> gotoStep(String asset, [int index = -1]) async {
     List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
@@ -77,6 +78,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
 
 
   void getSteps() async {
+    if(_request) return;
+    _request = true;
     OrderDetailData data = widget.data;
     if(data != null){
       try{
@@ -98,6 +101,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         Func.showMessage('网络出现异常: 获取步骤列表失败');
       }
     }
+
+    _request = false;
   }
 
   get cacheKey {

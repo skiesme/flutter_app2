@@ -5,10 +5,10 @@ import 'package:sembast/sembast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 
-class Sembast {
+class SemBast {
   static Database _db;
 
-  Sembast(){
+  SemBast(){
    init();
   }
 

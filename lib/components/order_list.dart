@@ -43,7 +43,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    print('afterFirstLayout... type=${widget.type}');
+//    print('afterFirstLayout... type=${widget.type}');
 
     if(_scrollController.initialScrollOffset > 0){
       Future.delayed(new Duration(milliseconds: 100), () {

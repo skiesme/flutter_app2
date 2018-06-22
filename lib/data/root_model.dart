@@ -59,7 +59,7 @@ class TimeCache<T> {
 
 Map<String, TimeCache> _memoryCache = new Map();
 
-T getMemoryCache<T>(String key, {bool expired = true, VoidCallback callback}){
+T getMemoryCache<T>(String key, {bool expired = false, VoidCallback callback}){
   if(key == null || key.length == 0 || !_memoryCache.containsKey(key)){
     if(callback != null){
       callback();
@@ -159,7 +159,7 @@ class GlobListeners {
 }
 
 class RootModel {
-  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new Sembast();
+  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new SemBast();
 
   String token;
 
@@ -168,7 +168,7 @@ class RootModel {
   final ValueChanged<double> onTextScaleChanged;
 
   final SamexApi api;
-  final Sembast db;
+  final SemBast db;
 }
 
 class RootModelWidget extends InheritedWidget {
