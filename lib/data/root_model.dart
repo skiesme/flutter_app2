@@ -6,7 +6,7 @@ import 'package:samex_app/model/user.dart';
 
 import 'package:samex_app/data/sembast.dart';
 
-SamexApi getApi(BuildContext context){
+SaMexApi getApi(BuildContext context){
   return RootModelWidget.of(context).model.api;
 }
 
@@ -159,7 +159,7 @@ class GlobListeners {
 }
 
 class RootModel {
-  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SamexApi(), this.db = new SemBast();
+  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SaMexApi(), this.db = new SemBast();
 
   String token;
 
@@ -167,7 +167,7 @@ class RootModel {
 
   final ValueChanged<double> onTextScaleChanged;
 
-  final SamexApi api;
+  final SaMexApi api;
   final SemBast db;
 }
 

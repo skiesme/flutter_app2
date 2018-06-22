@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:samex_app/page/login_page.dart';
@@ -15,6 +16,11 @@ import 'package:samex_app/page/material_page.dart';
 
 var _textStyle = new TextStyle(color: Colors.white, fontSize: 16.0);
 
+void printHello() {
+  final DateTime now = new DateTime.now();
+  final int isolateId = Isolate.current.hashCode;
+  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+}
 
 class _Menu {
   final String image;

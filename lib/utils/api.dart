@@ -12,7 +12,7 @@ import 'package:samex_app/utils/func.dart';
   Dio _dio = new Dio();
 
 
-  class SamexApi {
+  class SaMexApi {
     static String ipAndPort = '192.168.60.12:40001';
 
 //    static String ipAndPort = '172.19.1.30:40001';
@@ -20,7 +20,7 @@ import 'package:samex_app/utils/func.dart';
     static String baseUrl = 'http://$ipAndPort/app/api';
     static Options _option;
 
-    Options _options({int connectTimeout = 6000, receiveTimeout = 3000, Map<String, dynamic> headers }){
+    static Options _options({int connectTimeout = 6000, receiveTimeout = 3000, Map<String, dynamic> headers }){
       if(_option == null){
         _option = new Options();
       }
@@ -87,6 +87,9 @@ import 'package:samex_app/utils/func.dart';
             Cache.instance.setStringValue(KEY_USER_TITLE, info.title);
             Cache.instance.setStringValue(KEY_USER_DISPLAY_NAME, info.displayname);
           }
+
+          Cache.instance.setIntValue(KEY_ORDER_COUNT, info.orders);
+
         }
       } catch (e){
         print('$url :  $e');
@@ -94,6 +97,31 @@ import 'package:samex_app/utils/func.dart';
       }
 
       return info;
+    }
+
+
+    static Future<int> getScheduleCount() async {
+      UserInfo info;
+      String url = baseUrl+'/user/count';
+
+      try {
+
+        Response response = await _dio.get(url, options: _options());
+        print('user: ${response.data}');
+
+        UserResult result = new UserResult.fromJson(response.data);
+        if(result.code != 0) {
+          print(result.message);
+        } else {
+          info = result.response;
+
+        }
+      } catch (e){
+        print('$url :  $e');
+//        Func.showMessage('网络出现异常: 获取用户数据失败!');
+      }
+
+      return info.orders;
     }
 
     Future<Map> userAll() async {

@@ -24,6 +24,7 @@ dependencies:
   dio: ^0.0.14
   image: ^2.0.4
   http: ^0.11.3+16
+  android_alarm_manager: ^0.1.1
 
 dev_dependencies:
   flutter_test:
