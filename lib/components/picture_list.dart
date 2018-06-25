@@ -4,7 +4,6 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 import 'package:flutter/material.dart';
-import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/components/simple_button.dart';
 
 import 'package:samex_app/data/root_model.dart';
@@ -14,6 +13,8 @@ import 'package:samex_app/utils/func.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
+
+//import 'package:flutter_native_image/flutter_native_image.dart';
 
 class PictureList extends StatefulWidget {
 
@@ -34,6 +35,11 @@ class PictureListState extends State<PictureList> {
 
   Future _getImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.camera, maxHeight: 1280.0, maxWidth: 1280.0);
+
+//    if(Platform.isIOS){
+//      image = await FlutterNativeImage.compressImage(image.path,
+//          quality: 98, percentage: 100);
+//    }
 
     if(image != null){
       setState(() {

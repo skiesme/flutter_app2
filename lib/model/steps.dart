@@ -34,25 +34,32 @@ class Calculator {
           path = f.split(',')[0];
         }
         if(path.startsWith('/')){
+          if(!Io.Platform.isIOS) {
+            onProgressListener(i + 1);
+            List<int> bytes = new Io.File(path).readAsBytesSync();
 
-          onProgressListener(i+1);
+            Image image = decodeImage(bytes);
 
-          List<int> bytes =  new Io.File(path).readAsBytesSync();
+            String cachePath = dirname(path) + '${i + 1}.png';
 
-          Image image = decodeImage(bytes);
+            Io.File file = new Io.File(cachePath);
+            if (file.existsSync()) {
+              file.deleteSync();
+            }
 
-          String cachePath = dirname(path)+ '${i+1}.png';
+            // Save the thumbnail as a PNG.
+            new Io.File(cachePath).writeAsBytesSync(
+                encodeJpg(image, quality: 80));
 
-          Io.File file = new Io.File(cachePath);
-          if(file.existsSync()){
-            file.deleteSync();
+
+            list.add(new UploadFileInfo(
+                new Io.File(cachePath), basename(cachePath),
+                contentType: Io.ContentType.BINARY));
+          } else {
+            list.add(new UploadFileInfo(
+                new Io.File(path), basename(path),
+                contentType: Io.ContentType.BINARY));
           }
-
-          // Save the thumbnail as a PNG.
-          new Io.File(cachePath).writeAsBytesSync(encodeJpg(image, quality: 80));
-
-
-          list.add(new UploadFileInfo(new Io.File(cachePath), basename(cachePath), contentType: Io.ContentType.BINARY));
         }
       } catch(e){
         print(e);

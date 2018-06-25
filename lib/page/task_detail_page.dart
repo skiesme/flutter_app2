@@ -469,7 +469,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   @override
   Widget build(BuildContext context) {
-
     return
       LoadingView(
           show: _show,

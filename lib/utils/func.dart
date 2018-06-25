@@ -70,7 +70,7 @@ class Func {
     Fluttertoast.showToast(
         msg: value,
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+        gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 1
     );
   }
