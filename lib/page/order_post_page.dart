@@ -145,7 +145,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   ),
                   ListTile(
                     title: Text('操作人'),
-                    subtitle: Text(getModel(context).user?.displayname?? ''),
+                    subtitle: Text(Cache.instance.userDisplayName),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

@@ -11,7 +11,7 @@ import 'package:samex_app/components/picture_list.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:dio/dio.dart';
 import 'package:samex_app/page/order_new_page.dart';
-
+import 'package:samex_app/utils/cache.dart';
 
 final List<_StatusSelect> _statusList = <_StatusSelect>[
   _StatusSelect(0, '正常'),
@@ -87,7 +87,7 @@ class _StepPageState extends State<StepPage>{
       double time = DateTime.now().millisecondsSinceEpoch / 1000;
       widget.data.statusdate =  time.toInt();
       widget.data.remark = _controller.text;
-      widget.data.executor = getModel(context).user.displayname;
+      widget.data.executor = Cache.instance.userDisplayName;
 
       List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
 
@@ -246,7 +246,7 @@ class _StepPageState extends State<StepPage>{
                   Padding(padding: Style.pagePadding4, child:Divider(height: 1.0,)),
                   Padding(padding: Style.pagePadding4, child:Text('时间: ${Func.getFullTimeString(data.statusdate)}')),
                   Padding(padding: Style.pagePadding4, child:Divider(height: 1.0,)),
-                  Padding(padding: Style.pagePadding2, child:Text('人员: ${(widget.isTask ? getModel(context).user?.displayname : data.executor) ?? ''}')),
+                  Padding(padding: Style.pagePadding2, child:Text('人员: ${(widget.isTask ? Cache.instance.userDisplayName : data.executor) ?? ''}')),
                   SizedBox(height: Style.separateHeight/2,),
                   Container(height: Style.separateHeight, color: Style.backgroundColor,),
 

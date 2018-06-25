@@ -19,6 +19,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/model/work_time.dart';
 import 'package:samex_app/page/work_time_page.dart';
+import 'package:samex_app/utils/cache.dart';
 
 class TaskDetailPage extends StatefulWidget {
 
@@ -155,7 +156,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 stepno: (_stepKey.currentState.steps + 1) * 10,
                 assetnum: _data.assetnum,
                 assetDescription: _data.assetDescription,
-                executor: getModel(context).user?.displayname??'',
+                executor: Cache.instance.userDisplayName,
                 wonum: _data.wonum
               ), read: _data.actfinish != 0,);
             }));

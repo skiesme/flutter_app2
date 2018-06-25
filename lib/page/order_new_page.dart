@@ -355,9 +355,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                 )),
                             _getMenus(
                                 preText: '上报人:',
-                                content: Text(
-                                    getModel(context).user?.displayname ??
-                                        '')),
+                                content: Text(Cache.instance.userDisplayName)),
                           ],
                         ),
                       )),

@@ -122,7 +122,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                   child: Icon(Icons.person, size: 60.0, color: Colors.white,),
                 ),
                 new SizedBox(height: 5.0,),
-                Text(_user?.displayname??' ', style: TextStyle(fontSize: 22.0, color: Colors.white),),
+                Text(Cache.instance.userDisplayName, style: TextStyle(fontSize: 22.0, color: Colors.white),),
                 new SizedBox(height: 5.0,),
 
                 new InkWell(
