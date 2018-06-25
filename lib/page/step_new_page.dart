@@ -15,7 +15,7 @@ class StepNewPage extends StatefulWidget {
   final OrderStep step;
   final bool read;
 
-  StepNewPage({@required this.step, @required this.read = false});
+  StepNewPage({@required this.step, this.read = false});
 
   @override
   _StepNewPageState createState() => _StepNewPageState();
