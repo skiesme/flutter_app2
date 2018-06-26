@@ -371,7 +371,7 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
             ..scale(_scale),
           child: widget.path.startsWith('http') ? new CachedNetworkImage(
             imageUrl: widget.path,
-            placeholder: new CircularProgressIndicator(),
+            placeholder: Center( child: new CircularProgressIndicator()),
             errorWidget: new Icon(Icons.error),
           )
               : new Image.file(new File(widget.path), fit: BoxFit.cover,) ,
