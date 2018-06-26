@@ -88,17 +88,11 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     for (int i = 0, len = _cmHistoryList.length; i < len; i++) {
       CMHistoryData f = _cmHistoryList[i];
       children.add(SimpleButton(
-        child: new Padding(
-          padding: Style.pagePadding,
-          child: Row(
-              children: <Widget>[
-                Text('记录:'),
-                Text(f.lead),
-                Expanded(child: Text(Func.getFullTimeString(f.actfinish),
-                  textAlign: TextAlign.center,)),
-                Text(f.status),
-              ]
-          ),
+        child: ListTile(
+          isThreeLine: true,
+          title: Text(f.wonum +'(${f.worktype == 'CM' ? '报修单':'保养单'})'),
+          subtitle: Text('${f.description}\n${Func.getFullTimeString(f.actfinish)}'),
+          trailing: Text('${f.lead}\n${f.status}', textAlign: TextAlign.right,),
         ),
         onTap: (){
           OrderShortInfo info = new OrderShortInfo(wonum: f.wonum, worktype: "CM");
@@ -121,11 +115,11 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       OrderStatusData f = list[i];
       children.add(SimpleButton(
         child: ListTile(
-              title: Text('操作人: ${f.changeby}', style: TextStyle(fontSize: 16.0),),
-              subtitle: Text('时间: '+Func.getFullTimeString(f.statusdate)),
-              trailing: Text(f.status),
-            ),
-          ),
+          title: Text('操作人: ${f.changeby}', style: TextStyle(fontSize: 16.0),),
+          subtitle: Text('时间: '+Func.getFullTimeString(f.statusdate)),
+          trailing: Text(f.status),
+        ),
+      ),
       );
       children.add(Divider(height: 1.0,));
     }
@@ -239,14 +233,12 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     OrderType type = getType();
     if(type == OrderType.XJ){
       return 'history_xj_${widget.data.wonum}_${widget.data.sopnum}';
-    } else if(type == OrderType.CM){
+    } else {
       if(widget.data.actfinish != 0){
         return 'history_cm2_${widget.data.wonum}';
       }
       return 'history_cm_${widget.data.wonum}_${widget.data.assetnum}';
     }
-
-    return '';
   }
 
   @override

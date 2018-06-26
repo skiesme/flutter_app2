@@ -138,9 +138,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
     switch(_tabIndex){
       case 0:
-        String str = (_type == OrderType.PM) ? '保养' :(_type == OrderType.CM ? '维修' : '巡检');
-        if(_type == OrderType.CM && _data.actfinish != 0){
-          str = '$str记录';
+        String str = (_type == OrderType.XJ) ? '巡检': '维修保养';
+        if(_type != OrderType.XJ ){
+          if(_data.actfinish == 0){
+            str = '$str历史';
+          } else {
+            str = '工单状态记录';
+          }
         } else {
           str = '$str历史';
         }

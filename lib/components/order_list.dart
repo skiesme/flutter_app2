@@ -16,7 +16,6 @@ import 'package:after_layout/after_layout.dart';
 
 const double _padding = 16.0;
 const TextStyle _status_style = TextStyle(color: Colors.red);
-bool _isReversed = true;
 
 const force_refresh = 'FORCEREFRESH';
 const force_scroller_head = 'force_scroller_head';
@@ -109,10 +108,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     try{
 
       int time = 0;
-
-      if(_isReversed){
-        older = older == 0 ? 1 : 0;
-      }
 
       if(widget.helper.itemCount() > 0){
         var data = widget.helper.datas[0];
@@ -288,21 +283,13 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   List<OrderShortInfo> getList(){
     List<OrderShortInfo> list = filter();
-    if(_isReversed){
-      return list.reversed.toList();
-    } else {
-      return list;
-    }
+    return list;
   }
 
   void removeAt(int index) {
     if(widget.helper.datas == null) return;
 
-    if(_isReversed){
-      widget.helper.datas.removeAt(widget.helper.datas.length - index - 1);
-    } else {
-      widget.helper.datas.removeAt(index);
-    }
+    widget.helper.datas.removeAt(index);
   }
 
 
@@ -310,7 +297,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   Widget build(BuildContext context) {
 //    print('${widget.type} ... build, ${widget.helper.itemCount()}');
 
-    List<OrderShortInfo> list = filter().reversed.toList();
+    List<OrderShortInfo> list = filter().toList();
     _scrollController = widget.helper.createController();
     _scrollController.addListener((){
       if(_scrollController.offset > context.size.height){
