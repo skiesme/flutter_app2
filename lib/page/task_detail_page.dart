@@ -217,7 +217,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         break;
       case 2:
       case 3:
-        widget = new PeopleAndMaterialList(isPeople: _tabIndex == 2, data: _data, key: _peopleAndMaterialKey,);
+        widget = new PeopleAndMaterialList(read: _data.actfinish > 0, isPeople: _tabIndex == 2, data: _data, key: _peopleAndMaterialKey,);
         break;
     }
 
@@ -473,6 +473,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   @override
   Widget build(BuildContext context) {
+
     return
       LoadingView(
           show: _show,

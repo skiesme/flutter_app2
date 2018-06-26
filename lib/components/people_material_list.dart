@@ -12,9 +12,11 @@ class PeopleAndMaterialList extends StatefulWidget {
 
   final bool isPeople;
 
+  final bool read;
+
   final OrderDetailData data;
 
-  PeopleAndMaterialList({this.isPeople, Key key, @required this.data}) : super(key:key);
+  PeopleAndMaterialList({this.isPeople, Key key, @required this.data, @required this.read}) : super(key:key);
 
   @override
   PeopleAndMaterialListState createState() => new PeopleAndMaterialListState();
@@ -84,14 +86,12 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
             child: Icon(Icons.edit, size: 16.0,),
             onTap: () async {
               final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
-                return new WorkTimePage(data: p , read: widget.data.actfinish != 0);
+                return new WorkTimePage(data: p , read: widget.read);
               }));
 
               if(result != null) {
                 getData();
               }
-
-
         })
 
       ],
