@@ -80,12 +80,12 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   List<TableRow> getTable() {
     List<TableRow> list = <TableRow>[];
-    for(int i = 0, len = _menus.length; i< len; i+= 2){
+    for(int i = 0, len = _menus.length; i< len; i+= 1){
 
       list.add(new TableRow(
           children: <Widget>[
             getMenu(_menus[i]),
-            getMenu(_menus[i+1]),
+//            getMenu(_menus[i+1]),
           ]
       ));
     }
@@ -174,9 +174,9 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     _menus.add(new _Menu(image: ImageAssets.home_order, title: '工单箱'));
     _menus.add(new _Menu(image: ImageAssets.home_assets, title: '资产扫描'));
     _menus.add(new _Menu(image: ImageAssets.home_material, title: '库存查询'));
-    _menus.add(new _Menu(image: ImageAssets.home_history, title: '历史记录'));
-    _menus.add(new _Menu(image: ImageAssets.home_notification, title: '通知公告'));
-    _menus.add(new _Menu(image: ImageAssets.home_meter, title: '仪表抄表'));
+//    _menus.add(new _Menu(image: ImageAssets.home_history, title: '历史记录'));
+//    _menus.add(new _Menu(image: ImageAssets.home_notification, title: '通知公告'));
+//    _menus.add(new _Menu(image: ImageAssets.home_meter, title: '仪表抄表'));
   }
 
   @override

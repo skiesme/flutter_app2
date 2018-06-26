@@ -5,6 +5,7 @@ import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/components/recent_history.dart';
 import 'package:samex_app/model/order_detail.dart';
+import 'package:samex_app/components/picture_list.dart';
 
 class AssetNumDetailPage extends StatefulWidget {
 
@@ -72,10 +73,21 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     children.add(Padding(padding: Style.pagePadding4, child: Text('功能类别: ${data.funclass}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('规格型号: ${data.specific}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('资产状态: ${data.status}'),));
+    children.add(Padding(padding: Style.pagePadding4, child: Row(
+      children: <Widget>[
+        Text('资产图片:'),
+        PictureList(canAdd: false, images: data.pic??[],)
+      ],
+    )));
 //    children.add(Padding(padding: Style.pagePadding4, child: Text('资产序列号: ${data.serialnum}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('上级资产编号: ${data.parent}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('最后修订时间: ${Func.getFullTimeString(data.changedate)}'),));
+
+
+
+
     children.add(new SizedBox(height: Style.separateHeight));
+
     children.add(Padding(padding: Style.pagePadding2, child: Text('资产相关工单记录', style: TextStyle(fontWeight: FontWeight.w700)),));
     children.add(Divider(height: 1.0,));
     children.add(new RecentHistory(data: new OrderDetailData(

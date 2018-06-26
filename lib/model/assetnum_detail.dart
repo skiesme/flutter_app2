@@ -37,6 +37,7 @@ class AssetNumDetail {
   String parent;
   String status;
   String specific;
+  List<String> pic;
 
   AssetNumDetail(
       {this.assetnum,
@@ -50,7 +51,9 @@ class AssetNumDetail {
         this.serialnum,
         this.parent,
         this.status,
-        this.specific});
+        this.specific,
+        this.pic
+      });
 
   AssetNumDetail.fromJson(Map<String, dynamic> json) {
     assetnum = json['assetnum'];
@@ -65,6 +68,7 @@ class AssetNumDetail {
     parent = json['parent']??'';
     status = json['status']??'';
     specific = json['specific']??'';
+    pic = json['pic']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {
@@ -81,6 +85,7 @@ class AssetNumDetail {
     data['parent'] = this.parent;
     data['status'] = this.status;
     data['specific'] = this.specific;
+    data['pic'] = this.pic;
     return data;
   }
 }

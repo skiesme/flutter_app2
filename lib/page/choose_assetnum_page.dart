@@ -23,6 +23,8 @@ class ChooseAssetPage extends StatefulWidget {
 
 class _ChooseAssetPageState extends State<ChooseAssetPage> {
   TextEditingController _scroller;
+  TextEditingController _scroller2;
+
   bool _loading = true;
   bool _request = false;
 
@@ -30,11 +32,23 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   void initState() {
     super.initState();
 
-    _scroller = new TextEditingController(text: widget.location ?? '');
+    _scroller = new TextEditingController(text:'');
     _scroller.addListener(() {
       setState(() {});
     });
+
+    _scroller2 = new TextEditingController(text: '');
+    _scroller2.addListener(() {
+      setState(() {});
+    });
+
+    if(widget.chooseLocation) {
+      _scroller.text = widget.location??'';
+    } else {
+      _scroller2.text = widget.location??'';
+    }
   }
+
 
   String _getTitle(){
     if(!widget.needReturn){
@@ -42,6 +56,14 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     } else {
       return widget.chooseLocation ? '位置选择' : '资产选择';
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _scroller?.dispose();
+    _scroller2?.dispose();
   }
 
   @override
@@ -89,11 +111,12 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
         children: <Widget>[
           Container(
             color: Style.backgroundColor,
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  hintText: "请输入${widget.chooseLocation ? '位置':'资产/位置'}编号进行过滤",
+                  prefixIcon: Text(widget.chooseLocation ? '位置编号: ':'资产编号: '),
+                  hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
@@ -104,6 +127,28 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
                           onPressed: () {
                             _scroller.clear();
                           })
+                      : null),
+            ),
+          ),
+
+          widget.chooseLocation ? Container():           Container(
+            color: Style.backgroundColor,
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            child: new TextField(
+              controller: _scroller2,
+              decoration: new InputDecoration(
+                  prefixIcon: Text('位置编号: '),
+                  hintText: "请输入位置编号进行过滤",
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.all(8.0),
+                  hintStyle: TextStyle(fontSize: 16.0),
+                  border: new OutlineInputBorder(),
+                  suffixIcon: _scroller2.text.isNotEmpty
+                      ? new IconButton(
+                      icon: Icon(Icons.clear),
+                      onPressed: () {
+                        _scroller2.clear();
+                      })
                       : null),
             ),
           ),
@@ -123,16 +168,13 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     if (data == null) return null;
 
     return data.where((DescriptionData f) {
-      // if(!widget.chooseLocation && widget.location != null){
-      //   if(f.location != widget.location){
-      //     return false;
-      //   }
-      // }
 
-      if (_scroller.text.length > 0) {
+      if (_scroller.text.length > 0 || _scroller2.text.length > 0) {
         if (!widget.chooseLocation) {
-          if (f.assetnum.contains(_scroller.text.toUpperCase())) {
+          if (f.assetnum.contains(_scroller.text.toUpperCase()) && (f.location??'').contains(_scroller2.text.toUpperCase())) {
             return true;
+          } else {
+            return false;
           }
         }
 

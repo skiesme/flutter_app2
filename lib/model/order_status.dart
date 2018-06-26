@@ -35,7 +35,7 @@ class OrderStatusData {
   OrderStatusData({this.changeby, this.status, this.statusdate});
 
   OrderStatusData.fromJson(Map<String, dynamic> json) {
-    changeby = json['changeby'];
+    changeby = json['changeby']??'';
     status = json['status'];
     statusdate = json['statusdate'];
   }
