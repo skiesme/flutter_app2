@@ -178,7 +178,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           children: <Widget>[
             info.actfinish == 0 ?  new Image.asset( ImageAssets.order_no_sync , height: 40.0,)
             : new CircleAvatar(child: Icon(Icons.done, size: 30.0,)),
-            Text(info.actfinish != 0 ? '已完成' : '未完成')
+            Text(info.actfinish != 0 ? '已完成' : (info.status.length > 3 ? info.status.substring(info.status.length - 3) : info.status))
           ],
         ));
   }
@@ -271,6 +271,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                               children: <Widget>[
                                 Text('标题: ${info.description}', style: TextStyle(color: Style.primaryColor, fontWeight: FontWeight.w700),),
 //                                Text('位置: ${info.locationDescription}'),
+//                                Text('资产:${info.assetnum??''}'),
                                 Text('设备: ${info.assetDescription}'),
 //                                widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
@@ -293,7 +294,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   List<OrderShortInfo> filter(){
     if(_query.isEmpty) return widget.helper.datas;
-    return widget.helper.datas.where((i) => i.wonum.contains(_query?.toUpperCase())).toList();
+    return widget.helper.datas.where((i) => i.wonum.contains(_query?.toUpperCase()) || (i.assetnum??'').contains(_query?.toUpperCase())).toList();
   }
 
   List<OrderShortInfo> getList(){

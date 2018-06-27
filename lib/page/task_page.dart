@@ -146,7 +146,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       controller: _searchQuery,
       autofocus: true,
       decoration: const InputDecoration(
-        hintText: '输入工单号',
+        hintText: '输入工单号/资产编号进行查询',
         border: InputBorder.none,
         hintStyle: const TextStyle(color: Colors.white30),
       ),
