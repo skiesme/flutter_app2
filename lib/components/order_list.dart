@@ -184,13 +184,28 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   Color getColor(OrderShortInfo info){
-    switch (getOrderType(info.worktype)){
+    if(info.actfinish == 0) {
+      switch (getOrderType(info.worktype)) {
+        case OrderType.XJ:
+          return Style.primaryColor;
+        case OrderType.CM:
+          return Colors.redAccent;
+        default:
+          return Colors.deepOrangeAccent;
+      }
+    } else {
+      return Colors.green;
+    }
+  }
+
+  Color getBackGroundColor(OrderShortInfo info){
+    switch (getOrderType(info.worktype)) {
       case OrderType.XJ:
-        return Style.primaryColor;
+        return const Color(0xFFd9c0c6);
       case OrderType.CM:
-        return Colors.redAccent;
+        return const Color(0xFFd4ded6);
       default:
-        return Colors.deepOrangeAccent;
+        return const Color(0xFFe7dc9e);
     }
   }
 
@@ -212,7 +227,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
             color: getColor(info),
           ),
           new Container(
-              color: info.actfinish == 0 ? Colors.white : Colors.cyan.withOpacity(0.2),
+              color: getBackGroundColor(info).withOpacity(0.6),
               child: new SimpleButton(
                   onTap: () async {
                     final result  = await Navigator.push(context, new MaterialPageRoute(
