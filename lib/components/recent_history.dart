@@ -90,7 +90,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       children.add(SimpleButton(
         child: ListTile(
           isThreeLine: true,
-          title: Text(f.wonum +'(${f.worktype == 'CM' ? '报修单':'保养单'})'),
+          title: Text(f.wonum??'' +'(${f.worktype == 'CM' ? '报修单':'保养单'})'),
           subtitle: Text('${f.description}\n${Func.getFullTimeString(f.actfinish)}'),
           trailing: Text('${f.lead}\n${f.status}', textAlign: TextAlign.right,),
         ),

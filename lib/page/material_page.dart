@@ -79,7 +79,7 @@ class _MaterialPageState extends State<MaterialPage> {
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  hintText: "请输入物料编号/名称进行过滤",
+                  hintText: "请输入物料编号/名称/规格进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
@@ -116,6 +116,10 @@ class _MaterialPageState extends State<MaterialPage> {
         }
 
         if ((f.description??'').contains(_scroller.text.toUpperCase())) {
+          return true;
+        }
+
+        if ((f.in27??'').contains(_scroller.text.toUpperCase())) {
           return true;
         }
 

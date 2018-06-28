@@ -20,8 +20,9 @@ class PictureList extends StatefulWidget {
 
   final bool canAdd;
   final List<String> images;
+  final int count;
 
-  PictureList({Key key, this.canAdd = true,  this.images}):super(key:key);
+  PictureList({Key key, this.canAdd = true,  this.images, this.count = 3}):super(key:key);
 
   @override
   PictureListState createState() => new PictureListState();
@@ -163,7 +164,7 @@ class PictureListState extends State<PictureList> {
     bool canAdd = widget.canAdd ?? true;
 
 
-    if(count < 3 && canAdd){
+    if(count < widget.count && canAdd){
       children.add(SizedBox(width: Style.separateHeight/2,));
       children.add(SimpleButton(
         onTap: (){

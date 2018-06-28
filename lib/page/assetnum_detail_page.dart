@@ -6,6 +6,7 @@ import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/components/recent_history.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/components/picture_list.dart';
+import 'package:samex_app/page/upload_assetnum_page.dart';
 
 class AssetNumDetailPage extends StatefulWidget {
 
@@ -71,20 +72,19 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     children.add(Padding(padding: Style.pagePadding4, child: Text('修改人员: ${data.changeby}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('资产类型: ${data.assettype}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('功能类别: ${data.funclass}'),));
-    children.add(Padding(padding: Style.pagePadding4, child: Text('规格型号: ${data.specific}'),));
+    if(data.specific.isNotEmpty){
+      children.add(Padding(padding: Style.pagePadding4, child: Text('规格型号: ${data.specific}'),));
+    }
     children.add(Padding(padding: Style.pagePadding4, child: Text('资产状态: ${data.status}'),));
-    children.add(Padding(padding: Style.pagePadding4, child: Row(
-      children: <Widget>[
-        Text('资产图片:'),
-        PictureList(canAdd: false, images: data.pic??[],)
-      ],
-    )));
+
 //    children.add(Padding(padding: Style.pagePadding4, child: Text('资产序列号: ${data.serialnum}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('上级资产编号: ${data.parent}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('最后修订时间: ${Func.getFullTimeString(data.changedate)}'),));
+    children.add(new SizedBox(height: Style.separateHeight));
 
-
-
+    children.add(Padding(padding: Style.pagePadding2, child: Text('相关图片', style: TextStyle(fontWeight: FontWeight.w700)),));
+    children.add(Divider(height: 1.0,));
+    children.add(Padding(padding: Style.pagePadding4, child:PictureList(canAdd: false, images: data.pic??[],)));
 
     children.add(new SizedBox(height: Style.separateHeight));
 
@@ -108,6 +108,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    AssetNumDetail data = getMemoryCache<AssetNumDetail>(cacheKey, expired: false);
     return new Scaffold(
       appBar: AppBar(
         title: Text('${widget.asset} 详情'),
@@ -120,6 +121,24 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
       ),
 
       body: _getDetail(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: data == null ?  null : new FloatingActionButton(
+          child: Tooltip(
+            child: new Icon(Icons.edit),
+            message: '修改',
+            preferBelow: false,
+          ),
+//          backgroundColor: Colors.redAccent,
+          onPressed: () async {
+            final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
+              return new UploadAssetPage(asset: data);
+            }));
+
+            if(result != null) {
+              _error = false;
+              _getAssetDetail();
+            }
+          }),
     );
   }
 }

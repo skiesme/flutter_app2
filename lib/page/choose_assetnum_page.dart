@@ -211,7 +211,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
             SimpleButton(
               child: ListTile(
                 leading: CircleAvatar(
-                  child: Text('${index+1}'),
+                  child: Text('${index+1}', style: TextStyle(fontSize: index > 10000 ? 12.0 : 14.0),),
                 ),
                 title: Text(widget.chooseLocation
                     ? '${asset.location}'

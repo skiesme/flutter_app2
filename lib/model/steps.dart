@@ -40,7 +40,7 @@ class Calculator {
 
             Image image = decodeImage(bytes);
 
-            String cachePath = dirname(path) + '${i + 1}.png';
+            String cachePath = dirname(path) + '${i + 1}.jpg';
 
             Io.File file = new Io.File(cachePath);
             if (file.existsSync()) {
