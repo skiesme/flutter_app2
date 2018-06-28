@@ -15,10 +15,37 @@ import 'package:samex_app/components/load_more.dart';
 import 'package:after_layout/after_layout.dart';
 
 const double _padding = 16.0;
-const TextStyle _status_style = TextStyle(color: Colors.red);
 
 const force_refresh = 'FORCEREFRESH';
 const force_scroller_head = 'force_scroller_head';
+const option_cache_key = 'filter_option_key';
+
+final List<_OrderTypeSelect> _orderTypeList = <_OrderTypeSelect>[
+  _OrderTypeSelect(OrderType.ALL, '全部'),
+  _OrderTypeSelect(OrderType.CM, '报修'),
+  _OrderTypeSelect(OrderType.XJ, '巡检'),
+  _OrderTypeSelect(OrderType.PM, '保养')
+];
+
+class _OrderTypeSelect{
+  OrderType key;
+  String value;
+
+  _OrderTypeSelect(this.key, this.value);
+}
+
+final List<_OrderStatusSelect> _orderStatusList = <_OrderStatusSelect>[
+  _OrderStatusSelect('', '全部'),
+  _OrderStatusSelect('inactive', '已完成'),
+  _OrderStatusSelect('active', '进行中'),
+];
+
+class _OrderStatusSelect{
+  String key;
+  String value;
+
+  _OrderStatusSelect(this.key, this.value);
+}
 
 class OrderList extends StatefulWidget {
 
@@ -39,6 +66,41 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   ScrollController _scrollController;
 
   bool needAutoScroller;
+
+  bool _expend = false;
+
+  FilterOption _option = new FilterOption();
+
+  TextEditingController _searchQuery;
+
+
+  @override
+  void initState() {
+    super.initState();
+    switch(widget.type){
+      case OrderType.PM:
+        _option.type = _orderTypeList[3];
+        _option.status = _orderStatusList[2];
+        break;
+      case OrderType.XJ:
+        _option.type = _orderTypeList[2];
+        _option.status = _orderStatusList[2];
+        break;
+      case OrderType.CM:
+        _option.type = _orderTypeList[1];
+        _option.status = _orderStatusList[2];
+        break;
+      default:
+        FilterOption  option = getMemoryCache<FilterOption>(option_cache_key, expired: false);
+        if(option != null){
+          _option = option;
+        }
+        _option.type = _orderTypeList[0];
+        _option.status = _orderStatusList[0];
+        _searchQuery = new TextEditingController(text: '');
+        break;
+    }
+  }
 
   @override
   void afterFirstLayout(BuildContext context) {
@@ -83,7 +145,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   String _getWorkType(){
-    switch (widget.type){
+    switch (_option.type.key){
       case OrderType.ALL:
         return '';
       case OrderType.CM:
@@ -95,30 +157,33 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     }
   }
 
-  String _getQueryStatus() {
-    if(widget.type == OrderType.ALL){
-      return '';
-    } else {
-      return 'active';
-    }
-  }
-
 
   Future<Null> _handleRefresh([int older = 0]) async {
     try{
 
+      Func.closeKeyboard(context);
       int time = 0;
+
+      int startTime = 0;
+
+      if(widget.type == OrderType.ALL){
+        time = _option.endTime;
+        startTime = _option.startTime;
+
+        if(older == 0 && widget.helper.itemCount() > 0) {
+          var data = widget.helper.datas[0];
+          startTime = data.reportDate;
+        }
+      }
 
       if(widget.helper.itemCount() > 0){
         var data = widget.helper.datas[0];
-//        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
         time = data.reportDate;
       }
 
       if(older == 1 && widget.helper.itemCount() > 0){
         var data = widget.helper.datas[widget.helper.itemCount() - 1];
 
-//        time = widget.type == OrderType.ALL ? data.actfinish : data.reportDate;
         time = data.reportDate;
 
         if(_canLoadMore) _canLoadMore = false;
@@ -129,16 +194,24 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
       Map response = await getApi(context).orderList(
           type:_getWorkType(),
-          status: _getQueryStatus(),
+          status: _option.status.key,
           time: time,
+          query: _searchQuery?.text,
+          all: _option.isMe ? 0 : 1,
+          start: startTime,
           older: older,
-          count: 20);
+          count: widget.type == OrderType.ALL ? 20 : 100);
       OrderListResult result = new OrderListResult.fromJson(response);
 
       if(older == 1) _canLoadMore = true;
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
+
+        if(widget.type == OrderType.ALL) {
+          setMemoryCache<FilterOption>(option_cache_key, _option);
+        }
+
         List<OrderShortInfo> info = result.response??[];
         if(info.length > 0){
           print('列表size: ${info.length}');
@@ -177,7 +250,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             info.actfinish == 0 ?  new Image.asset( ImageAssets.order_no_sync , height: 40.0,)
-            : new CircleAvatar(child: Icon(Icons.done, size: 30.0,)),
+                : new CircleAvatar(child: Icon(Icons.done, size: 30.0,)),
             Text(info.actfinish != 0 ? '已完成' : (info.status.length > 3 ? info.status.substring(info.status.length - 3) : info.status))
           ],
         ));
@@ -271,7 +344,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                               children: <Widget>[
                                 Text('标题: ${info.description}', style: TextStyle(color: Style.primaryColor, fontWeight: FontWeight.w700),),
 //                                Text('位置: ${info.locationDescription}'),
-//                                Text('资产:${info.assetnum??''}'),
+                                Text('资产:${info.assetnum??''}'),
                                 Text('设备: ${info.assetDescription}'),
 //                                widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
@@ -308,6 +381,201 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     widget.helper.datas.removeAt(index);
   }
 
+  Widget _getOptionView(){
+    if(!_expend){
+      return  Container();
+    } else {
+      return Container(
+          padding: EdgeInsets.all(4.0),
+          child: Wrap(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    new TextField(
+                      controller: _searchQuery,
+                      decoration: const InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+                        prefixIcon: Text('内容过滤: '),
+                        hintText: '输入工单号/资产编号进行查询',
+                        border: InputBorder.none,
+                      ),
+                      style: const TextStyle(color: Colors.black87, fontSize: 16.0),
+                    )
+                  ],
+                ),
+                SimpleButton(
+                  onTap: (){
+                    setState(() {
+                      _option.isMe = !_option.isMe;
+                    });
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text('所有工单'),
+                      Icon(_option.isMe ? Icons.radio_button_unchecked :Icons.radio_button_checked, size: 16.0,),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('工单类型: '),
+                    new PopupMenuButton<_OrderTypeSelect>(
+                      child: Row(
+                        children: <Widget>[
+                          Text('${_option.type.value}'),
+                          Align(child: const Icon(Icons.arrow_drop_down))
+                        ],
+                      ),                      itemBuilder: (BuildContext context) {
+                      return _orderTypeList.map((_OrderTypeSelect status) {
+                        return new PopupMenuItem<_OrderTypeSelect>(
+                          value: status,
+                          child: new Text(status.value),
+                        );
+                      }).toList();
+                    },
+                      onSelected: (_OrderTypeSelect value) {
+                        setState(() {
+                          _option.type = value;
+                        });
+                      },
+                    )
+
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('工单状态: '),
+
+                    new PopupMenuButton<_OrderStatusSelect>(
+                      child: Row(
+                        children: <Widget>[
+                          Text('${_option.status.value}'),
+                          Align(child: const Icon(Icons.arrow_drop_down))
+                        ],
+                      ),
+                      itemBuilder: (BuildContext context) {
+                        return _orderStatusList.map((_OrderStatusSelect status) {
+                          return new PopupMenuItem<_OrderStatusSelect>(
+                            value: status,
+                            child: new Text(status.value),
+                          );
+                        }).toList();
+                      },
+                      onSelected: (_OrderStatusSelect value) {
+//                                print('status = ${value.value}');
+                        setState(() {
+                          _option.status = value;
+                        });
+                      },
+                    )
+
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('时间段: '),
+                    new SizedBox(width: 10.0,),
+                    new InkWell(
+                        onTap:  () {
+                          DateTime time = new DateTime.fromMillisecondsSinceEpoch(
+                              _option.startTime * 1000);
+                          Func.selectDate(context, time, (DateTime date) {
+                            setState(() {
+                              _option.startTime = (new DateTime(date.year, date.month, date.day).millisecondsSinceEpoch ~/ 1000).toInt();
+
+                            });
+                          });
+                        },
+                        child: Row(
+                            children: <Widget>[
+                              new Text('${Func.getYearMonthDay(_option.startTime * 1000)}'),
+                              Icon(Icons.arrow_drop_down)]
+                        )
+                    ),
+                    Text('到'),
+                    new SizedBox(width: 10.0,),
+                    new InkWell(
+                        onTap:  () {
+                          DateTime time = new DateTime.fromMillisecondsSinceEpoch(
+                              _option.endTime * 1000);
+                          Func.selectDate(context, time, (DateTime date) {
+                            setState(() {
+                              _option.endTime = (new DateTime(date.year, date.month, date.day).millisecondsSinceEpoch ~/ 1000).toInt();
+
+                            });
+                          });
+                        },
+                        child: Row(
+                            children: <Widget>[
+                              new Text('${Func.getYearMonthDay(_option.endTime * 1000)}'),
+                              Icon(Icons.arrow_drop_down)]
+                        )
+                    ),
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SimpleButton(
+                        onTap: (){
+                          setState(() {
+                            widget.helper.clear();
+                            _handleRefresh();
+                            _query = '';
+                            widget.helper.inital = true;
+                          });
+                        },
+                        elevation: 2.0,
+
+                        shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(4.0)),
+                        padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                        color: Colors.blueAccent,
+                        child: Row(
+                          children: <Widget>[
+                            Text('确定', style: TextStyle(color: Colors.white),),
+                          ],
+                        ))
+                  ],
+                ),
+              ],
+              spacing: 12.0,
+              runSpacing: 8.0,
+              runAlignment: WrapAlignment.center
+
+          ));
+    }
+  }
+
+  Widget _getFilterOptionView(){
+    return  new Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        SimpleButton(
+            onTap: (){
+              setState(() {
+                _expend = !_expend;
+              });
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text('筛选', style: Style.textStyleSelect,),
+                Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+              ],
+            )
+        ),
+        _getOptionView()
+      ],
+
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -324,7 +592,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     });
 
     Widget view = Scrollbar(child: new ListView.builder(
-
         physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
         controller: _scrollController,
         itemCount: list.length,
@@ -337,6 +604,17 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                   elevation: 2.0,
                   child:_getCell(list[index], index)));
         }));
+
+    if(widget.type == OrderType.ALL){
+      view = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Card( child: _getFilterOptionView()),
+          Expanded(child:view),
+        ],
+      );
+    }
+
 
     List<Widget> children = <Widget>[
       _query.isEmpty ? new RefreshIndicator(
@@ -359,7 +637,12 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     return new Container(
         color: const Color(0xFFF0F0F0),
-        child: new Stack(children: children));
+        child: GestureDetector(
+            onTap: (){
+              Func.closeKeyboard(context);
+            },
+            child: new Stack(children: children))
+    );
   }
 
   @override
@@ -367,8 +650,17 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     super.dispose();
 
     globalListeners.removeListener(hashCode);
-
+    _searchQuery?.dispose();
   }
 
 
+}
+
+
+class FilterOption {
+  bool isMe = true;
+  _OrderTypeSelect type = _orderTypeList[0];
+  int startTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 - 365*24*60*60;
+  _OrderStatusSelect status = _orderStatusList[0];
+  int endTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000;
 }

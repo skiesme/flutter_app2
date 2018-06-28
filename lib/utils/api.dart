@@ -140,14 +140,26 @@ import 'package:samex_app/utils/func.dart';
       return info?.orders ?? 0;
     }
 
-    Future<Map> orderList({String type='', int time = 0,  int count = 20,  int older = 0, String status = 'active' }) async {
+    Future<Map> orderList({
+      String type='',           // 工单类型
+      int time = 0,             // 末尾时间点
+      int count = 20,           // 数量
+      int older = 0,            // 前/后
+      int start = 0,            // 开始时间点
+      String query= '',         // 搜索内容(工单编号/资产编号)
+      int all = 0,              // 0: 跟账号相关  1: 全部
+      String status = 'active'  // 工单状态, '': 全部, 'active': 进行中, 'inactive':'完成'
+    }) async {
       DateTime now = new DateTime.now();
       Uri uri = new Uri.http(ipAndPort, '/app/api/order', {
         'worktype': type,
         'time': '$time',
         'count': '$count',
         'older':'$older',
-        'status': status
+        'status': status,
+        'start': '$start',
+        'query': query,
+        'all': '$all'
       });
       Response response = await _dio.get(uri.toString(), options: _options());
 

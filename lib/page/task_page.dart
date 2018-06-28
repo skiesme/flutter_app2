@@ -125,12 +125,20 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       ];
     }
 
-    return <Widget>[
+    return widget.isTask ? <Widget>[
       new IconButton(
         icon: const Icon(Icons.search),
         tooltip: '工单搜索',
         onPressed: _startSearch,
       ),
+      new IconButton(
+        icon: const Icon(Icons.refresh),
+        tooltip: '强制刷新',
+        onPressed: (){
+          globalListeners.queryChanges(force_refresh);
+        },
+      ),
+    ] : <Widget>[
       new IconButton(
         icon: const Icon(Icons.refresh),
         tooltip: '强制刷新',
@@ -203,6 +211,11 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     _controller?.dispose();
     _searchQuery?.dispose();
     globalListeners.removeBoolListener(ChangeBool_Scroll);
+
+//    if(!widget.isTask){
+//      taskPageHelpers[3].clear();
+//      taskPageHelpers[3].inital = true;
+//    }
   }
 
   @override

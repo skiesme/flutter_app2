@@ -39,6 +39,8 @@ enum OrderType {
 }
 
 OrderType getOrderType(String type){
+  if(type == null) return OrderType.ALL;
+
   if(type.startsWith('XJ')) return OrderType.XJ;
   if(type.startsWith('PM')) return OrderType.PM;
   if(type.startsWith('CM')) return OrderType.CM;
