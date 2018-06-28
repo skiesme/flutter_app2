@@ -354,7 +354,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                               children: <Widget>[
                                 Text('标题: ${info.description}', style: TextStyle(color: Style.primaryColor, fontWeight: FontWeight.w700),),
 //                                Text('位置: ${info.locationDescription}'),
-                                Text('资产:${info.assetnum??''}'),
+//                                Text('资产:${info.assetnum??''}'),
                                 Text('设备: ${info.assetDescription}'),
 //                                widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')

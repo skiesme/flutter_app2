@@ -14,6 +14,9 @@ import 'package:samex_app/model/description.dart';
 import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/components/picture_list.dart';
+import 'package:samex_app/model/cm_history.dart';
+import 'package:samex_app/model/order_list.dart';
+import 'package:samex_app/page/task_detail_page.dart';
 
 class OrderNewPage extends StatefulWidget {
   final OrderPostData data;
@@ -52,8 +55,6 @@ class _OrderNewPageState extends State<OrderNewPage> {
   void initState() {
     super.initState();
 
-
-
     _data = widget.data ?? new OrderPostData();
     _controller =
     new TextEditingController(text: widget.data?.description ?? '');
@@ -88,6 +89,87 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
     return list;
   }
+
+  void _getHistory() async {
+
+    setState(() {
+      _show = true;
+    });
+
+    try {
+      Map response = await getApi(context).historyCM(_data.assetnum, location:_data.location);
+      CMHistoryResult result = new CMHistoryResult.fromJson(response);
+
+      if (result.code != 0) {
+        Func.showMessage(result.message);
+      } else {
+        List<CMHistoryData> data = result.response;
+        if(data.length > 0){
+          showDialog(
+              context: context,
+              builder: (BuildContext context) =>
+              new AlertDialog(
+//                titlePadding : const EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 12.0),
+//                contentPadding : const EdgeInsets.fromLTRB(12.0, 10.0, 12.0, 12.0),
+                title: Text('最近的报修记录', style: TextStyle(fontSize: 16.0),),
+                content: SingleChildScrollView(child: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: data.map(
+                          (CMHistoryData f) =>
+                          SimpleButton(
+                            padding: EdgeInsets.all(0.0),
+                            child: ListTile(
+                              dense: true,
+                              contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
+                              title: Text(f.wonum??'', style: TextStyle(fontSize: 16.0)),
+                              subtitle: Text('${f.description}'),
+                              trailing: Text('${f.status}\n${Func.getYearMonthDay(f.actfinish*1000)}', textAlign: TextAlign.right,),
+                            ),
+                            onTap: (){
+                              OrderShortInfo info = new OrderShortInfo(wonum: f.wonum, worktype: "CM");
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (_) => new TaskDetailPage(info: info)));
+
+                            },
+                          )).toList(),
+                )),
+                actions: <Widget>[
+                  new FlatButton(
+                    child: new Text('取消'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+
+                  ),
+                  new FlatButton(
+                    child: new Text('继续'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _post();
+                    },)
+                ],
+              )
+          );
+
+        } else {
+          _post();
+          return;
+        }
+      }
+
+    } catch (e){
+      print (e);
+      Func.showMessage('网络出现异常: 获取最近报修工单失败');
+    }
+
+    if(mounted){
+      setState(() {
+        _show = false;
+      });
+    }
+
+  }
+
 
   void _post() async {
     Func.closeKeyboard(context);
@@ -367,7 +449,11 @@ class _OrderNewPageState extends State<OrderNewPage> {
                             child: RaisedButton(
                               padding: EdgeInsets.symmetric(horizontal: 40.0),
                               onPressed: () {
-                                _post();
+                                if(_data.assetnum != null && _data.assetnum.isNotEmpty){
+                                  _getHistory();
+                                } else {
+                                  _post();
+                                }
                               },
                               child: Text(
                                 '提交',

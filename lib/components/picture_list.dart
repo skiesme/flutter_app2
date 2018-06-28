@@ -190,8 +190,7 @@ class PictureListState extends State<PictureList> {
       return _getImageList();
     } else {
 
-      bool canAdd = widget.canAdd ?? true;
-      if(canAdd){
+      if(widget.canAdd){
         return  _getImageList();
       } else {
         return new Center(child: Text('未发现上传照片'));

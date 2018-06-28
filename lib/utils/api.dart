@@ -205,8 +205,10 @@ class SaMexApi {
     return response.data;
   }
 
-  Future<Map> historyCM(String assetnum) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/ordercmnews/$assetnum');
+  Future<Map> historyCM(String assetnum, {String location}) async {
+    Uri uri = new Uri.http(ipAndPort, '/app/api/ordercmnews/$assetnum', location == null ? null : {
+      'location': location
+    });
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
