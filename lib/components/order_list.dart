@@ -174,23 +174,33 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           var data = widget.helper.datas[0];
           startTime = data.reportDate;
         }
+
+        if(older == 1 && widget.helper.itemCount() > 0){
+          var data = widget.helper.datas[widget.helper.itemCount() - 1];
+
+          time = data.reportDate;
+        }
+      } else {
+        if(widget.helper.itemCount() > 0){
+          var data = widget.helper.datas[0];
+          time = data.reportDate;
+        }
+
+        if(older == 1 && widget.helper.itemCount() > 0){
+          var data = widget.helper.datas[widget.helper.itemCount() - 1];
+
+          time = data.reportDate;
+        }
       }
 
-      if(widget.helper.itemCount() > 0){
-        var data = widget.helper.datas[0];
-        time = data.reportDate;
-      }
-
-      if(older == 1 && widget.helper.itemCount() > 0){
-        var data = widget.helper.datas[widget.helper.itemCount() - 1];
-
-        time = data.reportDate;
-
+      if(older == 1) {
         if(_canLoadMore) _canLoadMore = false;
         else {
           print('已经在loadMore了...');
         }
       }
+
+
 
       Map response = await getApi(context).orderList(
           type:_getWorkType(),
@@ -662,5 +672,5 @@ class FilterOption {
   _OrderTypeSelect type = _orderTypeList[0];
   int startTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 - 365*24*60*60;
   _OrderStatusSelect status = _orderStatusList[0];
-  int endTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000;
+  int endTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 +24*60*60;
 }
