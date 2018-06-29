@@ -190,9 +190,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
         break;
       case 3:
-        children.add(Text('物料列表'));
+        children.add(Text('物料计划'));
         if(_data.actfinish == 0){
-          children.add(newButton('新增物料', (){
+          children.add(newButton('物料登记', (){
 
           }));
         }

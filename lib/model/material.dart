@@ -1,3 +1,6 @@
+
+Map<String, String> locationSite = new Map();
+
 class MaterialResult {
   int code;
   String message;
@@ -36,6 +39,7 @@ class MaterialData {
   String location;
   String locationdescription;
   String orderunit;
+  String site;
   int physcntdate;
 
   MaterialData(
@@ -47,6 +51,7 @@ class MaterialData {
         this.location,
         this.locationdescription,
         this.orderunit,
+        this.site,
         this.physcntdate});
 
   MaterialData.fromJson(Map<String, dynamic> json) {
@@ -55,10 +60,15 @@ class MaterialData {
     in26 = json['in26'];
     in27 = json['in27'];
     itemnum = json['itemnum'];
-    location = json['location'];
+    location = json['location']??'';
     locationdescription = json['locationdescription'];
     orderunit = json['orderunit'];
     physcntdate = json['physcntdate'];
+    site = json['site'];
+
+    if(!locationSite.containsKey(location) && location.isNotEmpty){
+      locationSite[location] = locationdescription;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -72,6 +82,7 @@ class MaterialData {
     data['locationdescription'] = this.locationdescription;
     data['orderunit'] = this.orderunit;
     data['physcntdate'] = this.physcntdate;
+    data['site'] = this.site;
     return data;
   }
 }

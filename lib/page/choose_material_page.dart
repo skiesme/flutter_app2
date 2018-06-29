@@ -9,15 +9,28 @@ import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/components/simple_button.dart';
 
 
-class MaterialPage extends StatefulWidget {
+class ChooseMaterialPage extends StatefulWidget {
   @override
-  _MaterialPageState createState() => _MaterialPageState();
+  _ChooseMaterialPageState createState() => _ChooseMaterialPageState();
 }
 
-class _MaterialPageState extends State<MaterialPage> {
+class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
   TextEditingController _scroller;
   bool _loading = true;
   bool _request = false;
+
+  _StatusSelect _location;
+
+  String _getDefaultLocation(){
+    if(Cache.instance.site == 'JZT'){
+      return 'JZTCK';
+    } else if(Cache.instance.site == 'SC'){
+      return 'SCZXC';
+    } else if(Cache.instance.site == 'GM') {
+      return 'GMCK';
+    }
+    return '';
+  }
 
   @override
   void initState() {
@@ -27,6 +40,8 @@ class _MaterialPageState extends State<MaterialPage> {
     _scroller.addListener(() {
       setState(() {});
     });
+
+    _location = new _StatusSelect(key: _getDefaultLocation(), value: '');
   }
 
 
@@ -37,6 +52,14 @@ class _MaterialPageState extends State<MaterialPage> {
     });
 
     if (list != null) _loading = false;
+
+    List<_StatusSelect> statusList = new List();
+
+    locationSite.forEach((String key, String value){
+      statusList.add(new _StatusSelect(key: key, value: value));
+    });
+
+    statusList.add(new _StatusSelect(key: '', value: '全部'));
 
     return new Scaffold(
       appBar: new AppBar(
@@ -74,25 +97,56 @@ class _MaterialPageState extends State<MaterialPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
-            color: Style.backgroundColor,
-            padding: const EdgeInsets.all(20.0),
-            child: new TextField(
-              controller: _scroller,
-              decoration: new InputDecoration(
-                  hintText: "请输入物料编号/名称/规格进行过滤",
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(8.0),
-                  hintStyle: TextStyle(fontSize: 16.0),
-                  border: new OutlineInputBorder(),
-                  suffixIcon: _scroller.text.isNotEmpty
-                      ? new IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () {
-                        _scroller.clear();
-                      })
-                      : null),
-            ),
-          ),
+              color: Style.backgroundColor,
+              padding: const EdgeInsets.all(10.0),
+              child: Column(children: <Widget>[
+
+                new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        new Row(
+                            children: <Widget>[
+                              new Text(locationSite[_location.key]??'全部'),
+                            ]),
+                        Container(child: new PopupMenuButton<_StatusSelect>(
+
+                          child: Align(child: const Icon(Icons.arrow_drop_down),),
+                          itemBuilder: (BuildContext context) {
+                            return statusList.map((_StatusSelect status) {
+                              return new PopupMenuItem<_StatusSelect>(
+                                value: status,
+                                child: new Text(status.value),
+                              );
+                            }).toList();
+                          },
+                          onSelected: (_StatusSelect value) {
+//                                print('status = ${value.value}');
+                            setState(() {
+                              _location = value;
+                            });
+                          },
+                        ))
+                      ]),
+                SizedBox(height: 10.0,),
+                new TextField(
+                  controller: _scroller,
+                  decoration: new InputDecoration(
+                      hintText: "请输入物料编号/名称/规格进行过滤",
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.all(8.0),
+                      hintStyle: TextStyle(fontSize: 16.0),
+                      border: new OutlineInputBorder(),
+                      suffixIcon: _scroller.text.isNotEmpty
+                          ? new IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            _scroller.clear();
+                          })
+                          : null),
+                ),
+
+              ])),
+
           Expanded(
             child: _loading
                 ? Center(
@@ -109,6 +163,10 @@ class _MaterialPageState extends State<MaterialPage> {
     if (data == null) return null;
 
     return data.where((MaterialData f) {
+
+      if(!(f.location ?? '').contains(_location.key)){
+        return false;
+      }
 
       if (_scroller.text.length > 0) {
         if ((f.itemnum??'').contains(_scroller.text.toUpperCase())) {
@@ -151,12 +209,19 @@ class _MaterialPageState extends State<MaterialPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SimpleButton(
-                  onTap:(){},
-                  padding: EdgeInsets.all(8.0),
-                  child:  Column(
+                    onTap:(){},
+                    padding: EdgeInsets.all(8.0),
+                    child:  Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                        Text('${index+1}: ${info.description}', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text('${index+1}: ${info.description}', style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),),
+                            Text('站点:${info.site??''}', style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600)),
+
+                          ],
+                        ),
                         SizedBox(height: 8.0,),
                         Wrap(
                             children: <Widget>[
@@ -165,6 +230,7 @@ class _MaterialPageState extends State<MaterialPage> {
                               Text('规格:${info.in27??'无'}'),
                               Text('余量: ${info.curbal} ${info.orderunit}'),
                               Text('位置:${info.locationdescription??''}'),
+
                               Text('上次盘点:${Func.getFullTimeString(info.physcntdate)}')
                             ],
                             spacing: 16.0,
@@ -174,7 +240,7 @@ class _MaterialPageState extends State<MaterialPage> {
 
                         )
                       ],
-                      )
+                    )
                 ),
                 Divider(
                   height: 1.0,
@@ -194,6 +260,7 @@ class _MaterialPageState extends State<MaterialPage> {
       _loading = true;
     });
     try {
+      locationSite.clear();
       _request = true;
       Map response = await getModel(context).api.getMaterials();
       MaterialResult result = new MaterialResult.fromJson(response);
@@ -218,4 +285,12 @@ class _MaterialPageState extends State<MaterialPage> {
       });
     }
   }
+}
+
+class _StatusSelect {
+  String key;
+  String value;
+
+  _StatusSelect({this.key, this.value});
+
 }
