@@ -8,6 +8,7 @@ import 'package:samex_app/components/simple_button.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/page/work_time_page.dart';
+import 'package:samex_app/page/material_new_page.dart';
 
 class PeopleAndMaterialList extends StatefulWidget {
 
@@ -32,8 +33,6 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
     if(key.isEmpty) return '';
     return 'PeopleAndMaterial_${widget.isPeople}_$key';
   }
-
-
 
   void getData() async {
     OrderDetailData data = widget.data;
@@ -119,13 +118,13 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
             shape: new CircleBorder(side: BorderSide.none),
             child: Icon(Icons.edit, size: 16.0,),
             onTap: () async {
-//              final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
-//                return new WorkTimePage(data: p , read: widget.read);
-//              }));
-//
-//              if(result != null) {
-//                getData();
-//              }
+              final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
+                return new MaterialPage(data: p , read: widget.read);
+              }));
+
+              if(result != null) {
+                getData();
+              }
             })
 
       ],

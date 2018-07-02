@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/model/work_time.dart';
+import 'package:samex_app/model/order_material.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/func.dart';
 
@@ -384,6 +385,19 @@ class SaMexApi {
     return response.data;
   }
 
+
+  Future<Map> postOrderMaterial(OrderMaterialData params) async {
+    Response response =  await _dio.post(baseUrl+'/ordermaterial',
+        data: json.encode(params.toJson()), options: _options());
+    print('postOrderMaterial: ${response.data}');
+    return response.data;
+  }
+
+  Future<Map> delOrderMaterial(int id) async {
+    Response response =  await _dio.delete(baseUrl+'/ordermaterial/$id', options: _options());
+    print('delOrderMaterial: ${response.data}');
+    return response.data;
+  }
 
   Future<Map> postWorkTime(WorkTimeData params) async {
     Response response =  await _dio.post(baseUrl+'/worktime',

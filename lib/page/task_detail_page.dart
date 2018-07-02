@@ -20,6 +20,8 @@ import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/model/work_time.dart';
 import 'package:samex_app/page/work_time_page.dart';
 import 'package:samex_app/utils/cache.dart';
+import 'package:samex_app/page/material_new_page.dart';
+import 'package:samex_app/model/order_material.dart';
 
 class TaskDetailPage extends StatefulWidget {
 
@@ -192,8 +194,16 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       case 3:
         children.add(Text('物料计划'));
         if(_data.actfinish == 0){
-          children.add(newButton('物料登记', (){
+          children.add(newButton('物料登记', () async {
+            final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
+              return new MaterialPage(data: new OrderMaterialData(
+                  wonum: _data.wonum
+              ), read: _data.actfinish != 0,);
+            }));
 
+            if(result != null) {
+              _peopleAndMaterialKey.currentState?.getData();
+            }
           }));
         }
 

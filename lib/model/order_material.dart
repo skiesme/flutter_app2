@@ -41,7 +41,7 @@ class OrderMaterialData {
   String storelocsite;
 
   OrderMaterialData(
-      {this.woitemid,
+      {this.woitemid = 0,
         this.itemnum,
         this.wonum,
         this.location,

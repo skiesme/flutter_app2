@@ -41,6 +41,7 @@ class MaterialData {
   String orderunit;
   String site;
   int physcntdate;
+  num avgcost;
 
   MaterialData(
       {this.curbal,
@@ -52,6 +53,7 @@ class MaterialData {
         this.locationdescription,
         this.orderunit,
         this.site,
+        this.avgcost,
         this.physcntdate});
 
   MaterialData.fromJson(Map<String, dynamic> json) {
@@ -65,6 +67,7 @@ class MaterialData {
     orderunit = json['orderunit'];
     physcntdate = json['physcntdate'];
     site = json['site'];
+    avgcost = json['avgcost'];
 
     if(!locationSite.containsKey(location) && location.isNotEmpty){
       locationSite[location] = locationdescription;
@@ -83,6 +86,7 @@ class MaterialData {
     data['orderunit'] = this.orderunit;
     data['physcntdate'] = this.physcntdate;
     data['site'] = this.site;
+    data['avgcost'] = this.avgcost;
     return data;
   }
 }

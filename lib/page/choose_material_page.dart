@@ -10,6 +10,11 @@ import 'package:samex_app/components/simple_button.dart';
 
 
 class ChooseMaterialPage extends StatefulWidget {
+
+  final bool needReturn;
+
+  ChooseMaterialPage({this.needReturn = false});
+
   @override
   _ChooseMaterialPageState createState() => _ChooseMaterialPageState();
 }
@@ -102,31 +107,32 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
               child: Column(children: <Widget>[
 
                 new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        new Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+
+                      Container(child: new PopupMenuButton<_StatusSelect>(
+
+                        child: new Row(
                             children: <Widget>[
                               new Text(locationSite[_location.key]??'全部'),
+                              Align(child: const Icon(Icons.arrow_drop_down),)
                             ]),
-                        Container(child: new PopupMenuButton<_StatusSelect>(
-
-                          child: Align(child: const Icon(Icons.arrow_drop_down),),
-                          itemBuilder: (BuildContext context) {
-                            return statusList.map((_StatusSelect status) {
-                              return new PopupMenuItem<_StatusSelect>(
-                                value: status,
-                                child: new Text(status.value),
-                              );
-                            }).toList();
-                          },
-                          onSelected: (_StatusSelect value) {
+                        itemBuilder: (BuildContext context) {
+                          return statusList.map((_StatusSelect status) {
+                            return new PopupMenuItem<_StatusSelect>(
+                              value: status,
+                              child: new Text(status.value),
+                            );
+                          }).toList();
+                        },
+                        onSelected: (_StatusSelect value) {
 //                                print('status = ${value.value}');
-                            setState(() {
-                              _location = value;
-                            });
-                          },
-                        ))
-                      ]),
+                          setState(() {
+                            _location = value;
+                          });
+                        },
+                      ))
+                    ]),
                 SizedBox(height: 10.0,),
                 new TextField(
                   controller: _scroller,
@@ -209,7 +215,11 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SimpleButton(
-                    onTap:(){},
+                    onTap:(){
+                      if(widget.needReturn){
+                        Navigator.pop(context, info);
+                      }
+                    },
                     padding: EdgeInsets.all(8.0),
                     child:  Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -228,6 +238,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
                               Text('编号:${info.itemnum}'),
                               Text('类别:${info.in26 ??'无'}'),
                               Text('规格:${info.in27??'无'}'),
+                              Text('成本:${info.avgcost??'无'}'),
                               Text('余量: ${info.curbal} ${info.orderunit}'),
                               Text('位置:${info.locationdescription??''}'),
 
