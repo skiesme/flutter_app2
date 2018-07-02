@@ -373,6 +373,18 @@ class SaMexApi {
     return response.data;
   }
 
+
+  Future<Map> getOrderMaterial(String wonum) async {
+    Uri uri = new Uri.http(ipAndPort, '/app/api/ordermaterial/$wonum');
+
+    Response response = await _dio.get(uri.toString(), options: _options());
+
+    print('${uri.toString()}: ${response.data}');
+
+    return response.data;
+  }
+
+
   Future<Map> postWorkTime(WorkTimeData params) async {
     Response response =  await _dio.post(baseUrl+'/worktime',
         data: json.encode(params.toJson()), options: _options());

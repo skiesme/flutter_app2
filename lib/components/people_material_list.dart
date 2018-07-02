@@ -3,6 +3,7 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/model/work_time.dart';
+import 'package:samex_app/model/order_material.dart';
 import 'package:samex_app/components/simple_button.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/utils/style.dart';
@@ -50,14 +51,23 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
 
           }
         } else {
+          Map response = await getApi(context).getOrderMaterial(data.wonum);
+          OrderMaterialResult result = new OrderMaterialResult.fromJson(response);
+
+          if(result.code != 0){
+            Func.showMessage(result.message);
+          } else {
+            setMemoryCache<List<OrderMaterialData>>(cacheKey, result.response);
+          }
+
         }
 
 
       } catch (e){
         print (e);
-        setMemoryCache<List<WorkTimeData>>(cacheKey, getMemoryCache(cacheKey)??[]);
+        setMemoryCache(cacheKey, getMemoryCache(cacheKey)??[]);
 
-        Func.showMessage('网络出现异常: 获取步骤列表失败');
+        Func.showMessage('网络出现异常: 获取数据失败');
       }
     }
 
@@ -98,6 +108,30 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
     );
   }
 
+  TableRow _buildMaterialRow(OrderMaterialData p) {
+    return new TableRow(
+      children: <Widget> [
+        _centeredText(p.description),
+        _centeredText(p.location),
+        _centeredText('${p.itemqty}'),
+        new SimpleButton(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            shape: new CircleBorder(side: BorderSide.none),
+            child: Icon(Icons.edit, size: 16.0,),
+            onTap: () async {
+//              final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
+//                return new WorkTimePage(data: p , read: widget.read);
+//              }));
+//
+//              if(result != null) {
+//                getData();
+//              }
+            })
+
+      ],
+    );
+  }
+
   Widget getPeoples(){
     List<WorkTimeData> list = getMemoryCache(cacheKey, expired: false)??[];
 
@@ -128,13 +162,31 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
   }
 
   Widget getMaterial(){
-    List<WorkTimeData> list = getMemoryCache(cacheKey, expired: false)??[];
-    if(list == null){
-      return Center(child: Text('没有发现记录'),);
-    }
+    List<OrderMaterialData> list = getMemoryCache(cacheKey, expired: false)??[];
+
+    List<TableRow> children =<TableRow>[
+      new TableRow(
+          decoration: new BoxDecoration(color: Colors.blue.shade300),
+          children: <Widget> [
+            _centeredText('物料'),
+            _centeredText('仓库'),
+            _centeredText('数量'),
+            _centeredText('操作'),
+
+          ]
+      )
+    ];
+
+    children.addAll(list.map((f) => _buildMaterialRow(f)).toList());
+
 
     return Container(
+        padding: Style.pagePadding,
+        child: new Table(
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          children: children,
 
+        )
     );
   }
 
