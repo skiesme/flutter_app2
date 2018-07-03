@@ -26,4 +26,11 @@ class ImageAssets {
   static const String task_detail_person = 'assets/images/task_detail_person.png';
 
   static const String scan = 'assets/images/scan.png';
+
+  static const String order_ing = 'assets/images/order_ing.png';
+  static const String order_done = 'assets/images/order_done.png';
+  static const String order_pending_approved = 'assets/images/order_daipizhun.png';
+  static const String order_approved = 'assets/images/order_pizhun.png';
+  static const String order_pending_accept = 'assets/images/order_daiyanshou.png';
+
 }

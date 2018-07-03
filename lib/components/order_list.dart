@@ -252,44 +252,116 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   Widget _getSyncStatus(OrderShortInfo info){
+
+    List<Widget> children = new List();
+    switch (getOrderType(info.worktype)) {
+      case OrderType.XJ:
+        children.addAll(<Widget>[
+//          Text('巡检工单', style: TextStyle(color: getOrderTextColor(info), fontWeight: FontWeight.w700),),
+          new CircleAvatar(child:new Padding(padding: EdgeInsets.all(8.0), child:  new Image.asset( info.actfinish == 0 ? ImageAssets.order_ing : ImageAssets.order_done , height: 40.0,)), backgroundColor: getColor(info),),
+          Text(info.status, style: TextStyle(color: getColor(info)),)
+        ]);
+        break;
+      case OrderType.CM:
+//        children.add(Text('报修工单', style: TextStyle(color: getOrderTextColor(info), fontWeight: FontWeight.w700),),);
+        String image= '';
+
+        if(info.status.contains('待批准')){
+          image = ImageAssets.order_pending_approved;
+        } else if(info.status.contains('已批准')){
+          image = ImageAssets.order_approved;
+        } else if(info.status.contains('待验收')){
+          image = ImageAssets.order_pending_accept;
+        } else {
+          image = ImageAssets.order_done;
+        }
+
+        children.add(new CircleAvatar(child: new Padding(padding: EdgeInsets.all(8.0), child: new Image.asset(image, height: 40.0,)), backgroundColor: getColor(info),),);
+        children.add(Text(info.status.length > 3 ? info.status.substring(info.status.length - 3) : info.status, style: TextStyle(color: getColor(info))));
+        break;
+      default:
+//        children.add(Text('保养工单', style: TextStyle(color: getOrderTextColor(info), fontWeight: FontWeight.w700),),);
+        String image= '';
+
+        if(info.status.contains('进行中')){
+          image = ImageAssets.order_ing;
+        }  else if(info.status.contains('待验收')){
+          image = ImageAssets.order_pending_accept;
+        } else {
+          image = ImageAssets.order_done;
+        }
+
+        children.add(new CircleAvatar(child: new Padding(padding: EdgeInsets.all(8.0), child: new Image.asset(image, height: 40.0,)), backgroundColor: getColor(info),),);
+        children.add(Text(info.status.length > 3 ? info.status.substring(info.status.length - 3) : info.status, style: TextStyle(color: getColor(info))));
+        break;
+    }
+
+
     return  Container(
         padding: new EdgeInsets.only(right: _padding),
         decoration: new BoxDecoration(border: new Border(right: new BorderSide(width: 0.5, color: Theme.of(context).dividerColor))),
         child:Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            info.actfinish == 0 ?  new Image.asset( ImageAssets.order_no_sync , height: 40.0,)
-                : new CircleAvatar(child: Icon(Icons.done, size: 30.0,)),
-            Text(info.actfinish != 0 ? '已完成' : (info.status.length > 3 ? info.status.substring(info.status.length - 3) : info.status))
-          ],
+          children: children,
         ));
   }
 
   Color getColor(OrderShortInfo info){
-    if(info.actfinish == 0) {
-      switch (getOrderType(info.worktype)) {
-        case OrderType.XJ:
-          return Style.primaryColor;
-        case OrderType.CM:
-          return Colors.redAccent;
-        default:
-          return Colors.deepOrangeAccent;
-      }
-    } else {
-      return Colors.green;
+    switch (getOrderType(info.worktype)) {
+      case OrderType.XJ:
+        if(info.actfinish == 0){
+          return Colors.blue.shade900;
+        } else {
+          return Colors.green;
+        }
+        break;
+      case OrderType.CM:
+        if(info.status.contains('待批准')){
+          return Colors.red.shade900;
+        } else if(info.status.contains('已批准')){
+          return Colors.cyan;
+        } else if(info.status.contains('待验收')){
+          return Colors.yellow.shade600;
+        } else {
+          return Colors.green;
+        }
+        break;
+      case OrderType.PM:
+        if(info.status.contains('进行中')){
+          return Colors.blue.shade900;
+        } else if(info.status.contains('待验收')){
+          return Colors.yellow.shade600;
+        } else {
+          return Colors.green;
+        }
+        break;
+      default:
+        return Colors.deepOrangeAccent;
+    }
+  }
+
+  Color getOrderTextColor(OrderShortInfo info){
+    switch (getOrderType(info.worktype)) {
+      case OrderType.XJ:
+        return Colors.pink;
+      case OrderType.CM:
+        return Colors.deepPurpleAccent;
+      default:
+        return Colors.orange.shade600;
     }
   }
 
   Color getBackGroundColor(OrderShortInfo info){
-    switch (getOrderType(info.worktype)) {
-      case OrderType.XJ:
-        return const Color(0xFFd9c0c6);
-      case OrderType.CM:
-        return const Color(0xFFd4ded6);
-      default:
-        return const Color(0xFFe7dc9e);
-    }
+    return Colors.white;
+//    switch (getOrderType(info.worktype)) {
+//      case OrderType.XJ:
+//        return const Color(0xFFd9c0c6);
+//      case OrderType.CM:
+//        return const Color(0xFFd4ded6);
+//      default:
+//        return const Color(0xFFe7dc9e);
+//    }
   }
 
   String getLeadName(OrderShortInfo info){
@@ -301,74 +373,85 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   Widget _getCell(OrderShortInfo info, int index){
+
+    String str = '';
+    switch (getOrderType(info.worktype)) {
+      case OrderType.XJ:
+        str = '巡检';
+        break;
+      case OrderType.CM:
+        str='报修';
+        break;
+      default:
+        str = '保养';
+        break;
+    }
+
     return new Column (
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
-            height: Style.separateHeight/2,
+            height: Style.separateHeight,
             color: getColor(info),
           ),
-          new Container(
-              color: getBackGroundColor(info).withOpacity(0.6),
-              child: new SimpleButton(
-                  onTap: () async {
-                    final result  = await Navigator.push(context, new MaterialPageRoute(
-                        builder: (_) => new TaskDetailPage(info:  info,),
-                        settings: RouteSettings(name: TaskDetailPage.path)
-                    ));
-                    if(result != null) {
-                      removeAt(index);
+          new SimpleButton(
+              onTap: () async {
+                final result  = await Navigator.push(context, new MaterialPageRoute(
+                    builder: (_) => new TaskDetailPage(info:  info,),
+                    settings: RouteSettings(name: TaskDetailPage.path)
+                ));
+                if(result != null) {
+                  removeAt(index);
 
-                      setState(() {
+                  setState(() {
 
-                      });
-                    }
+                  });
+                }
+              },
+              child:  new Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  new Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: _padding, vertical: _padding/2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text('$str工单 : ${info.wonum}',style: TextStyle(fontWeight: FontWeight.w700)),
+                        Text(getLeadName(info), style: TextStyle(fontWeight: FontWeight.w700))
+                      ],
+                    ),
+                  ),
+                  Divider(height: 1.0,),
+                  new Padding(padding: EdgeInsets.symmetric(horizontal: _padding, vertical: _padding/2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        _getSyncStatus(info),
 
-                  },
-                  child:  new Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      new Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: _padding, vertical: _padding/2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        SizedBox(width: _padding,),
+                        Expanded(child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('工单 : ${info.wonum}',style: TextStyle(fontWeight: FontWeight.w700)),
-                            Text(getLeadName(info), )
-                          ],
-                        ),
-                      ),
-                      Divider(height: 1.0,),
-                      new Padding(padding: EdgeInsets.symmetric(horizontal: _padding, vertical: _padding/2),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            _getSyncStatus(info),
-
-                            SizedBox(width: _padding,),
-                            Expanded(child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text('标题: ${info.description}', style: TextStyle(color: Style.primaryColor, fontWeight: FontWeight.w700),),
+                            Text('标题: ${info.description}', style: TextStyle(color: getOrderTextColor(info), fontWeight: FontWeight.w700),),
 //                                Text('位置: ${info.locationDescription}'),
 //                                Text('资产:${info.assetnum??''}'),
-                                Text('设备: ${info.assetDescription}'),
+                            Text('设备: ${info.assetDescription}'),
 //                                widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
 //                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
-                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
-                              ],
-                            ))
+                            Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
                           ],
-                        ),
+                        ))
+                      ],
+                    ),
 
-                      ),
-                    ],
-                  )
-              )),
+                  ),
+                ],
+              )
+          ),
 //          Divider(height: 1.0,),
 
         ]
@@ -608,10 +691,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         itemBuilder: (BuildContext context, int index){
           return Container(
               color:  Colors.transparent,
-              padding: Style.pagePadding2,
-              child: Material(
-                  borderRadius: new BorderRadius.circular(4.0),
-                  elevation: 2.0,
+              padding: EdgeInsets.symmetric(vertical: 5.0),
+              child: Card(
                   child:_getCell(list[index], index)));
         }));
 
