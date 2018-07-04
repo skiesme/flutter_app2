@@ -141,14 +141,14 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
     Widget child;
 
     if(getOrderType(widget.order.worktype) != OrderType.CM){
-      getMemoryCache<List<String>>(cacheKey, callback: (){
+      getMemoryCache(cacheKey, callback: (){
         _getSteps();
       });
 
       child = _getAttachmentsWidget();
 
     } else {
-      getMemoryCache<List<String>>(cacheKey, callback: (){
+      getMemoryCache(cacheKey, callback: (){
         _getCMAttachments();
       });
       child = _getCMAttachmentsWidget();
