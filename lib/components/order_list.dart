@@ -344,7 +344,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   Color getOrderTextColor(OrderShortInfo info){
     switch (getOrderType(info.worktype)) {
       case OrderType.XJ:
-        return Colors.pink;
+        return Colors.pink.shade600;
       case OrderType.CM:
         return Colors.deepPurpleAccent;
       default:

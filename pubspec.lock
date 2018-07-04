@@ -98,7 +98,7 @@ packages:
       name: crypto
       url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
     source: hosted
-    version: "2.0.3"
+    version: "2.0.5"
   csslib:
     dependency: transitive
     description:
@@ -144,15 +144,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_native_image:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: d711b584e653faed47b42c16468423f10a5e221f
-      url: "https://github.com/btastic/flutter_native_image.git"
-    source: git
-    version: "0.0.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -242,6 +233,13 @@ packages:
       url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
     source: hosted
     version: "0.6.1"
+  json_rpc_2:
+    dependency: transitive
+    description:
+      name: json_rpc_2
+      url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
+    source: hosted
+    version: "2.0.8"
   kernel:
     dependency: transitive
     description:
@@ -262,7 +260,7 @@ packages:
       name: matcher
       url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
     source: hosted
-    version: "0.12.2+1"
+    version: "0.12.2"
   meta:
     dependency: transitive
     description:
@@ -311,7 +309,7 @@ packages:
       name: path
       url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
     source: hosted
-    version: "1.6.0"
+    version: "1.6.1"
   path_provider:
     dependency: "direct main"
     description:
@@ -470,7 +468,7 @@ packages:
       name: test
       url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
     source: hosted
-    version: "0.12.40"
+    version: "0.12.41"
   typed_data:
     dependency: transitive
     description:
@@ -499,6 +497,13 @@ packages:
       url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
     source: hosted
     version: "2.0.6"
+  vm_service_client:
+    dependency: transitive
+    description:
+      name: vm_service_client
+      url: "https://dart-pub.mirrors.sjtug.sjtu.edu.cn"
+    source: hosted
+    version: "0.2.4+3"
   watcher:
     dependency: transitive
     description:
@@ -528,5 +533,5 @@ packages:
     source: hosted
     version: "2.1.14"
 sdks:
-  dart: ">=2.0.0-dev.55.0 <=2.0.0-dev.61.0.flutter-c95617b19c"
-  flutter: ">=0.1.4 <=0.5.5"
+  dart: ">=2.0.0-dev.62.0 <=2.0.0-dev.63.0.flutter-4c9689c1d2"
+  flutter: ">=0.1.4 <2.0.0"

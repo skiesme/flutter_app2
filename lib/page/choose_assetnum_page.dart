@@ -115,7 +115,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  prefixIcon: Text(widget.chooseLocation ? '位置编号: ':'资产编号: '),
+                  prefixIcon: Align(child: Text(widget.chooseLocation ? '位置编号: ':'资产编号: '), widthFactor: 1.1,),
                   hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
@@ -137,7 +137,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
             child: new TextField(
               controller: _scroller2,
               decoration: new InputDecoration(
-                  prefixIcon: Text('位置编号: '),
+                  prefixIcon: Align(child: Text('位置编号: ',), widthFactor: 1.1,),
                   hintText: "请输入位置编号进行过滤",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
