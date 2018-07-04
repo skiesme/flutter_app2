@@ -189,7 +189,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
           } else {
             setMemoryCache<List<HistoryData>>(cacheKey, result.response);
           }
-        } else if(type == OrderType.CM){
+        } else if(type == OrderType.CM || type == OrderType.PM){
           if(data.actfinish != 0) {
             Map response = await getApi(context).orderStatus(data.wonum);
             OrderStatusResult result = new OrderStatusResult.fromJson(response);
@@ -212,9 +212,6 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
             }
           }
         }
-
-      } else {
-
       }
       if(mounted){
         setState(() {
