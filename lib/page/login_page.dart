@@ -80,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(color: Colors.white, fontSize: 16.0),
             decoration: new InputDecoration(
               prefixIcon: new Padding(
-                  padding: new EdgeInsets.all(6.0),
+                  padding: new EdgeInsets.all(12.0),
                   child : new Image.asset(
                     ImageAssets.login_user,
                     height: 22.0,
@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
             style: TextStyle(color: Colors.white, fontSize: 16.0),
             decoration: new InputDecoration(
               prefixIcon: new Padding(
-                  padding: new EdgeInsets.all(6.0),
+                  padding: new EdgeInsets.all(12.0),
                   child : new Image.asset(
                     ImageAssets.login_password,
                     height: 22.0,
