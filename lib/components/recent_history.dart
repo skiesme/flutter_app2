@@ -156,7 +156,11 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
         }
         break;
       case OrderType.PM:
-        children = getCMHistoryWidget();
+        if(widget.data.actfinish == 0){
+          children = getCMHistoryWidget();
+        } else {
+          children = getOrderStatusWidget();
+        }
         break;
       default:
         break;
