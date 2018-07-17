@@ -19,7 +19,7 @@ var _textStyle = new TextStyle(color: Colors.white, fontSize: 16.0);
 void printHello() {
   final DateTime now = new DateTime.now();
   final int isolateId = Isolate.current.hashCode;
-  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
+  print("[$now] Hello, world! isolate=$isolateId function='$printHello'");
 }
 
 class _Menu {
@@ -71,7 +71,10 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               new Image.asset(menu.image, height: 80.0),
-              new SizedBox(height: 9.0,),
+              new SizedBox(
+                height: 9.0,
+                width: double.infinity,
+              ),
               Text(menu.title, style: TextStyle(fontSize: 16.0))
             ],
           ),

@@ -124,7 +124,9 @@ class _LoginPageState extends State<LoginPage> {
               color: const Color.fromARGB(255, 96, 167, 232),
               highlightColor: const Color.fromARGB(255, 96, 167, 232),
               textColor: Colors.white,
-              child: Text('登录', style: new TextStyle(fontSize: 18.0),),
+              child: SizedBox(
+                  width: double.infinity,
+                  child: Center(child:Text('登录', style: new TextStyle(fontSize: 18.0),))),
               onPressed: _submit
           ),
           new SizedBox(height: 60.0),
