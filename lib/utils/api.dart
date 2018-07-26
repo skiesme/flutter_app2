@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/model/work_time.dart';
@@ -14,10 +13,10 @@ Dio _dio = new Dio();
 
 
 class SaMexApi {
-  static String ipAndPort = '192.168.60.12:40001';
+//  static String ipAndPort = '192.168.60.12:40001';
 //  static String ipAndPort = '192.168.1.63:40001';
 
-//    static String ipAndPort = '172.19.1.30:40001';
+    static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.152:40001';
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
@@ -232,53 +231,28 @@ class SaMexApi {
   Future<Map> postStep(OrderStep step, List<UploadFileInfo> files) async {
     Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
 
-    var request = new http.MultipartRequest("POST", uri);
+    Map<String, dynamic> jsonData = step.toJson();
+    jsonData["files"] = files;
 
-    Map<String, dynamic> formData = step.toJson();
-
-    print('${uri.toString()}: ${formData.toString()}, length=${files?.length}');
-
-    request.fields.addAll(formData);
-
-    request.headers .addAll( {
-      'Authorization': Cache.instance.token
-    });
-
-
-    for(int i =0, len = files.length; i< len; i++){
-      request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
-    }
-
-    http.StreamedResponse response = await request.send();
-
-    String result = await response.stream.bytesToString();
-
-    print('${uri.toString()}: $result');
-
-    return json.decode(result);
+    FormData formData = new FormData.from(jsonData);
+    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000));
+    print('${uri.toString()}: ${response.data}');
+    return response.data;
   }
 
   Future<Map> postAsset(String asset, List<UploadFileInfo> files) async{
     Uri uri =  Uri.parse(baseUrl+ '/asset/$asset');
 
-    var request = new http.MultipartRequest("POST", uri);
-
-    request.headers.addAll( {
-      'Authorization': Cache.instance.token
+    FormData formData = new FormData.from({
+      "files": files
     });
 
+    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000));
 
-    for(int i =0, len = files.length; i< len; i++){
-      request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
-    }
 
-    http.StreamedResponse response = await request.send();
+    print('${uri.toString()}: ${response.data}');
 
-    String result = await response.stream.bytesToString();
-
-    print('${uri.toString()}: $result');
-
-    return json.decode(result);
+    return response.data;
   }
 
 
@@ -292,37 +266,27 @@ class SaMexApi {
     List<UploadFileInfo> files}) async {
     Uri uri =  Uri.parse(baseUrl+ '/ordernew');
 
-    var request = new http.MultipartRequest("POST", uri);
 
-    Map<String, String> formData = {
+    Map<String, dynamic> jsonData = {
       "worktype": worktype,
       "description": description,
       "assetnum":assetnum,
       "location":location,
       "reportedby": reportedby,
       "images": images,
+      "files": files
     };
 
-    print('${uri.toString()}: ${formData.toString()}, length=${files?.length}');
+    print('${uri.toString()}: ${jsonData.toString()}, length=${files?.length}');
 
-    request.fields.addAll(formData);
-
-    request.headers.addAll( {
-      'Authorization': Cache.instance.token
-    });
+    FormData formData = new FormData.from(jsonData);
 
 
-    for(int i =0, len = files.length; i< len; i++){
-      request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
-    }
+    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000));
 
-    http.StreamedResponse response = await request.send();
+    print('${uri.toString()}: ${response.data}');
 
-    String result = await response.stream.bytesToString();
-
-    print('${uri.toString()}: $result');
-
-    return json.decode(result);
+    return response.data;
   }
 
 

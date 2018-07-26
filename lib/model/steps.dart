@@ -53,12 +53,10 @@ class Calculator {
 
 
             list.add(new UploadFileInfo(
-                new Io.File(cachePath), basename(cachePath),
-                contentType: Io.ContentType.BINARY));
+                new Io.File(cachePath), basename(cachePath)));
           } else {
             list.add(new UploadFileInfo(
-                new Io.File(path), basename(path),
-                contentType: Io.ContentType.BINARY));
+                new Io.File(path), basename(path)));
           }
         }
       } catch(e){
@@ -318,8 +316,8 @@ class OrderStep {
     return list;
   }
 
-  Map<String, String> toJson() {
-    final Map<String, String> data = new Map<String, String>();
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
     data['stepno'] = this.stepno.toString();
     data['description'] = this.description;
     data['wonum'] = this.wonum;
