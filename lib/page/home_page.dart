@@ -197,7 +197,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                     physics: new AlwaysScrollableScrollPhysics(),
                     slivers: <Widget>[
                       SliverAppBar(
-                        title: const Text('深水光明移动工单系统'),
+                        title: const Text('深水光明SAMEX系统'),
                         pinned: true,
                         actions: <Widget>[
                           IconButton(

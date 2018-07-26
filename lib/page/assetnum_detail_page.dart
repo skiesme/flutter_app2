@@ -3,6 +3,7 @@ import 'package:samex_app/model/assetnum_detail.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
+import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/components/recent_history.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/components/picture_list.dart';
@@ -122,7 +123,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
 
       body: _getDetail(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: data == null ?  null : new FloatingActionButton(
+      floatingActionButton: (data == null || !Cache.instance.userTitle.contains("管理员") ) ?  null : new FloatingActionButton(
           child: Tooltip(
             child: new Icon(Icons.edit),
             message: '修改',

@@ -34,8 +34,8 @@ class PictureListState extends State<PictureList> {
 
   List<ImageData> _resources = new List();
 
-  Future _getImage() async {
-    File image = await ImagePicker.pickImage(source: ImageSource.camera, maxHeight: 1280.0, maxWidth: 1280.0);
+  Future _getImage(ImageSource value) async {
+    File image = await ImagePicker.pickImage(source: value, maxHeight: 1280.0, maxWidth: 1280.0);
 
 //    if(Platform.isIOS){
 //      image = await FlutterNativeImage.compressImage(image.path,
@@ -168,7 +168,25 @@ class PictureListState extends State<PictureList> {
       children.add(SizedBox(width: Style.separateHeight/2,));
       children.add(SimpleButton(
         onTap: (){
-          _getImage();
+
+          showDialog<ImageSource>(
+            context: context,
+            builder: (BuildContext context) => new SimpleDialog(
+                children: <Widget>[
+                  new SimpleDialogOption(
+                      child: Text('拍摄'),
+                      onPressed: () { Navigator.pop(context, ImageSource.camera); }
+                  ),
+                  new SimpleDialogOption(
+                      child: Text('从相册中选择'),
+                      onPressed: () { Navigator.pop(context, ImageSource.gallery); }
+                  ),
+                ]
+            ),
+          ).then<void>((ImageSource value) { // The value passed to Navigator.pop() or null.
+              _getImage(value);
+          });
+
         },
         padding: EdgeInsets.all(10.0),
         child: Icon(Icons.add, size: width/2, color: Colors.grey,),

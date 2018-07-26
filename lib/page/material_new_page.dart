@@ -104,6 +104,11 @@ class _MaterialPageState extends State<MaterialPage> {
       return;
     }
 
+    if(double.parse(_controller.text) > _material.curbal) {
+      Func.showMessage('库存量不足');
+      return;
+    }
+
 
     setState(() {
       _show = true;
@@ -249,6 +254,10 @@ class _MaterialPageState extends State<MaterialPage> {
                             _getMenus(
                                 preText: '仓库站点:',
                                 content: Text(_material?.site ?? '',)),
+
+                            _getMenus(
+                                preText: '物料余量:',
+                                content: Text('${_material?.curbal ?? ''} ${_material?.orderunit??''}',)),
 
                             _getMenus(
                                 preText: '所需用量:',

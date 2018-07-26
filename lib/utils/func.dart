@@ -64,13 +64,13 @@ class Func {
     };
   }
 
-  static void showMessage(String value) {
+  static void showMessage(String value, {ToastGravity gravity = ToastGravity.BOTTOM}) {
     if(value == null ) return;
 
     Fluttertoast.showToast(
         msg: value,
         toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
+        gravity: gravity,
         timeInSecForIos: 1
     );
   }

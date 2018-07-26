@@ -13,7 +13,7 @@ dependencies:
   sqflite: ^0.8.9
   path_provider: ^0.4.1
   intl: ^0.15.5
-  fluttertoast: ^2.0.6
+  fluttertoast: ^2.0.7
   after_layout: 1.0.2
   sembast: ^1.8.0
 #  barcode_scan: ^0.0.4
