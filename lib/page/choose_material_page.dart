@@ -7,7 +7,7 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/components/simple_button.dart';
-
+import 'package:samex_app/components/center_popup_menu.dart';
 
 class ChooseMaterialPage extends StatefulWidget {
 
@@ -23,6 +23,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
   TextEditingController _scroller;
   bool _loading = true;
   bool _request = false;
+
+  GlobalKey<PopupMenuButtonState<_StatusSelect>> _key = new GlobalKey();
 
   _StatusSelect _location;
 
@@ -106,33 +108,41 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
               padding: const EdgeInsets.all(10.0),
               child: Column(children: <Widget>[
 
-                new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
 
-                      Container(child: new PopupMenuButton<_StatusSelect>(
-
-                        child: new Row(
+                SimpleButton(
+                    onTap:(){
+                      _key.currentState?.showButtonMenu();
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(child: new MyPopupMenuButton<_StatusSelect>(
+                          key:_key,
+                          child: new Row(
                             children: <Widget>[
                               new Text(locationSite[_location.key]??'全部'),
                               Align(child: const Icon(Icons.arrow_drop_down),)
-                            ]),
-                        itemBuilder: (BuildContext context) {
-                          return statusList.map((_StatusSelect status) {
-                            return new PopupMenuItem<_StatusSelect>(
-                              value: status,
-                              child: new Text(status.value),
-                            );
-                          }).toList();
-                        },
-                        onSelected: (_StatusSelect value) {
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          itemBuilder: (BuildContext context) {
+                            return statusList.map((_StatusSelect status) {
+                              return new PopupMenuItem<_StatusSelect>(
+                                value: status,
+                                child: new Text(status.value),
+                              );
+                            }).toList();
+                          },
+                          onSelected: (_StatusSelect value) {
 //                                print('status = ${value.value}');
-                          setState(() {
-                            _location = value;
-                          });
-                        },
-                      ))
-                    ]),
+                            setState(() {
+                              _location = value;
+                            });
+                          },
+                        )),
+                      ],
+                    )),
+
                 SizedBox(height: 10.0,),
                 new TextField(
                   controller: _scroller,
