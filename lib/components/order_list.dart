@@ -482,18 +482,18 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           padding: EdgeInsets.all(4.0),
           child: Wrap(
               children: <Widget>[
-                Column(
+                Row(
                   children: <Widget>[
-                    new TextField(
+                    Text('内容过滤: ', style: const TextStyle(color: Colors.black87, fontSize: 16.0)),
+                    Expanded( child: new TextField(
                       controller: _searchQuery,
                       decoration: const InputDecoration(
                         contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-                        prefixIcon: Text('内容过滤: '),
                         hintText: '输入工单号/资产编号进行查询',
                         border: InputBorder.none,
                       ),
                       style: const TextStyle(color: Colors.black87, fontSize: 16.0),
-                    )
+                    ))
                   ],
                 ),
                 SimpleButton(
