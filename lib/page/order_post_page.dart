@@ -8,7 +8,6 @@ import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/page/people_page.dart';
 import 'package:samex_app/model/people.dart';
-import 'package:samex_app/model/steps.dart';
 
 class OrderPostPage extends StatefulWidget {
 

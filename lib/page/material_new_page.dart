@@ -104,10 +104,10 @@ class _MaterialPageState extends State<MaterialPage> {
       return;
     }
 
-    if(double.parse(_controller.text) > _material.curbal) {
-      Func.showMessage('库存量不足');
-      return;
-    }
+//    if(double.parse(_controller.text) > _material.curbal) {
+//      Func.showMessage('库存量不足');
+//      return;
+//    }
 
 
     setState(() {

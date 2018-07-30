@@ -123,7 +123,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
 
       body: _getDetail(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: (data == null || !Cache.instance.userTitle.contains("管理员") ) ?  null : new FloatingActionButton(
+      floatingActionButton: (data == null || !Cache.instance.userDisplayName.contains("管理员") ) ?  null : new FloatingActionButton(
           child: Tooltip(
             child: new Icon(Icons.edit),
             message: '修改',

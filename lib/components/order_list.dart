@@ -40,6 +40,31 @@ final List<_OrderStatusSelect> _orderStatusList = <_OrderStatusSelect>[
   _OrderStatusSelect('active', '进行中'),
 ];
 
+final List<_OrderStatusSelect> _orderCMStatusList = <_OrderStatusSelect>[
+  _OrderStatusSelect('', '全部'),
+  _OrderStatusSelect('inactive', '已完成'),
+  _OrderStatusSelect('待批准', '待批准'),
+  _OrderStatusSelect('已批准', '已批准'),
+  _OrderStatusSelect('待验收', '待验收'),
+
+];
+
+final List<_OrderStatusSelect> _orderPMStatusList = <_OrderStatusSelect>[
+  _OrderStatusSelect('', '全部'),
+  _OrderStatusSelect('inactive', '已完成'),
+  _OrderStatusSelect('进行中', '进行中'),
+  _OrderStatusSelect('待验收', '待验收'),
+];
+
+final List<_OrderStatusSelect> _orderALLStatusList = <_OrderStatusSelect>[
+  _OrderStatusSelect('', '全部'),
+  _OrderStatusSelect('inactive', '已完成'),
+  _OrderStatusSelect('进行中', '进行中'),
+  _OrderStatusSelect('待验收', '待验收'),
+  _OrderStatusSelect('待批准', '待批准'),
+  _OrderStatusSelect('已批准', '已批准'),
+];
+
 class _OrderStatusSelect{
   String key;
   String value;
@@ -161,6 +186,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   Future<Null> _handleRefresh([int older = 0]) async {
     try{
 
+      if(!_canLoadMore){
+//        print('已经在loadMore了...');
+        return;
+      }
+
       Func.closeKeyboard(context);
       int time = 0;
 
@@ -193,13 +223,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         }
       }
 
-      if(older == 1) {
-        if(_canLoadMore) _canLoadMore = false;
-        else {
-          print('已经在loadMore了...');
-        }
-      }
-
+      _canLoadMore = false;
 
 
       Map response = await getApi(context).orderList(
@@ -213,7 +237,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           count: widget.type == OrderType.ALL ? 20 : 100);
       OrderListResult result = new OrderListResult.fromJson(response);
 
-      if(older == 1) _canLoadMore = true;
+      _canLoadMore = true;
+
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
@@ -474,6 +499,20 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     widget.helper.datas.removeAt(index);
   }
 
+
+  List<_OrderStatusSelect> _getStatusList(){
+    switch(_option.type.key){
+      case OrderType.CM:
+        return _orderCMStatusList;
+      case OrderType.PM:
+        return _orderPMStatusList;
+      case OrderType.XJ:
+        return _orderStatusList;
+      default:
+        return _orderALLStatusList;
+    }
+  }
+
   Widget _getOptionView(){
     if(!_expend){
       return  Container();
@@ -484,7 +523,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Text('内容过滤: ', style: const TextStyle(color: Colors.black87, fontSize: 16.0)),
+                    Text('内容过滤: ', style: const TextStyle(color: Colors.black87)),
                     Expanded( child: new TextField(
                       controller: _searchQuery,
                       decoration: const InputDecoration(
@@ -513,7 +552,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('工单类型: '),
+                    Text('工单类型:'),
+                    SizedBox(width: 2.0,),
                     new PopupMenuButton<_OrderTypeSelect>(
                       child: Row(
                         children: <Widget>[
@@ -531,6 +571,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                       onSelected: (_OrderTypeSelect value) {
                         setState(() {
                           _option.type = value;
+                          _option.status = _orderStatusList[0];
+
                         });
                       },
                     )
@@ -540,8 +582,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text('工单状态: '),
-
+                    Text('工单状态:'),
+                    SizedBox(width: 2.0,),
                     new PopupMenuButton<_OrderStatusSelect>(
                       child: Row(
                         children: <Widget>[
@@ -550,7 +592,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                         ],
                       ),
                       itemBuilder: (BuildContext context) {
-                        return _orderStatusList.map((_OrderStatusSelect status) {
+                        return _getStatusList().map((_OrderStatusSelect status) {
                           return new PopupMenuItem<_OrderStatusSelect>(
                             value: status,
                             child: new Text(status.value),
@@ -659,7 +701,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text('筛选', style: Style.textStyleSelect,),
+                Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
                 Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
               ],
             )

@@ -135,11 +135,11 @@ class _LoadMoreState extends State<LoadMore> with TickerProviderStateMixin {
 
   void _handleLoadMore() {
     if (!widget.enableLoadMore || widget.isFinish) {
-      print("return is state");
+//      print("return is state");
       return;
     }
     if (widget.onLoadMore != null && !isLoading) {
-      print("_handle loadMore");
+//      print("_handle loadMore");
       handleResult(widget.onLoadMore());
     }
   }
@@ -151,7 +151,7 @@ class _LoadMoreState extends State<LoadMore> with TickerProviderStateMixin {
   }
 
   Future handleResult(Future result) async {
-    print("handleResult");
+//    print("handleResult");
     assert(() {
       if (result == null)
         FlutterError.reportError(new FlutterErrorDetails(
