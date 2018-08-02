@@ -8,20 +8,22 @@ import 'package:samex_app/model/work_time.dart';
 import 'package:samex_app/model/order_material.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/func.dart';
+//import 'package:http/http.dart' as http;
 
 Dio _dio = new Dio();
 
 
 class SaMexApi {
-  static String ipAndPort = '192.168.60.12:40001';
+//  static String ipAndPort = '192.168.60.12:40001';
 //  static String ipAndPort = '192.168.1.63:40001';
 
-//    static String ipAndPort = '172.19.1.30:40001';
+    static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.152:40001';
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
 
-  static Options _options({int connectTimeout = 6000, receiveTimeout = 3000, Map<String, dynamic> headers }){
+  static Options _options({int connectTimeout = 6000, receiveTimeout = 3000,
+    Map<String, dynamic> headers, OnUploadProgress onProgress }){
     if(_option == null){
       _option = new Options();
     }
@@ -36,7 +38,7 @@ class SaMexApi {
 
     _option.connectTimeout = connectTimeout;
     _option.receiveTimeout = receiveTimeout;
-
+    _option.onProgress = onProgress;
 
     return _option;
   }
@@ -228,28 +230,52 @@ class SaMexApi {
     return response.data;
   }
 
-  Future<Map> postStep(OrderStep step, List<UploadFileInfo> files) async {
+
+//  /// use http library
+//  Future<Map> postStep222(OrderStep step, List<UploadFileInfo> files) async {
+//    Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
+//
+//    var request = new http.MultipartRequest("POST", uri);
+//
+//    Map<String, dynamic> formData = step.toJson();
+//    print('${uri.toString()}: ${formData.toString()}, length=${files?.length}');
+//    formData.forEach((key, value){
+//      request.fields[key] = value.toString();
+//    });
+//    request.headers .addAll( {
+//      'Authorization': Cache.instance.token
+//    });
+//    for(int i =0, len = files.length; i< len; i++){
+//      request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
+//    }
+//    http.StreamedResponse response = await request.send();
+//    String result = await response.stream.bytesToString();
+//    print('${uri.toString()}: $result');
+//    return json.decode(result);
+//  }
+
+  Future<Map> postStep(OrderStep step, List<UploadFileInfo> files, {OnUploadProgress onProgress}) async {
     Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
 
     Map<String, dynamic> jsonData = step.toJson();
     jsonData["files"] = files;
 
     FormData formData = new FormData.from(jsonData);
-    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000));
+    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000,
+        onProgress: onProgress));
     print('${uri.toString()}: ${response.data}');
     return response.data;
   }
 
-  Future<Map> postAsset(String asset, List<UploadFileInfo> files) async{
+  Future<Map> postAsset(String asset, List<UploadFileInfo> files, {OnUploadProgress onProgress}) async{
     Uri uri =  Uri.parse(baseUrl+ '/asset/$asset');
 
     FormData formData = new FormData.from({
       "files": files
     });
 
-    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000));
-
-
+    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000,
+        onProgress: onProgress));
     print('${uri.toString()}: ${response.data}');
 
     return response.data;
@@ -263,7 +289,9 @@ class SaMexApi {
     String location,
     String reportedby,
     String images,
-    List<UploadFileInfo> files}) async {
+    List<UploadFileInfo> files,
+    OnUploadProgress onProgress
+  }) async {
     Uri uri =  Uri.parse(baseUrl+ '/ordernew');
 
 
@@ -282,8 +310,8 @@ class SaMexApi {
     FormData formData = new FormData.from(jsonData);
 
 
-    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000));
-
+    Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000,
+        onProgress: onProgress));
     print('${uri.toString()}: ${response.data}');
 
     return response.data;

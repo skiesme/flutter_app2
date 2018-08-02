@@ -123,10 +123,10 @@ packages:
   dio:
     dependency: "direct main"
     description:
-      name: dio
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.7"
+      path: "../dio"
+      relative: true
+    source: path
+    version: "0.1.8"
   flutter:
     dependency: "direct main"
     description: flutter

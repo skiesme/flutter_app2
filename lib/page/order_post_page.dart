@@ -44,23 +44,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
 
     try {
-//      if(widget.action.instruction == '完成报验收'){
-//        Map response = await getApi(context).steps(sopnum: '', wonum: widget.wonum, site: Cache.instance.site);
-//        StepsResult result = new StepsResult.fromJson(response);
-//
-//        if(result.code != 0){
-//          Func.showMessage(result.message);
-//        } else {
-//          List<OrderStep> list = result.response.steps??[];
-//          for(int i= 0, len = list.length ; i < len ; i++){
-//            if(list[i].status == null || list[i].status.isEmpty){
-//              throw(new Exception('发现未提交任务'));
-//            }
-//          }
-//        }
-//      }
-
-
       Map response = await getModel(context).api.submit(
         assigncode: _data?.hrid?? Cache.instance.userName,
         actionid: widget.action.actionid,
@@ -167,17 +150,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
                 Expanded(child: Container(
                   color: Colors.transparent),
                 )
-
-//              Container(
-//                padding: EdgeInsets.all(20.0),
-//                child: Center(
-//                    child:RaisedButton(
-//                  child: Text('提交', style: TextStyle(fontSize: 18.0),),
-//                    onPressed: (){
-//
-//                })),
-//              )
-
                 ],
               ),
             ),

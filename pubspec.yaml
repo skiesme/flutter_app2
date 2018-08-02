@@ -21,7 +21,9 @@ dependencies:
     path: ../flutter_barcode_reader
   image_picker: 0.4.5
   cached_network_image: ^0.4.1
-  dio: ^0.1.7
+#  dio: ^0.1.7
+  dio:
+    path: ../dio
   image: ^2.0.4
 #  http: ^0.11.3+16
   android_alarm_manager: ^0.1.1

@@ -51,6 +51,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
   String _tips;
 
+  int _progress = 0;
+
   @override
   void initState() {
     super.initState();
@@ -217,7 +219,24 @@ class _OrderNewPageState extends State<OrderNewPage> {
               description: _controller.text,
               reportedby: Cache.instance.userName,
               images: images,
-              files: list);
+              files: list,
+              onProgress: (send, total){
+                int percent = ((send / total) * 100).toInt();
+                print('received: percent= $percent');
+                setMountState(() {
+                  if(percent == 100) {
+                    _progress = 0;
+                    _tips = '后台处理中...';
+
+                  } else {
+                    _progress = percent;
+                    _tips = '上传中...($percent\%)';
+
+                  }
+                });
+
+              }
+          );
           OrderNewResult result = new OrderNewResult.fromJson(response);
           if (result.code != 0) {
             Func.showMessage(result.message);
@@ -307,6 +326,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
             child: LoadingView(
               show: _show,
               tips: _tips,
+              progress: _progress,
               child: Container(
                   color: Style.backgroundColor,
                   height: MediaQuery.of(context).size.height,

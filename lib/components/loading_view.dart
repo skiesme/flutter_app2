@@ -6,7 +6,8 @@ class LoadingView extends StatelessWidget {
   final bool show;
   final String tips;
   final bool confirm;
-  LoadingView({this.child, this.show = false, this.tips, this.confirm = false});
+  final int progress;
+  LoadingView({this.child, this.show = false, this.tips, this.confirm = false, this.progress = 0});
 
   WillPopCallback _onWillPop(BuildContext context) {
     if(show == false || !confirm) return null;
@@ -41,6 +42,7 @@ class LoadingView extends StatelessWidget {
 
     List<Widget> children = new List<Widget>();
     children.add(this.child);
+
     if(show){
       children.add(Container(
         color: Colors.black87.withOpacity(0.4),
@@ -59,7 +61,7 @@ class LoadingView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    new CircularProgressIndicator(),
+                    new CircularProgressIndicator(value: (progress > 0 && progress < 100) ? (progress / 100) : null ),
                     new SizedBox(height: 8.0,),
                     Text(tips??'请稍后...', style: TextStyle(color: Colors.white),)
                   ],

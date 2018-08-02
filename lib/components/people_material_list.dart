@@ -132,7 +132,12 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
   }
 
   Widget getPeoples(){
-    List<WorkTimeData> list = getMemoryCache(cacheKey, expired: false)??[];
+    List<WorkTimeData> list;
+    try{
+      list = getMemoryCache(cacheKey, expired: false)??[];
+    } catch (e){
+      list = new List();
+    }
 
     List<TableRow> children =<TableRow>[
       new TableRow(
@@ -161,7 +166,14 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
   }
 
   Widget getMaterial(){
-    List<OrderMaterialData> list = getMemoryCache(cacheKey, expired: false)??[];
+
+    List<OrderMaterialData> list;
+    try{
+      list = getMemoryCache(cacheKey, expired: false)??[];
+    } catch (e){
+      list = new List();
+    }
+
 
     List<TableRow> children =<TableRow>[
       new TableRow(
