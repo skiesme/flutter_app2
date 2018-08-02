@@ -464,6 +464,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       case OrderType.PM:
 
         _data?.actions?.forEach((Actions f){
+          if(_data.status.contains('待验收') && f.instruction.contains('指派工单责任人')){
+            return;
+          }
           list.add(PopupMenuItem<String>(
             value: f.actionid,
             child: Text(f.instruction),

@@ -38,7 +38,7 @@ class SaMexApi {
 
     _option.connectTimeout = connectTimeout;
     _option.receiveTimeout = receiveTimeout;
-    _option.onProgress = onProgress;
+    _option.onUploadProgress = onProgress;
 
     return _option;
   }

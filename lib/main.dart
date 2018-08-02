@@ -93,6 +93,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+
+    final ThemeData theme = Theme.of(context);
+
     return new MaterialApp(
         localizationsDelegates: [
           // ... app-specific localization delegate[s] here
@@ -114,6 +117,11 @@ class _MyAppState extends State<MyApp> {
           // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
           // counter didn't reset back to zero; the application is not restarted.
           primaryColor: Style.primaryColor,
+            textTheme: theme.textTheme.copyWith(
+            body1: theme.textTheme.body1.copyWith(
+              fontSize: 14.0
+            )
+          )
         ),
         builder: (BuildContext context, Widget child) {
           return new Directionality(
