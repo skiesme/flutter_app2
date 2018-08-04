@@ -108,7 +108,7 @@ class _StepPageState extends State<StepPage>{
               widget.data, lists,
               onProgress: (send, total){
                 int percent = ((send / total) * 100).toInt();
-                print('received: percent= $percent');
+                print('${new DateTime.now()} received: percent= $percent');
                 setMountState(() {
                   if(percent == 100) {
                     _progress = 0;
@@ -159,6 +159,7 @@ class _StepPageState extends State<StepPage>{
 
         setMountState(() {
           _show = false;
+          _progress = 0;
         });
       };
 
@@ -359,7 +360,7 @@ class _StepPageState extends State<StepPage>{
     return new LoadingView(
       show: _show,
       tips: _tips,
-      progress: _progress,
+      progress: _show ? _progress : 0,
       confirm: true,
       child: new Scaffold(
           resizeToAvoidBottomPadding: false,

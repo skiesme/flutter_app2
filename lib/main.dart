@@ -116,12 +116,12 @@ class _MyAppState extends State<MyApp> {
           // "hot reload" (press "r" in the console where you ran "flutter run",
           // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
           // counter didn't reset back to zero; the application is not restarted.
-          primaryColor: Style.primaryColor,
+            primaryColor: Style.primaryColor,
             textTheme: theme.textTheme.copyWith(
-            body1: theme.textTheme.body1.copyWith(
-              fontSize: 14.0
+                body1: theme.textTheme.body1.copyWith(
+                    fontSize: 14.0
+                )
             )
-          )
         ),
         builder: (BuildContext context, Widget child) {
           return new Directionality(

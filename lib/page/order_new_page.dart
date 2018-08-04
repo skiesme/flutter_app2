@@ -255,6 +255,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
         if (mounted) {
           setState(() {
             _show = false;
+            _progress = 0;
           });
         }
       };
