@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/work_time.dart';
@@ -185,10 +186,33 @@ class _WorkTimePageState extends State<WorkTimePage> {
 
   @override
   Widget build(BuildContext context) {
+    String real = _controller.text;
     if(_data.finishdate > _data.startdate){
       _data.regularhrs = (_data.finishdate - _data.startdate)  / (60*60);
+
+      real = _data.regularhrs.toString();
+
+      if(real.isNotEmpty){
+        _controller.text = num.parse(real).toStringAsFixed(2);
+      }
+
     } else {
       _data.regularhrs = 0.0;
+    }
+
+    String regularhrs = _data.regularhrs.toStringAsFixed(2);
+
+
+    if(MediaQuery.of(context).padding.bottom == 0){
+      if(real.isNotEmpty){
+        Future.delayed(new Duration(milliseconds: 17), (){
+          if(_controller.text.length != num.parse(real).toStringAsFixed(2).toString().length ){
+            _controller.text = num.parse(real).toStringAsFixed(2);
+            Func.closeKeyboard(context);
+          }
+        });
+
+      }
     }
 
     return new Scaffold(
@@ -366,7 +390,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                   bottom: Divider.createBorderSide(context, width: 1.0)
                               )),
                         ),
-                        _getMenus(preText: '参考工时:', content: Text('${_data.regularhrs??''}')),
+                        _getMenus(preText: '参考工时:', content: Text(regularhrs)),
                         _getMenus(preText: '实际工时:', content: TextField(
                           controller: _controller,
                           keyboardType: TextInputType.number,

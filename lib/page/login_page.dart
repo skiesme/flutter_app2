@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Center(child:Text('登录', style: new TextStyle(fontSize: 18.0),))),
               onPressed: _submit
           ),
-          new SizedBox(height: 60.0),
+          new SizedBox(height: 120.0),
 
 
         ],

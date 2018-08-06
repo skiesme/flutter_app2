@@ -118,10 +118,23 @@ class _MyAppState extends State<MyApp> {
           // counter didn't reset back to zero; the application is not restarted.
             primaryColor: Style.primaryColor,
             textTheme: theme.textTheme.copyWith(
-                body1: theme.textTheme.body1.copyWith(
-                    fontSize: 14.0
-                )
-            )
+              body1: theme.textTheme.body1.copyWith(
+                  fontSize: 14.0
+              ),
+              title: theme.textTheme.title.copyWith(
+                  fontSize: 18.0
+              ),
+            ),
+
+          primaryTextTheme: theme.primaryTextTheme.copyWith(
+            body1: theme.primaryTextTheme.body1.copyWith(
+                fontSize: 14.0
+            ),
+            title: theme.primaryTextTheme.title.copyWith(
+                fontSize: 18.0
+            ),
+          ),
+          fontFamily: 'Miui',
         ),
         builder: (BuildContext context, Widget child) {
           return new Directionality(

@@ -111,15 +111,14 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
         children: <Widget>[
           Container(
             color: Style.backgroundColor,
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  prefixIcon: Align(child: Text(widget.chooseLocation ? '位置编号: ':'资产编号: '), widthFactor: 1.1,),
-                  hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号进行过滤",
+                  prefixIcon: Align(child: Text(widget.chooseLocation ? '位置: ':'资产: '), widthFactor: 1.1,),
+                  hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号/描述进行过滤",
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(8.0),
-                  hintStyle: TextStyle(fontSize: 16.0),
+                  contentPadding: const EdgeInsets.all(0.0),
                   border: new OutlineInputBorder(),
                   suffixIcon: _scroller.text.isNotEmpty
                       ? new IconButton(
@@ -133,15 +132,14 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
           widget.chooseLocation ? Container():           Container(
             color: Style.backgroundColor,
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
             child: new TextField(
               controller: _scroller2,
               decoration: new InputDecoration(
-                  prefixIcon: Align(child: Text('位置编号: ',), widthFactor: 1.1,),
-                  hintText: "请输入位置编号进行过滤",
+                  prefixIcon: Align(child: Text('位置: ',), widthFactor: 1.1,),
+                  hintText: "请输入位置编号/描述进行过滤",
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(8.0),
-                  hintStyle: TextStyle(fontSize: 16.0),
+                  contentPadding: const EdgeInsets.all(0.0),
                   border: new OutlineInputBorder(),
                   suffixIcon: _scroller2.text.isNotEmpty
                       ? new IconButton(
@@ -171,14 +169,17 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
       if (_scroller.text.length > 0 || _scroller2.text.length > 0) {
         if (!widget.chooseLocation) {
-          if (f.assetnum.contains(_scroller.text.toUpperCase()) && (f.location??'').contains(_scroller2.text.toUpperCase())) {
+          if (
+            (f.assetnum.contains(_scroller.text.toUpperCase())  || (f.description??'').contains(_scroller.text.toUpperCase()) ) &&
+              ((f.location??'').contains(_scroller2.text.toUpperCase()) || (f.locationDescription ??'').contains(_scroller2.text.toUpperCase()))
+          ) {
             return true;
           } else {
             return false;
           }
         }
 
-        if ((f.location??'').contains(_scroller.text.toUpperCase())) {
+        if ((f.location??'').contains(_scroller.text.toUpperCase()) || (f.description ??'').contains(_scroller.text.toUpperCase())) {
           return true;
         }
 
@@ -196,7 +197,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
     if (data == null || data.length == 0) {
       return Center(
-        child: Text('没有可选择的资产'),
+        child: Text('没有可选择的${widget.chooseLocation ? '位置' : '资产'}'),
       );
     }
 

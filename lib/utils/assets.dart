@@ -33,4 +33,6 @@ class ImageAssets {
   static const String order_approved = 'assets/images/order_pizhun.png';
   static const String order_pending_accept = 'assets/images/order_daiyanshou.png';
 
+  static const String logout = 'assets/images/logout.png';
+
 }

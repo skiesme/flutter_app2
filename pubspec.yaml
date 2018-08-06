@@ -74,7 +74,12 @@ flutter:
   - assets/images/order_daiyanshou.png
   - assets/images/order_pizhun.png
   - assets/images/order_daipizhun.png
+  - assets/images/logout.png
 
+  fonts:
+    - family: Miui
+      fonts:
+        - asset: assets/fonts/miui.ttf
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

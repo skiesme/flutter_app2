@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:samex_app/page/login_page.dart';
@@ -14,7 +15,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/page/choose_material_page.dart';
 
-var _textStyle = new TextStyle(color: Colors.white, fontSize: 16.0);
+var _textStyle = new TextStyle(color: Colors.white, fontSize: 14.0);
 
 void printHello() {
   final DateTime now = new DateTime.now();
@@ -125,7 +126,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                   child: Icon(Icons.person, size: 60.0, color: Colors.white,),
                 ),
                 new SizedBox(height: 5.0,),
-                Text(Cache.instance.userDisplayName, style: TextStyle(fontSize: 22.0, color: Colors.white),),
+                Text(Cache.instance.userDisplayName, style: TextStyle(fontSize: 18.0, color: Colors.white),),
                 new SizedBox(height: 5.0,),
 
                 new InkWell(
@@ -190,6 +191,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
             return new Future.value(false);
           },
           child: new Scaffold(
+
             body: new RefreshIndicator(
                 key: _refreshKey,
                 onRefresh: _handlerRefresh,
@@ -197,7 +199,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                     physics: new AlwaysScrollableScrollPhysics(),
                     slivers: <Widget>[
                       SliverAppBar(
-                        title: const Text('深水光明SAMEX系统'),
+                        title: const Text('深水光明SAMEX系统',),
                         pinned: true,
                         actions: <Widget>[
                           IconButton(
@@ -225,12 +227,11 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
                 Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
               },
-              backgroundColor: Colors.redAccent,
-              child: const Icon(
-                Icons.lock_open,
-                semanticLabel: '注销',
-              ),
+              backgroundColor: Colors.transparent,
+              child: Image.asset(ImageAssets.logout),
             ),
+
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           ));
   }
 
