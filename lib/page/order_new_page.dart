@@ -48,6 +48,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
   CalculationManager _manager;
 
   TextEditingController _controller;
+  TextEditingController _controller2;
+
 
   String _tips;
 
@@ -58,8 +60,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
     super.initState();
 
     _data = widget.data ?? new OrderPostData();
-    _controller =
-    new TextEditingController(text: widget.data?.description ?? '');
+    _controller = new TextEditingController(text: '');
+    _controller2 = new TextEditingController(text: Cache.instance.userPhone ?? '');
 
     _manager?.stop();
   }
@@ -181,6 +183,11 @@ class _OrderNewPageState extends State<OrderNewPage> {
       return;
     }
 
+    if (Func.validatePhone(_controller2.text)) {
+      Func.showMessage('请填写联系电话');
+      return;
+    }
+
     setState(() {
       _show = true;
     });
@@ -217,6 +224,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
               assetnum: _data.assetnum,
               location: _data.location,
               description: _controller.text,
+              phone: _controller2.text,
               reportedby: Cache.instance.userName,
               images: images,
               files: list,
@@ -456,6 +464,16 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                   images: _data.images,
                                   key: _key,
                                 )),
+
+                            _getMenus(
+                                preText: '联系电话:',
+                                content: TextField(
+                                  controller: _controller2,
+                                  decoration: new InputDecoration.collapsed(
+                                    hintText: '请输入电话号码',
+                                  ),
+                                ),
+                                crossAxisAlignment: CrossAxisAlignment.start),
                             _getMenus(
                                 preText: '上报人:',
                                 content: Text(Cache.instance.userDisplayName)),

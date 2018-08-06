@@ -9,6 +9,8 @@ const String KEY_SITE = "__site";
 const String KEY_USER_NAME = '__username';
 const String KEY_FONT_SIZE = '__textfontsize';
 const String KEY_USER_TITLE = '__usertitle';
+const String KEY_USER_PHONE= '__userphone';
+
 const String KEY_USER_DISPLAY_NAME = '_userdisplayname';
 const String KEY_ORDER_COUNT = '__order_count';
 
@@ -48,7 +50,9 @@ class Cache {
   String get site => _getString(KEY_SITE);
   String get userName => _getString(KEY_USER_NAME);
   String get userTitle => _getString(KEY_USER_TITLE);
+  String get userPhone => _getString(KEY_USER_PHONE);
   String get userDisplayName => _getString(KEY_USER_DISPLAY_NAME);
+
   double get textScaleFactor => _getDouble(KEY_FONT_SIZE);
   int get orderCount => _getInt(KEY_ORDER_COUNT);
 

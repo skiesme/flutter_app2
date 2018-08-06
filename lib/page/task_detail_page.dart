@@ -274,11 +274,18 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       }
       if(_type != OrderType.XJ){
         list.addAll(<Widget>[
+          Text('联系电话: ${_data?.phone ?? ''}'),
           Text('优先等级: ${_data?.wopriority ?? ''}'),
           Text('主管人员: ${_data?.supervisor??''}'),
           Text('负责人员: ${_data?.lead ?? ''}'),
-          Text('联系电话: ${_data?.phone ?? ''}'),
         ]);
+      }
+
+      if(_data.faultlev.isNotEmpty){
+        list.add(Text('故障等级: ${_data.faultlev}'));
+      }
+      if(_data.woprof.isNotEmpty){
+        list.add(Text('报修工单分类: ${_data.woprof}'));
       }
 
 //      list.add(Text('站点编号: ${_data?.lead ?? ''}'));

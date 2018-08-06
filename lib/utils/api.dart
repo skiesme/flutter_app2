@@ -15,10 +15,10 @@ Dio _dio = new Dio();
 
 
 class SaMexApi {
-//  static String ipAndPort = '192.168.60.12:40001';
+  static String ipAndPort = '192.168.60.12:40001';
 //  static String ipAndPort = '192.168.1.63:40001';
 
-    static String ipAndPort = '172.19.1.30:40001';
+//    static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.112:40001';
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
@@ -104,6 +104,7 @@ class SaMexApi {
           Cache.instance.setStringValue(KEY_SITE, info.defsite);
           Cache.instance.setStringValue(KEY_USER_TITLE, info.title);
           Cache.instance.setStringValue(KEY_USER_DISPLAY_NAME, info.displayname);
+          Cache.instance.setStringValue(KEY_USER_PHONE, info.phone);
         }
 
         Cache.instance.setIntValue(KEY_ORDER_COUNT, info.orders);
@@ -304,6 +305,7 @@ class SaMexApi {
     String location,
     String reportedby,
     String images,
+    String phone,
     List<UploadFileInfo> files,
     OnUploadProgress onProgress
   }) async {
@@ -317,6 +319,7 @@ class SaMexApi {
       "location":location,
       "reportedby": reportedby,
       "images": images,
+      "phone": phone,
       "files": files
     };
 

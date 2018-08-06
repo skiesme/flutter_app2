@@ -46,6 +46,8 @@ class OrderDetailData {
   String wopriority;
   String supervisor;
   String sopnum;
+  String woprof;
+  String faultlev;
   List<Actions> actions;
   int ownerid;
 
@@ -72,6 +74,8 @@ class OrderDetailData {
         this.wopriority,
         this.supervisor,
         this.ownerid,
+        this.woprof,
+        this.faultlev,
         this.sopnum});
 
   OrderDetailData.fromJson(Map<String, dynamic> json) {
@@ -97,6 +101,9 @@ class OrderDetailData {
     supervisor = json['supervisor'];
     sopnum = json['sopnum'];
     ownerid = json['ownerid'];
+    woprof = json['woprof']??'';
+    faultlev = json['faultlev']??'';
+
     if (json['actions'] != null) {
       actions = new List<Actions>();
       json['actions'].forEach((v) {
