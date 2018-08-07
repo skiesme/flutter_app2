@@ -96,6 +96,19 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
   void _getHistory() async {
 
+    Func.closeKeyboard(context);
+
+    if (_controller.text.isEmpty) {
+      Func.showMessage('请填写工单描述');
+      return;
+    }
+
+    if (!Func.validatePhone(_controller2.text)) {
+      Func.showMessage('请填写联系电话');
+      return;
+    }
+
+
     setState(() {
       _show = true;
     });
@@ -125,7 +138,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                             child: ListTile(
                               dense: true,
                               contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
-                              title: Text(f.wonum??'', style: TextStyle(fontSize: 16.0)),
+                              title: Text(f.assetDescription??'', style: TextStyle(fontSize: 16.0)),
                               subtitle: Text('${f.description}'),
                               trailing: Text('${f.status}\n${Func.getYearMonthDay(f.actfinish*1000)}', textAlign: TextAlign.right,),
                             ),
@@ -183,7 +196,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
       return;
     }
 
-    if (Func.validatePhone(_controller2.text)) {
+    if (!Func.validatePhone(_controller2.text)) {
       Func.showMessage('请填写联系电话');
       return;
     }

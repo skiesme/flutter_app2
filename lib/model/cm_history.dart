@@ -32,6 +32,7 @@ class CMHistoryData {
   String lead;
   String status;
   String description;
+  String assetDescription;
   String worktype;
   int actfinish;
 
@@ -44,6 +45,7 @@ class CMHistoryData {
     actfinish = json['actfinish'];
     worktype = json['worktype'];
     description = json['description'];
+    assetDescription= json['assetdescription'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +54,7 @@ class CMHistoryData {
     data['lead'] = this.lead;
     data['status'] = this.status;
     data['actfinish'] = this.actfinish;
+    data['assetdescription'] = this.assetDescription;
     return data;
   }
 }

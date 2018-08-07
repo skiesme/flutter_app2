@@ -275,7 +275,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(_type != OrderType.XJ){
         list.addAll(<Widget>[
           Text('联系电话: ${_data?.phone ?? ''}'),
-          Text('优先等级: ${_data?.wopriority ?? ''}'),
+//          Text('优先等级: ${_data?.wopriority ?? ''}'),
           Text('主管人员: ${_data?.supervisor??''}'),
           Text('负责人员: ${_data?.lead ?? ''}'),
         ]);

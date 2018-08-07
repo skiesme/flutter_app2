@@ -64,7 +64,7 @@ class Func {
     };
   }
 
-  static void showMessage(String value, {ToastGravity gravity = ToastGravity.BOTTOM}) {
+  static void showMessage(String value, {ToastGravity gravity = ToastGravity.CENTER}) {
     if(value == null ) return;
 
     Fluttertoast.showToast(

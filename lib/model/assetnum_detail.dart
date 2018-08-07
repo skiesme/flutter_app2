@@ -34,6 +34,7 @@ class AssetNumDetail {
   String assettype;
   String funclass;
   String serialnum;
+  String assetlev;
   String parent;
   String status;
   String specific;
@@ -52,6 +53,7 @@ class AssetNumDetail {
         this.parent,
         this.status,
         this.specific,
+        this.assetlev,
         this.pic
       });
 
@@ -68,6 +70,7 @@ class AssetNumDetail {
     parent = json['parent']??'';
     status = json['status']??'';
     specific = json['specific']??'';
+    assetlev = json['assetlev'] ?? '';
     pic = json['pic']?.cast<String>();
   }
 
@@ -86,6 +89,7 @@ class AssetNumDetail {
     data['status'] = this.status;
     data['specific'] = this.specific;
     data['pic'] = this.pic;
+    data['assetlev'] = this.assetlev;
     return data;
   }
 }

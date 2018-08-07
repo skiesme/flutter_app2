@@ -78,7 +78,8 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     }
     children.add(Padding(padding: Style.pagePadding4, child: Text('资产状态: ${data.status}'),));
 
-//    children.add(Padding(padding: Style.pagePadding4, child: Text('资产序列号: ${data.serialnum}'),));
+    children.add(Padding(padding: Style.pagePadding4, child: Text('运行状况: ${data.serialnum}'),));
+    children.add(Padding(padding: Style.pagePadding4, child: Text('重要等级: ${data.assetlev}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('上级资产编号: ${data.parent}'),));
     children.add(Padding(padding: Style.pagePadding4, child: Text('最后修订时间: ${Func.getFullTimeString(data.changedate)}'),));
     children.add(new SizedBox(height: Style.separateHeight));
