@@ -96,7 +96,8 @@ class OrderDetailData {
     actfinish = json['actfinish'];
     lead = json['lead'];
     reportedby = json['reportedby'];
-    phone = json['phone'];
+    phone = json['phone']??'';
+    phone  = phone.trim();
     wopriority = json['wopriority'];
     supervisor = json['supervisor'];
     sopnum = json['sopnum'];

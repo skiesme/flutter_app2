@@ -54,7 +54,7 @@ class UserInfo {
     orders = json['orders'];
     title = json['title'] ??'';
     department = json['department'] ??'';
-    phone = json['phone'] ?? '';
+    phone = (json['phone'] ?? '').trim();
     permission = json['permission'] != null
         ? new Permission.fromJson(json['permission'])
         : null;
