@@ -191,6 +191,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         return;
       }
 
+//      print('${widget.type} ...  _handleRefresh...');
+
+
       Func.closeKeyboard(context);
       int time = 0;
 

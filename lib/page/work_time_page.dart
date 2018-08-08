@@ -184,23 +184,29 @@ class _WorkTimePageState extends State<WorkTimePage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  void  _changeDate(){
     String real = _controller.text;
     if(_data.finishdate > _data.startdate){
       _data.regularhrs = (_data.finishdate - _data.startdate)  / (60*60);
-
-      real = _data.regularhrs.toString();
-
-      if(real.isNotEmpty){
-        _controller.text = num.parse(real).toStringAsFixed(2);
-      }
-
     } else {
       _data.regularhrs = 0.0;
     }
 
-    String regularhrs = _data.regularhrs.toStringAsFixed(2);
+    real = _data.regularhrs.toString();
+//    if(real.isNotEmpty){
+      _controller.text = num.parse(real).toStringAsFixed(2);
+//    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String real = _controller.text;
+    if(_data.finishdate > _data.startdate){
+    } else {
+      _data.regularhrs = 0.0;
+    }
+
+    String regular = _data.regularhrs.toStringAsFixed(2);
 
 
     if(MediaQuery.of(context).padding.bottom == 0){
@@ -308,6 +314,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                     Func.selectDate(context, time, (DateTime date) {
                                       setState(() {
                                         _data.startdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
+                                        _changeDate();
                                       });
                                     });
                                   },
@@ -325,6 +332,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                     Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
                                       setState(() {
                                         _data.startdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
+                                        _changeDate();
                                       });
                                     });
                                   },
@@ -356,6 +364,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                     Func.selectDate(context, time, (DateTime date) {
                                       setState(() {
                                         _data.finishdate = (new DateTime(date.year, date.month, date.day, time.hour, time.minute).millisecondsSinceEpoch ~/ 1000).toInt();
+                                        _changeDate();
                                       });
                                     });
                                   },
@@ -373,6 +382,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                     Func.selectTime(context, TimeOfDay.fromDateTime(time), (TimeOfDay date) {
                                       setState(() {
                                         _data.finishdate =  (new DateTime(time.year, time.month, time.day, date.hour, date.minute).millisecondsSinceEpoch ~/ 1000).toInt();
+                                        _changeDate();
                                       });
                                     });
                                   },
@@ -390,7 +400,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                   bottom: Divider.createBorderSide(context, width: 1.0)
                               )),
                         ),
-                        _getMenus(preText: '参考工时:', content: Text(regularhrs)),
+                        _getMenus(preText: '参考工时:', content: Text(regular)),
                         _getMenus(preText: '实际工时:', content: TextField(
                           controller: _controller,
                           keyboardType: TextInputType.number,

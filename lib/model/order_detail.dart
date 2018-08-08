@@ -83,7 +83,7 @@ class OrderDetailData {
     description = json['description'];
     location = json['location'];
     locationDescription = json['location_description'];
-    assetnum = json['assetnum'];
+    assetnum = json['assetnum']??'';
     assetDescription = json['asset_description'];
     status = json['status'];
     worktype = json['worktype'];

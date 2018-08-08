@@ -27,8 +27,7 @@ class RecentHistory extends StatefulWidget {
 
 class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<RecentHistory> {
 
-  bool _first = true;
-  bool _request = false;
+  bool _loading = true;
 
   OrderType getType() {
     return  getOrderType(widget.data?.worktype??'');
@@ -128,19 +127,34 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   }
 
   @override
-  Widget build(BuildContext context) {
-//    print('cacheKey:$cacheKey, data:${widget.data.toJson()}');
+  void initState() {
+    super.initState();
 
-    var data = getMemoryCache(cacheKey, callback: (){
+    _loading = getMemoryCache(cacheKey) == null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    List<dynamic> data = getMemoryCache(cacheKey, callback: (){
       _getHistory();
     });
-    if(data == null){
-//      if(_first) _getHistory();
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(child: _first ? CircularProgressIndicator() : Text('没有发现历史记录')),
-      ) ;
 
+    print('cacheKey:$cacheKey, data:$data, $_loading');
+
+
+    if(_loading){
+      return  Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if(data.isEmpty){
+      return  Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(child:  Text('没有发现历史记录')),
+      );
     }
 
     List<Widget> children ;
@@ -166,10 +180,6 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
         break;
     }
 
-    if(children.length == 0){
-      return Center(child: Text('没有发现历史记录'));
-    }
-
     return Column(
         children: children
     );
@@ -178,9 +188,11 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   void _getHistory() async {
 
-    if(_request) return;
-    _request = true;
     OrderDetailData data = widget.data;
+
+    setState(() {
+      _loading = true;
+    });
 
     try {
       if(data != null){
@@ -204,7 +216,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
               setMemoryCache<List<OrderStatusData>>(cacheKey, result.response);
             }
           } else {
-            if( data.assetnum != null && data.assetnum.length > 0) {
+            if( data.assetnum.isNotEmpty) {
               Map response = await getApi(context).historyCM(data.assetnum);
               CMHistoryResult result = new CMHistoryResult.fromJson(response);
 
@@ -213,21 +225,23 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
               } else {
                 setMemoryCache<List<CMHistoryData>>(cacheKey, result.response);
               }
+            } else {
+              setMemoryCache<List<CMHistoryData>>(cacheKey, []);
             }
           }
         }
       }
-      if(mounted){
-        setState(() {
 
-        });
-      }
     } catch (e){
       print (e);
       Func.showMessage('网络出现异常: 获取巡检历史失败');
     }
 
-    _request = false;
+    if(mounted){
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   String  get cacheKey {
@@ -250,7 +264,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
   @override
   void afterFirstLayout(BuildContext context) {
 //    _getHistory();
-    _first = false;
+    _loading = false;
   }
 
   @override

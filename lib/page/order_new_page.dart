@@ -479,6 +479,10 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                 )),
 
                             _getMenus(
+                                preText: '上报人:',
+                                content: Text(Cache.instance.userDisplayName)),
+
+                            _getMenus(
                                 preText: '联系电话:',
                                 content: TextField(
                                   controller: _controller2,
@@ -487,9 +491,6 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                   ),
                                 ),
                                 crossAxisAlignment: CrossAxisAlignment.start),
-                            _getMenus(
-                                preText: '上报人:',
-                                content: Text(Cache.instance.userDisplayName)),
                           ],
                         ),
                       )),
