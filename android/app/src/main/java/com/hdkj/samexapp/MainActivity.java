@@ -17,6 +17,6 @@ public class MainActivity extends FlutterActivity {
 
   public void onBackPressed() {
     super.onBackPressed();
-    IntentWrapper.onBackPressed(this);
+//    IntentWrapper.onBackPressed(this);
   }
 }

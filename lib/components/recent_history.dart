@@ -150,7 +150,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       );
     }
 
-    if(data.isEmpty){
+    if(data == null || data.isEmpty){
       return  Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(child:  Text('没有发现历史记录')),
