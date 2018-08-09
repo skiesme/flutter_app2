@@ -4,8 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
 
-import 'package:samex_app/data/sembast.dart';
-
 SaMexApi getApi(BuildContext context){
   return RootModelWidget.of(context).model.api;
 }
@@ -16,6 +14,10 @@ void setToken(BuildContext context, String token){
 
 UserInfo getUserInfo(BuildContext context) {
   return RootModelWidget.of(context).model.user;
+}
+
+String getCountUrl(){
+  return SaMexApi.baseUrl +'/user/count';
 }
 
 void setUserInfo(BuildContext context, UserInfo info){
@@ -161,7 +163,7 @@ class GlobListeners {
 }
 
 class RootModel {
-  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SaMexApi(), this.db = new SemBast();
+  RootModel({ this.token, this.onTextScaleChanged}) : this.api = new SaMexApi();
 
   String token;
 
@@ -170,7 +172,6 @@ class RootModel {
   final ValueChanged<double> onTextScaleChanged;
 
   final SaMexApi api;
-  final SemBast db;
 }
 
 class RootModelWidget extends InheritedWidget {

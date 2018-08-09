@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:isolate';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:samex_app/page/login_page.dart';
@@ -14,6 +13,7 @@ import 'package:samex_app/page/order_new_page.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/page/choose_material_page.dart';
+import 'package:samex_app/utils/alarm.dart';
 
 var _textStyle = new TextStyle(color: Colors.white, fontSize: 14.0);
 
@@ -241,8 +241,10 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     if(info != null) {
       setState(() {
         setUserInfo(context, info);
+        Alarm.start(token: Cache.instance.token, workers: info.orders, url: getCountUrl());
       });
     }
+
   }
 
   @override
@@ -257,6 +259,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
     super.dispose();
     taskPageHelpers.clear();
     clearMemoryCache();
+    Alarm.stop();
   }
 
   @override
