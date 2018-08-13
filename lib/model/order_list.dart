@@ -59,10 +59,10 @@ class OrderShortInfo {
   OrderShortInfo.fromJson(Map<String, dynamic> json) {
     wonum = json['wonum'];
     description = json['description'];
-    location = json['location'];
-    locationDescription = json['location_description'];
-    assetnum = json['assetnum'];
-    assetDescription = json['asset_description'];
+    location = json['location']??'';
+    locationDescription = json['location_description']??'';
+    assetnum = json['assetnum']??'';
+    assetDescription = json['asset_description']??'';
     status = json['status'];
     worktype = json['worktype'];
     reportDate = json['reportdate'];

@@ -167,6 +167,7 @@ class SaMexApi {
     int start = 0,            // 开始时间点
     String query= '',         // 搜索内容(工单编号/资产编号)
     int all = 0,              // 0: 跟账号相关  1: 全部
+    int task = 0,             // 1: 任务箱  0:工单箱
     String status = 'active'  // 工单状态, '': 全部, 'active': 进行中, 'inactive':'完成'
   }) async {
     DateTime now = new DateTime.now();
@@ -178,6 +179,7 @@ class SaMexApi {
       'status': status,
       'start': '$start',
       'query': query,
+      'task': '$task',
       'all': '$all'
     });
     Response response = await _dio.get(uri.toString(), options: _options());

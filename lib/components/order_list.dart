@@ -237,6 +237,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           all: _option.isMe ? 0 : 1,
           start: startTime,
           older: older,
+          task: widget.type == OrderType.ALL ? 0 : 1,
           count: widget.type == OrderType.ALL ? 20 : 100);
       OrderListResult result = new OrderListResult.fromJson(response);
 
@@ -467,10 +468,10 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 //                                Text('位置: ${info.locationDescription}'),
 //                                Text('资产:${info.assetnum??''}'),
                             Text('设备: ${info.assetDescription}'),
-//                                widget.type == OrderType.ALL ?
+                                widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
-//                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
-                            Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
+                                Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
+                            Text('更新时间: ${Func.getFullTimeString(info.reportDate)}')
                           ],
                         ))
                       ],
