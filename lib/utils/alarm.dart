@@ -14,7 +14,7 @@ class Alarm {
     @required String token,
     @required int workers,
     @required String url,
-    int interval = 3,
+    int interval = 1,
   }) async {
 
     final Map<String, dynamic> params = <String, dynamic> {

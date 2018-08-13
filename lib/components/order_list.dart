@@ -352,6 +352,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           return Colors.cyan;
         } else if(info.status.contains('待验收')){
           return Colors.yellow.shade600;
+        } else if(info.status.contains('重做')){
+          return Colors.red.shade400;
         } else {
           return Colors.green;
         }
@@ -361,6 +363,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           return Colors.blue.shade900;
         } else if(info.status.contains('待验收')){
           return Colors.yellow.shade600;
+        } else if(info.status.contains('重做')){
+          return Colors.red.shade400;
         } else {
           return Colors.green;
         }

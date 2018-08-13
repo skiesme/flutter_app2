@@ -69,7 +69,7 @@ public class AlarmService extends AbsWorkService {
         return sShouldStopService;
     }
 
-    private int show(int  old){
+    private int show(int  old, final int newOrders){
         Notify n = new  Notify(getBaseContext());
 
         NotifyConfig c = new NotifyConfig();
@@ -78,7 +78,7 @@ public class AlarmService extends AbsWorkService {
         create.content(new Function1<Payload.Content.Default, Unit>() {
             @Override
             public Unit invoke(Payload.Content.Default aDefault) {
-                aDefault.setText("收到新的任务单");
+                aDefault.setText("收到新的任务单( "+newOrders+" )");
                 aDefault.setTitle("通知");
                 return null;
             }
@@ -141,7 +141,7 @@ public class AlarmService extends AbsWorkService {
 
                     if(new_orders > old) {
                         int id = preferences.getInt(NOTIFICATION_ID, -1);
-                        preferences.edit().putInt(NOTIFICATION_ID, show(id)).apply();
+                        preferences.edit().putInt(NOTIFICATION_ID, show(id, new_orders)).apply();
                     }
 
                 }
@@ -159,7 +159,7 @@ public class AlarmService extends AbsWorkService {
         }
 
         try {
-            int interval = getInstance(getApplicationContext()).getInt(TIME, 3);
+            int interval = getInstance(getApplicationContext()).getInt(TIME, 1);
             TimeUnit unit = TimeUnit.MINUTES;
             if(BuildConfig.DEBUG){
                 interval = 30;
