@@ -162,7 +162,7 @@ public class AlarmService extends AbsWorkService {
             int interval = getInstance(getApplicationContext()).getInt(TIME, 3);
             TimeUnit unit = TimeUnit.MINUTES;
             if(BuildConfig.DEBUG){
-                interval = 10;
+                interval = 30;
                 unit = TimeUnit.SECONDS;
             }
 
