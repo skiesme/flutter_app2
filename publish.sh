@@ -8,9 +8,10 @@ _api_key=7985c2827257ea59c9559e929a880dd9
 scheme='Runner'
 info_plist=${pwd}/ios/Runner/info.plist
 workspace=Runner.xcworkspace
+dart='main_publish.dart'
 
 uploadAndroid(){
-    flutter build apk --release -t lib/main_publish.dart
+    flutter build apk --release -t lib/${dart}
 
     apk_release_file=${pwd}/build/app/outputs/apk/release/app-release.apk
 
@@ -21,6 +22,8 @@ uploadAndroid(){
 }
 
 uploadIos() {
+
+    flutter build ios --release -t lib/${dart}
 
     configurationBuildDir="`pwd`/build"
 
@@ -56,11 +59,19 @@ uploadIos() {
     curl -F "file=@${ios_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
 }
 
-if [ "$1" = "ios" ]; then
-    echo "build ios release ..."
-    flutter build ios --release -t lib/main_publish.dart
+if [ "$1" = "63" ]; then
+    dart='main_publish2.dart'
+    uploadAndroid
     uploadIos
 else
-    echo "build android release ..."
-    uploadAndroid
+    if [ "$1" = "ios" ]; then
+        echo "build ios release ..."
+        uploadIos
+    else
+        echo "build android release ..."
+        uploadAndroid
+    fi
+
 fi
+
+
