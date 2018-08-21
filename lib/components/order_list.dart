@@ -543,23 +543,26 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                     ))
                   ],
                 ),
-                SimpleButton(
-                  onTap: (){
-                    setState(() {
-                      _option.isMe = !_option.isMe;
-                    });
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text('所有工单'),
-                      Icon(_option.isMe ? Icons.radio_button_unchecked :Icons.radio_button_checked, size: 16.0,),
-                    ],
-                  ),
-                ),
+
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    SimpleButton(
+                      onTap: (){
+                        setState(() {
+                          _option.isMe = !_option.isMe;
+                        });
+                      },
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text('所有工单'),
+                          Icon(_option.isMe ? Icons.radio_button_unchecked :Icons.radio_button_checked, size: 16.0,),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 2.0,),
+
                     Text('工单类型:'),
                     SizedBox(width: 2.0,),
                     new PopupMenuButton<_OrderTypeSelect>(
