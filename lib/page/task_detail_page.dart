@@ -181,7 +181,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
             final result = await Navigator.push(context, new MaterialPageRoute(builder: (_){
               return new WorkTimePage(data: new WorkTimeData(
                   refwo: _data.wonum
-              ), read: _data.actfinish != 0,);
+              ), read: _data.actfinish != 0,
+              isNew: true,);
             }));
 
             if(result != null) {

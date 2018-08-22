@@ -10,7 +10,8 @@ class PeoplePage extends StatefulWidget {
 
   final RegExp req;
   final bool trade;
-  PeoplePage({this.req, this.trade = false});
+  final bool multiple;
+  PeoplePage({this.req, this.trade = false, this.multiple = false});
 
   @override
   _PeoplePageState createState() => _PeoplePageState();
@@ -20,6 +21,11 @@ class _PeoplePageState extends State<PeoplePage> {
 
   TextEditingController _scroller;
   bool _loading = true;
+
+  Map<int, bool> _chooseData = new Map();
+
+  List<PeopleData> _data;
+
 
   @override
   void initState() {
@@ -42,19 +48,42 @@ class _PeoplePageState extends State<PeoplePage> {
 
     if(list != null) _loading = false;
 
+    var actions = <Widget>[
+      new IconButton(
+          icon: Icon(Icons.refresh),
+          tooltip: '数据刷新',
+          onPressed: (){
+            if(!_loading){
+              _getUsers();
+            }
+          }),
+    ];
+
+    if(widget.multiple){
+      actions.add(IconButton(icon: Icon(Icons.done), onPressed: (){
+        if(_chooseData.length == 0){
+          Func.showMessage("请至少选择一个人员");
+        } else {
+          List<PeopleData> result = new List();
+
+
+          for(var key in _chooseData.keys){
+            print('key = $key');
+            result.add(_data[key]);
+          }
+
+          print('$result');
+
+          Navigator.pop(context, result);
+
+        }
+      }));
+    }
+
     return new Scaffold(
       appBar: new AppBar(
         title: Text('人员选择'),
-        actions: <Widget>[
-          new IconButton(
-              icon: Icon(Icons.refresh),
-              tooltip: '数据刷新',
-              onPressed: (){
-                if(!_loading){
-                  _getUsers();
-                }
-              })
-        ],
+        actions: actions
       ),
       body: new Column(
         mainAxisSize: MainAxisSize.max,
@@ -119,6 +148,7 @@ class _PeoplePageState extends State<PeoplePage> {
       return Center(child: Text('没有可选择的人员'),);
     }
 
+    _data = data;
     return new ListView.builder(
       shrinkWrap: true,
       itemCount: data.length,
@@ -130,13 +160,24 @@ class _PeoplePageState extends State<PeoplePage> {
                 SimpleButton(
 
                   child:ListTile(
-
                     title: Text(people.displayname),
                     subtitle: Text(people.title),
                     trailing: Text(people.department),
+                    selected: widget.multiple ? _chooseData.containsKey(index) : false,
                   ),
                   onTap: (){
-                    Navigator.pop(context, people);
+                    if(widget.multiple){
+                      if(_chooseData.containsKey(index)){
+                        _chooseData.remove(index);
+                      } else {
+                        _chooseData[index] = true;
+                      }
+                      setState(() {
+
+                      });
+                    } else {
+                      Navigator.pop(context, people);
+                    }
                   },
                 ),
 

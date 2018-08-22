@@ -15,7 +15,9 @@ class WorkTimePage extends StatefulWidget {
   final WorkTimeData data;
   final bool read;
 
-  WorkTimePage({@required this.data, @required this.read});
+  final bool isNew;
+
+  WorkTimePage({@required this.data, @required this.read, this.isNew = false});
 
   @override
   _WorkTimePageState createState() => _WorkTimePageState();
@@ -25,7 +27,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
   bool _show = false;
   WorkTimeData _data;
 
-  PeopleData _people;
+  dynamic _people;
 
   TextEditingController _controller;
 
@@ -121,6 +123,39 @@ class _WorkTimePageState extends State<WorkTimePage> {
     }
   }
 
+  Future<bool> _post(PeopleData people) async {
+    _data.hrid = people.hrid;
+    _data.displayname = people.displayname;
+    _data.trade = people.trade;
+    _data.starttime = _data.startdate;
+    _data.finishtime = _data.finishdate;
+
+    _data.regularhrs = (_data.finishdate - _data.startdate) / (60*60);
+
+    _data.actualhrs = double.parse(_controller.text);
+
+    try{
+      Map response = await getApi(context).postWorkTime(_data);
+      WorkTimeResult result = new WorkTimeResult.fromJson(response);
+      if (result.code != 0) {
+        Func.showMessage(result.message);
+        return false;
+      } else {
+        if(_people is List){
+          return true;
+        }
+        Func.showMessage('提交成功');
+        return true;
+      }
+
+    } catch (e) {
+      print(e);
+      Func.showMessage('出现异常, 新建工时失败');
+      return false;
+    }
+
+  }
+
   void postStep() async{
     Func.closeKeyboard(context);
 
@@ -150,30 +185,26 @@ class _WorkTimePageState extends State<WorkTimePage> {
       _show = true;
     });
 
-    _data.hrid = _people.hrid;
-    _data.displayname = _people.displayname;
-    _data.trade = _people.trade;
-    _data.starttime = _data.startdate;
-    _data.finishtime = _data.finishdate;
+    if(_people is List){
+      List<PeopleData> data = _people;
 
-    _data.regularhrs = (_data.finishdate - _data.startdate) / (60*60);
-
-    _data.actualhrs = double.parse(_controller.text);
-
-    try{
-      Map response = await getApi(context).postWorkTime(_data);
-      WorkTimeResult result = new WorkTimeResult.fromJson(response);
-      if (result.code != 0) {
-        Func.showMessage(result.message);
-      } else {
-        Func.showMessage('提交成功');
-        Navigator.pop(context, true);
-        return;
+      for(int i = 0, len = data.length; i < len ; i++){
+        bool ok = await _post(data[i]);
+        if(!ok){
+          Navigator.pop(context, true);
+          return;
+        }
       }
 
-    } catch (e) {
-      print(e);
-      Func.showMessage('出现异常, 新建工时失败');
+      Navigator.pop(context, true);
+
+    } else {
+      bool ok =  await _post(_people);
+
+      if(ok){
+        Navigator.pop(context, true);
+      }
+
     }
 
     if(mounted){
@@ -196,6 +227,26 @@ class _WorkTimePageState extends State<WorkTimePage> {
 //    if(real.isNotEmpty){
       _controller.text = num.parse(real).toStringAsFixed(2);
 //    }
+  }
+
+  String getPeopleName(){
+    if(_people == null){
+      return '请选择人员';
+    }
+    if(_people is List){
+
+      String names = '';
+      List<PeopleData> data = _people;
+
+      for(int i = 0, len = data.length; i < len ; i++){
+        names += '${data[i].displayname} ';
+      }
+
+      return names;
+
+    } else {
+      return _people?.displayname ;
+    }
   }
 
   @override
@@ -279,9 +330,9 @@ class _WorkTimePageState extends State<WorkTimePage> {
                             content: SimpleButton(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
                                 onTap: widget.read ? null : () async {
-                                  final PeopleData result = await Navigator.push(context,
+                                  dynamic result = await Navigator.push(context,
                                       new MaterialPageRoute(
-                                          builder:(_)=> new PeoplePage( trade: true,))
+                                          builder:(_)=> new PeoplePage( trade: true, multiple: widget.isNew,))
                                   );
 
                                   if(result != null) {
@@ -294,11 +345,12 @@ class _WorkTimePageState extends State<WorkTimePage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(_people?.displayname  ?? '请选择人员', style: TextStyle(color: _people == null ? Colors.grey: Colors.black),),
+                                    Expanded(child:Text(getPeopleName(), style: TextStyle(color: _people == null ? Colors.grey: Colors.black),)),
                                     Icon(Icons.navigate_next, color: Colors.black87,),
                                   ],
                                 ))),
-                        _getMenus(preText: '技能:', content:  Text(_people?.trade ?? '', style: TextStyle(color: _people == null ? Colors.grey: Colors.black))),
+
+                        widget.isNew ? Container() :  _getMenus(preText: '技能:', content:  Text(_people?.trade ?? '', style: TextStyle(color: _people == null ? Colors.grey: Colors.black))),
 
 
                         new Container(
