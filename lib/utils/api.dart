@@ -11,8 +11,8 @@ import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/func.dart';
 //import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
-import 'package:get_version/get_version.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:package_info/package_info.dart';
 
 Dio _dio = new Dio();
 
@@ -66,13 +66,9 @@ class SaMexApi {
 
   Future<Map> checkUpdate() async {
 
-    String projectCode;
-    try{
-      projectCode = await GetVersion.projectCode;
-    } catch(e) {
-      print(e);
-      projectCode = '0';
-    }
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+    String projectCode = packageInfo.buildNumber;
 
     String url = 'http://$ipAndPort/app/version/$projectCode';
 

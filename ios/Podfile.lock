@@ -1,6 +1,4 @@
 PODS:
-  - android_alarm_manager (0.0.1):
-    - Flutter
   - barcode_scan (0.0.1):
     - Flutter
     - SGQRCode
@@ -15,6 +13,10 @@ PODS:
   - FMDB/standard (2.7.2)
   - image_picker (0.0.1):
     - Flutter
+  - open_file (0.0.1):
+    - Flutter
+  - package_info (0.0.1):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - Reachability (3.2)
@@ -26,12 +28,13 @@ PODS:
     - FMDB (~> 2.7.2)
 
 DEPENDENCIES:
-  - android_alarm_manager (from `.symlinks/plugins/android_alarm_manager/ios`)
   - barcode_scan (from `.symlinks/plugins/barcode_scan/ios`)
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - open_file (from `.symlinks/plugins/open_file/ios`)
+  - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
@@ -43,18 +46,20 @@ SPEC REPOS:
     - SGQRCode
 
 EXTERNAL SOURCES:
-  android_alarm_manager:
-    :path: ".symlinks/plugins/android_alarm_manager/ios"
   barcode_scan:
     :path: ".symlinks/plugins/barcode_scan/ios"
   connectivity:
     :path: ".symlinks/plugins/connectivity/ios"
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: ".symlinks/flutter/ios-release"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  open_file:
+    :path: ".symlinks/plugins/open_file/ios"
+  package_info:
+    :path: ".symlinks/plugins/package_info/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   shared_preferences:
@@ -63,13 +68,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  android_alarm_manager: 38beb952037bc2c262c568f24ad517cae8c8e209
   barcode_scan: 44a9c32453c4babafb4e45c6b399ef58211433db
   connectivity: d5992e3758d68b1c4b12d6e012fe0813f1aa1645
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   fluttertoast: ad0527b15297baf11349f3f581dae4d40f24f340
   FMDB: 6198a90e7b6900cfc046e6bc0ef6ebb7be9236aa
   image_picker: ee00aab0487cedc80a304085219503cc6d0f2e22
+  open_file: 40d524de730775bb4edb021fa137cc1d2fa13f1c
+  package_info: d7c98b64f60add4c2908b9d94d82a45d3c8827ad
   path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SGQRCode: 6cd7f03ea6b74d1267820d427b07d1451b387c79
