@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:isolate';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:samex_app/page/login_page.dart';
@@ -14,6 +15,9 @@ import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/page/choose_material_page.dart';
 import 'package:samex_app/utils/alarm.dart';
+import 'package:samex_app/model/update.dart';
+import 'package:samex_app/components/loading_view.dart';
+import 'package:open_file/open_file.dart';
 
 var _textStyle = new TextStyle(color: Colors.white, fontSize: 14.0);
 
@@ -41,6 +45,16 @@ class MainPage extends StatefulWidget{
 class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
   List<_Menu> _menus = <_Menu>[];
+
+  bool _show = false;
+  String _tips;
+  int _progress = 0;
+
+  void setMountState(VoidCallback func){
+    if(mounted){
+      setState(func);
+    }
+  }
 
   GlobalKey<RefreshIndicatorState> _refreshKey = new GlobalKey<RefreshIndicatorState>();
 
@@ -181,6 +195,64 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 //    _menus.add(new _Menu(image: ImageAssets.home_history, title: '历史记录'));
 //    _menus.add(new _Menu(image: ImageAssets.home_notification, title: '通知公告'));
 //    _menus.add(new _Menu(image: ImageAssets.home_meter, title: '仪表抄表'));
+
+  }
+
+  void _checkUpdate() async {
+    try {
+      final response = await getApi(context).checkUpdate();
+      UpdateResult result = UpdateResult.fromJson(response);
+      if(result.code == 0){
+        showDialog(
+          context: context,
+          builder:(BuildContext context)=> new AlertDialog(
+            title: new Text('发现新版本!'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: new Text('取消'),
+              ),
+              new FlatButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+
+                  try {
+                    OpenFile.open(
+                        await getApi(context).download(
+                        result.response.url, (int received, int total) {
+                      int percent = ((received / total) * 100).toInt();
+                      print('${new DateTime
+                          .now()} received: percent= $percent');
+
+                      setMountState(() {
+                        if (percent == 100) {
+                          _progress = 0;
+                          _tips = '';
+                          _show = false;
+
+                        } else {
+                          _progress = percent;
+                          _tips = '更新包下载中...($percent\%)';
+                          _show = true;
+                        }
+                      });
+                    }));
+                  } catch (e){
+                    print(e);
+                  }
+
+                },
+                child: new Text('下载'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e){
+      print('检查更新失败: $e');
+    }
   }
 
   @override
@@ -190,54 +262,63 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
           onWillPop: (){
             return new Future.value(false);
           },
-          child: new Scaffold(
+          child: new LoadingView(
+              show: _show,
+              tips: _tips,
+              progress: _show ? _progress : 0,
+              confirm: true,
+              child: new Scaffold(
 
-            body: new RefreshIndicator(
-                key: _refreshKey,
-                onRefresh: _handlerRefresh,
-                child: new CustomScrollView(
-                    physics: new AlwaysScrollableScrollPhysics(),
-                    slivers: <Widget>[
-                      SliverAppBar(
-                        title: const Text('深水光明SAMEX系统',),
-                        pinned: true,
-                        actions: <Widget>[
-                          IconButton(
-                              icon: Icon(Icons.add),
-                              tooltip: '新增工单',
-                              onPressed: () {
-                                Navigator.push(context, new MaterialPageRoute(
-                                    builder: (_)=> new OrderNewPage()));
-                              }),
-                          IconButton(
-                              icon: Icon(Icons.settings),
-                              tooltip: '设置',
-                              onPressed: openSettings),
-                        ],
-                      ),
-                      SliverList(
-                        delegate: new SliverChildListDelegate(buildSliverList()),
-                      )
+                body: new RefreshIndicator(
+                    key: _refreshKey,
+                    onRefresh: _handlerRefresh,
+                    child: new CustomScrollView(
+                        physics: new AlwaysScrollableScrollPhysics(),
+                        slivers: <Widget>[
+                          SliverAppBar(
+                            title: const Text('深水光明SAMEX系统',),
+                            pinned: true,
+                            actions: <Widget>[
+                              IconButton(
+                                  icon: Icon(Icons.add),
+                                  tooltip: '新增工单',
+                                  onPressed: () {
+                                    Navigator.push(context, new MaterialPageRoute(
+                                        builder: (_)=> new OrderNewPage()));
+                                  }),
+                              IconButton(
+                                  icon: Icon(Icons.settings),
+                                  tooltip: '设置',
+                                  onPressed: openSettings),
+                            ],
+                          ),
+                          SliverList(
+                            delegate: new SliverChildListDelegate(buildSliverList()),
+                          )
 
-                    ])),
+                        ])),
 
-            floatingActionButton: new FloatingActionButton(
-              onPressed: () async{
-                Cache.instance.remove(KEY_TOKEN);
+                floatingActionButton: new FloatingActionButton(
+                  onPressed: () async{
+                    Cache.instance.remove(KEY_TOKEN);
 
-                Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
-              },
-              backgroundColor: Colors.transparent,
-              child: Image.asset(ImageAssets.logout),
-            ),
+                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
+                  },
+                  backgroundColor: Colors.transparent,
+                  child: Image.asset(ImageAssets.logout),
+                ),
 
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          ));
+                floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+              )));
   }
 
   Future<Null> _handlerRefresh() async {
 
     UserInfo info = await getApi(context).user();
+    if(Platform.isAndroid){
+      _checkUpdate();
+    }
+
     if(info != null) {
       setState(() {
         setUserInfo(context, info);

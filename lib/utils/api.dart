@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' as Io;
 
 import 'package:dio/dio.dart';
 import 'package:samex_app/model/steps.dart';
@@ -10,15 +11,16 @@ import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/func.dart';
 //import 'package:http/http.dart' as http;
 import 'package:connectivity/connectivity.dart';
+import 'package:get_version/get_version.dart';
+import 'package:path_provider/path_provider.dart';
 
 Dio _dio = new Dio();
 
-
 class SaMexApi {
-//  static String ipAndPort = '192.168.60.12:40001';
+  static String ipAndPort = '192.168.60.12:40001';
 //  static String ipAndPort = '172.19.1.63:40001';
 
-    static String ipAndPort = '172.19.1.30:40001';
+//  static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.112:40001';
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
@@ -60,6 +62,39 @@ class SaMexApi {
 
   String getImageUrl(String docinfoid){
     return 'http://$ipAndPort/static/stepimage/${Cache.instance.site}/$docinfoid';
+  }
+
+  Future<Map> checkUpdate() async {
+
+    String projectCode;
+    try{
+      projectCode = await GetVersion.projectCode;
+    } catch(e) {
+      print(e);
+      projectCode = '0';
+    }
+
+    String url = 'http://$ipAndPort/app/version/$projectCode';
+
+    Response response =  await _dio.get(url,  options: _option);
+    print('$url: ${response.data}');
+    return response.data;
+  }
+
+  Future<String> download(String url, OnDownloadProgress cb) async {
+    Io.Directory cacheDir = await getTemporaryDirectory();
+
+    if(!url.startsWith('http')){
+      url = 'http://$ipAndPort$url';
+    }
+
+    print('$url: download');
+
+    String save = cacheDir.path+'/release.apk';
+
+    await _dio.download(url, save, onProgress: cb);
+
+    return save;
   }
 
   Future<Map> login(String userName, String password) async {
