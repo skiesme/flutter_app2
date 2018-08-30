@@ -98,7 +98,7 @@ class SaMexApi {
       'username': userName,
       'password': password
     }));
-    print('login: ${response.data}');
+    print('login:$baseUrl ${response.data}');
     return response.data;
   }
 

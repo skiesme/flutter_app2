@@ -33,8 +33,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
       return 'JZTCK';
     } else if(Cache.instance.site == 'SC'){
       return 'SCZXC';
-    } else if(Cache.instance.site == 'GM') {
-      return 'GMCK';
+//    } else if(Cache.instance.site == 'GM') {
+//      return 'GMCK';
     }
     return '';
   }

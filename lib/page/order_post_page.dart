@@ -111,7 +111,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     trailing: Icon(Icons.edit),
                     onTap: () async{
                         final  result = await Navigator.push(context,
-                          new MaterialPageRoute(builder: (_)=> PeoplePage(req: new RegExp(r'维修'),) )
+                          new MaterialPageRoute(builder: (_)=> PeoplePage(req: new RegExp(r'维修|设备'),) )
                         );
 
                         if(result != null) {
