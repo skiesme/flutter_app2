@@ -221,24 +221,24 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                   try {
                     OpenFile.open(
                         await getApi(context).download(
-                        result.response.url, (int received, int total) {
-                      int percent = ((received / total) * 100).toInt();
-                      print('${new DateTime
-                          .now()} received: percent= $percent');
+                            result.response.url, (int received, int total) {
+                          int percent = ((received / total) * 100).toInt();
+                          print('${new DateTime
+                              .now()} received: percent= $percent');
 
-                      setMountState(() {
-                        if (percent == 100) {
-                          _progress = 0;
-                          _tips = '';
-                          _show = false;
+                          setMountState(() {
+                            if (percent == 100) {
+                              _progress = 0;
+                              _tips = '';
+                              _show = false;
 
-                        } else {
-                          _progress = percent;
-                          _tips = '更新包下载中...($percent\%)';
-                          _show = true;
-                        }
-                      });
-                    }));
+                            } else {
+                              _progress = percent;
+                              _tips = '更新包下载中...($percent\%)';
+                              _show = true;
+                            }
+                          });
+                        }));
                   } catch (e){
                     print(e);
                   }
@@ -300,9 +300,31 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
 
                 floatingActionButton: new FloatingActionButton(
                   onPressed: () async{
-                    Cache.instance.remove(KEY_TOKEN);
 
-                    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
+                    showDialog(
+                      context: context,
+                      builder:(BuildContext context)=> new AlertDialog(
+                        content: new Text('确定退出登录?'),
+                        actions: <Widget>[
+                          new FlatButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: new Text('取消', ),
+                          ),
+
+                          new FlatButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                              Cache.instance.remove(KEY_TOKEN);
+
+                              Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
+                            },
+                            child: new Text('退出', style: TextStyle(color: Colors.redAccent),),
+                          ),
+
+                        ],
+                      ),
+                    );
+
                   },
                   backgroundColor: Colors.transparent,
                   child: Image.asset(ImageAssets.logout),

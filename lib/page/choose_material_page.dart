@@ -32,9 +32,9 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
     if(Cache.instance.site == 'JZT'){
       return 'JZTCK';
     } else if(Cache.instance.site == 'SC'){
-      return 'SCZXC';
-//    } else if(Cache.instance.site == 'GM') {
-//      return 'GMCK';
+      return 'SCWXC';
+    } else if(Cache.instance.site == 'GM') {
+      return 'WXCK';
     }
     return '';
   }
@@ -63,6 +63,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
     List<_StatusSelect> statusList = new List();
 
     locationSite.forEach((String key, String value){
+      print('$key - $value');
       statusList.add(new _StatusSelect(key: key, value: value));
     });
 
@@ -109,7 +110,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
               child: Column(children: <Widget>[
 
 
-                SimpleButton(
+                Card(child: SimpleButton(
                     onTap:(){
                       _key.currentState?.showButtonMenu();
                     },
@@ -141,7 +142,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
                           },
                         )),
                       ],
-                    )),
+                    ),
+                )),
 
                 SizedBox(height: 10.0,),
                 new TextField(

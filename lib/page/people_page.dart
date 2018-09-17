@@ -95,7 +95,7 @@ class _PeoplePageState extends State<PeoplePage> {
             child: new TextField(
               controller: _scroller,
               decoration: new InputDecoration(
-                  hintText: "仅支持用户拼音搜索",
+                  hintText: "仅支持用户名称搜索",
                   fillColor: Colors.white,
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
@@ -130,7 +130,7 @@ class _PeoplePageState extends State<PeoplePage> {
       }
 
       if(_scroller.text.length > 0){
-        return  f.hrid.contains(_scroller.text.toUpperCase());
+        return  f.hrid.contains(_scroller.text) || f.displayname.contains(_scroller.text);
       }
 
       return  true;

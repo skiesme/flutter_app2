@@ -624,7 +624,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('时间段: '),
+                    Text('上报时间: '),
                     new SizedBox(width: 10.0,),
                     new InkWell(
                         onTap:  () {
@@ -675,6 +675,10 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                             _handleRefresh();
                             _query = '';
                             widget.helper.inital = true;
+
+                            setState(() {
+                              _expend = false;
+                            });
                           });
                         },
                         elevation: 2.0,

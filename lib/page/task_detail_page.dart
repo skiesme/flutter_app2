@@ -510,7 +510,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
               ] : null,
             ),
             body: _info== null? Text(''): _getBody(),
-            floatingActionButton: _tabIndex == 1 && getOrderType(_info?.worktype) != OrderType.CM ? new FloatingActionButton(
+            floatingActionButton: _tabIndex == 1 && getOrderType(_info?.worktype) != OrderType.CM  && _info.actfinish == 0 ? new FloatingActionButton(
                 child: Tooltip(child: new Image.asset(ImageAssets.scan, height: 20.0,), message: '扫码', preferBelow: false,),
                 backgroundColor: Colors.redAccent,
                 onPressed: () async {
