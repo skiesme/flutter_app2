@@ -26,8 +26,12 @@ const option_cache_key = 'filter_option_key';
 final List<_OrderTypeSelect> _orderTypeList = <_OrderTypeSelect>[
   _OrderTypeSelect(OrderType.ALL, '全部'),
   _OrderTypeSelect(OrderType.CM, '报修'),
-  _OrderTypeSelect(OrderType.XJ, '巡检'),
-  _OrderTypeSelect(OrderType.PM, '保养')
+  _OrderTypeSelect(OrderType.PM, '保养'),
+  _OrderTypeSelect(OrderType.XJ, '一级巡检'),
+  _OrderTypeSelect(OrderType.XJ2, '二级巡检'),
+  _OrderTypeSelect(OrderType.XJ3, '三级巡检'),
+  _OrderTypeSelect(OrderType.XJ4, '四级巡检'),
+
 ];
 
 class _OrderTypeSelect{
@@ -178,7 +182,13 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       case OrderType.CM:
         return 'CM';
       case OrderType.XJ:
-        return 'XJ';
+        return 'XJM';
+      case OrderType.XJ2:
+        return 'XJ2';
+      case OrderType.XJ3:
+        return 'XJ3';
+      case OrderType.XJ4:
+        return 'XJ4';
       default:
         return 'PM';
     }
@@ -567,6 +577,10 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                       onTap: (){
                         setState(() {
                           _option.isMe = !_option.isMe;
+                          if(!_option.isMe){
+                            _option.type = _orderTypeList[0];
+                            _option.status = _orderStatusList[0];
+                          }
                         });
                       },
                       child: Row(

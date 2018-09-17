@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
 
 import 'package:samex_app/data/bloc_provider.dart';
 import 'package:rxdart/rxdart.dart';

@@ -38,6 +38,9 @@ enum OrderType {
   PM,             //保养
   XJ,             //巡检
   CM,             //报修
+  XJ2,
+  XJ3,
+  XJ4,
 }
 
 OrderType getOrderType(String type){
