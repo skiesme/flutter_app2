@@ -26,9 +26,9 @@ class BadgeBloc implements BlocBase {
   Sink<BadgeInEvent> get badgeChange => _badgeController.sink;
 
 
-  BehaviorSubject<Map<OrderType, int>> _favoritesController = new BehaviorSubject<Map<OrderType, int>>();
-  Sink<Map<OrderType, int>> get _inFavorites =>_favoritesController.sink;
-  Stream<Map<OrderType, int>> get outFavorites =>_favoritesController.stream;
+  BehaviorSubject<Map<OrderType, int>> _badgeAllController = new BehaviorSubject<Map<OrderType, int>>();
+  Sink<Map<OrderType, int>> get _inBadge =>_badgeAllController.sink;
+  Stream<Map<OrderType, int>> get outBadges =>_badgeAllController.stream;
 
 
   ///
@@ -40,14 +40,14 @@ class BadgeBloc implements BlocBase {
 
   void dispose(){
     _badgeController.close();
-    _favoritesController.close();
+    _badgeAllController.close();
   }
 
 
   void _handleBadge(BadgeInEvent event){
     _badges[event.type] = event.badge;
 
-    _inFavorites.add(_badges);
+    _inBadge.add(_badges);
 
   }
 

@@ -199,7 +199,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         actions: _buildActions(),
       ),
       body: _getBody(),
-      bottomNavigationBar: widget.isTask ? StreamBuilder<Map<OrderType, int> >(stream: bloc.outFavorites, builder: (context, snapshot){
+      bottomNavigationBar: widget.isTask ? StreamBuilder<Map<OrderType, int> >(stream: bloc.outBadges, builder: (context, snapshot){
 
         print('bottombar ...  ${snapshot.hasData}');
           if(snapshot.hasData){
