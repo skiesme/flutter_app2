@@ -1,5 +1,3 @@
-import 'dart:isolate';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -10,23 +8,13 @@ import 'package:samex_app/page/home_page.dart';
 import 'package:samex_app/data/root_model.dart';
 
 import 'package:samex_app/utils/style.dart';
-//import 'package:samex_app/utils/api.dart';
-//import 'package:android_alarm_manager/android_alarm_manager.dart';
-//
-//void printHello() {
-//  final DateTime now = new DateTime.now();
-//  final int isolateId = Isolate.current.hashCode;
-//  print("[$now] Hello, world! isolate=${isolateId} function='$printHello'");
-//
-//  SaMexApi.getScheduleCount().then((int count) {
-//    print('count=$count');
-//  });
-//}
+
+import 'package:samex_app/data/bloc_provider.dart';
+import 'package:samex_app/data/badge_bloc.dart';
 
 void main() async {
   await Cache.getInstance();
   runApp(new App());
-//  await AndroidAlarmManager.periodic(const Duration(seconds: 10), 0, printHello);
 
 }
 
@@ -36,13 +24,16 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new RootModelWidget(
-        model: new RootModel(
-            token: Cache.instance.token,
-            onTextScaleChanged: (double textScale){
-              _key.currentState.setTextScale(textScale);
-            }),
-        child: MyApp(key: _key,));
+    return
+      BlocProvider<BadgeBloc>(
+          bloc: BadgeBloc(),
+          child: new RootModelWidget(
+              model: new RootModel(
+                  token: Cache.instance.token,
+                  onTextScaleChanged: (double textScale){
+                    _key.currentState.setTextScale(textScale);
+                  }),
+              child: MyApp(key: _key,)));
   }
 }
 
@@ -116,15 +107,15 @@ class _MyAppState extends State<MyApp> {
           // "hot reload" (press "r" in the console where you ran "flutter run",
           // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
           // counter didn't reset back to zero; the application is not restarted.
-            primaryColor: Style.primaryColor,
-            textTheme: theme.textTheme.copyWith(
-              body1: theme.textTheme.body1.copyWith(
-                  fontSize: 14.0
-              ),
-              title: theme.textTheme.title.copyWith(
-                  fontSize: 18.0
-              ),
+          primaryColor: Style.primaryColor,
+          textTheme: theme.textTheme.copyWith(
+            body1: theme.textTheme.body1.copyWith(
+                fontSize: 14.0
             ),
+            title: theme.textTheme.title.copyWith(
+                fontSize: 18.0
+            ),
+          ),
 
           primaryTextTheme: theme.primaryTextTheme.copyWith(
             body1: theme.primaryTextTheme.body1.copyWith(

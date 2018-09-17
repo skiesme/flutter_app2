@@ -120,7 +120,6 @@ class GlobListeners {
   }
 
   void queryChanges(String query){
-//    print('queryChanges... $query, ${_listeners.length}');
     try{
       _listeners.map((int key, QueryListener value) => value(query));
     } catch(e){

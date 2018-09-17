@@ -9,6 +9,9 @@ import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/utils/cache.dart';
+import 'package:samex_app/components/badge_icon_button.dart';
+import 'package:samex_app/data/badge_bloc.dart';
+import 'package:samex_app/data/bloc_provider.dart';
 
 class TaskPage extends StatefulWidget {
 
@@ -77,19 +80,21 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     });
   }
 
-  List<BottomNavigationBarItem> _getBottomBar(){
+  List<BottomNavigationBarItem> _getBottomBar(Map<OrderType, int> badges){
+
+    if(badges == null) badges = Map();
     List<BottomNavigationBarItem> list = <BottomNavigationBarItem>[];
     int index = 0;
     list.add(new BottomNavigationBarItem(
-        icon: new Image.asset(ImageAssets.task_cm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey, height: 24.0,),
+        icon: BadgeIconButton(itemCount: badges[OrderType.CM]??0, icon:  new Image.asset(ImageAssets.task_cm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey, height: 24.0,)),
         title: Text('报修', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
-        icon: new Image.asset(ImageAssets.task_xj, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0),
+        icon: BadgeIconButton(itemCount: badges[OrderType.XJ]??0, icon: new Image.asset(ImageAssets.task_xj, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0)),
         title: Text('巡检', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
-        icon: new Image.asset(ImageAssets.task_pm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0),
+        icon: BadgeIconButton(itemCount: badges[OrderType.PM]??0, icon: new Image.asset(ImageAssets.task_pm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0)),
         title: Text('保养', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     return list;
@@ -167,9 +172,26 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
 //    print('_updateSearchQuery $newQuery');
     globalListeners.queryChanges(newQuery??'');
   }
+  
+  Widget getBottomBar(Map<OrderType, int> badges){
+    return  new BottomNavigationBar(
+      items: _getBottomBar(badges),
+      currentIndex: _tabIndex,
+      onTap: (index) {
+        setState((){
+          if(_isSearching){
+            _updateSearchQuery(_searchQuery.text);
+          }
+          _tabIndex = index;
+        });
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
+
     return new Scaffold(
       appBar: new AppBar(
         leading: _isSearching ? const BackButton() : null,
@@ -177,18 +199,16 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         actions: _buildActions(),
       ),
       body: _getBody(),
-      bottomNavigationBar: widget.isTask ? new BottomNavigationBar(
-        items: _getBottomBar(),
-        currentIndex: _tabIndex,
-        onTap: (index) {
-          setState((){
-            if(_isSearching){
-              _updateSearchQuery(_searchQuery.text);
-            }
-            _tabIndex = index;
-          });
-        },
-      ) : null,
+      bottomNavigationBar: widget.isTask ? StreamBuilder<Map<OrderType, int> >(stream: bloc.outFavorites, builder: (context, snapshot){
+
+        print('bottombar ...  ${snapshot.hasData}');
+          if(snapshot.hasData){
+            return getBottomBar(snapshot.data);
+          } else {
+            return getBottomBar(null);
+          }
+        
+      },) : null,
       floatingActionButton: _showFloatActionButton ?new FloatingActionButton(
 
           onPressed: (){
@@ -210,12 +230,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     super.dispose();
     _controller?.dispose();
     _searchQuery?.dispose();
-    globalListeners.removeBoolListener(ChangeBool_Scroll);
 
-//    if(!widget.isTask){
-//      taskPageHelpers[3].clear();
-//      taskPageHelpers[3].inital = true;
-//    }
+    globalListeners.removeBoolListener(ChangeBool_Scroll);
   }
 
   @override

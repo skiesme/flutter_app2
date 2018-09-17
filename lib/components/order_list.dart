@@ -14,6 +14,9 @@ import 'package:samex_app/components/load_more.dart';
 
 import 'package:after_layout/after_layout.dart';
 
+import 'package:samex_app/data/badge_bloc.dart';
+import 'package:samex_app/data/bloc_provider.dart';
+
 const double _padding = 16.0;
 
 const force_refresh = 'FORCEREFRESH';
@@ -97,7 +100,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   FilterOption _option = new FilterOption();
 
   TextEditingController _searchQuery;
-
 
   @override
   void initState() {
@@ -260,6 +262,20 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
             widget.helper.addData(info);
           }
         }
+
+        try {
+          final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
+
+          if (widget.type != OrderType.ALL) {
+//            print('send BadgeInEvent : ${widget.helper.itemCount()},  ${widget
+//                .type}');
+            bloc.badgeChange.add(
+                new BadgeInEvent(widget.helper.itemCount(), widget.type));
+          }
+        } catch (e){
+          print('badgeChange   error: $e');
+        }
+
       }
 
     } catch(e){
@@ -796,7 +812,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   @override
   void dispose() {
     super.dispose();
-
     globalListeners.removeListener(hashCode);
     _searchQuery?.dispose();
   }

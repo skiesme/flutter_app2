@@ -19,7 +19,7 @@ import 'package:samex_app/model/update.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:open_file/open_file.dart';
 
-var _textStyle = new TextStyle(color: Colors.white, fontSize: 14.0);
+var _textStyle = new TextStyle(color: Colors.white, fontSize: 16.0);
 
 void printHello() {
   final DateTime now = new DateTime.now();
