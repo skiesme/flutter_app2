@@ -32,13 +32,13 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
     super.initState();
   }
 
-  Widget _getLoading() {
+  Widget _getLoading([String info = '没有附件信息']) {
     List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
 
     if(data == null){
       return Center(child: CircularProgressIndicator());
     } else  {
-      return Center(child: Text('没有附件信息'));
+      return Center(child: Text(info));
     }
   }
 
@@ -52,7 +52,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
     List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
     data = _filter(data);
 
-    return  data == null || data.length == 0 ? _getLoading() : RefreshIndicator(
+    return  data == null || data.length == 0 ? _getLoading('未发现步骤附件') : RefreshIndicator(
         onRefresh:_getSteps,
         child:ListView.builder(
             itemCount: data.length,
@@ -95,7 +95,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
 
   Widget _getCMAttachmentsWidget(){
 
-    List<String> data = getMemoryCache<List<String>>(cacheKey, expired: false);
+    List<String> data = getMemoryCache<List<String>>(cacheKey2, expired: false);
 
 
     if(data == null) {
@@ -103,7 +103,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
       return  Center(child: CircularProgressIndicator());
     }
 
-    if(data.length == 0) return Center(child: Text('没有附件信息'));
+    if(data.length == 0) return Center(child: Text(''));
 
     return new Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -148,11 +148,22 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
       child = _getAttachmentsWidget();
 
     } else {
-      getMemoryCache(cacheKey, callback: (){
+      getMemoryCache(cacheKey2, callback: (){
         _getCMAttachments();
       });
       child = _getCMAttachmentsWidget();
 
+      getMemoryCache(cacheKey, callback: (){
+        _getSteps();
+      });
+
+      child = new Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            child,
+            _getAttachmentsWidget()
+          ]);
     }
 
     return new Scaffold(
@@ -163,9 +174,9 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
             new IconButton(icon: Icon(Icons.refresh), onPressed: (){
               if( getOrderType(widget.order.worktype) == OrderType.CM){
                 _getCMAttachments();
-              } else  {
-                _getSteps();
               }
+              _getSteps();
+
             })
           ],
         ),
@@ -214,7 +225,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
         } else {
           if(mounted){
             setState(() {
-              setMemoryCache(cacheKey, result.response);
+              setMemoryCache(cacheKey2, result.response);
             });
           }
 
@@ -230,6 +241,18 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
 
   get cacheKey {
     var key = widget.order.wonum ?? '';
+
+    if( getOrderType(widget.order.worktype) != OrderType.CM) {
+      if (key.isEmpty) return '';
+
+      return 'stepsList_$key';
+    } else  {
+      return 'cm_attachments+$key';
+    }
+  }
+
+  get cacheKey2 {
+    var key = '2_'+widget.order.wonum ?? '';
 
     if( getOrderType(widget.order.worktype) != OrderType.CM) {
       if (key.isEmpty) return '';

@@ -140,7 +140,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       _getHistory();
     });
 
-    print('cacheKey:$cacheKey, data:$data, $_loading');
+//    print('cacheKey:$cacheKey, data:$data, $_loading');
 
 
     if(_loading){

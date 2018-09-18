@@ -7,12 +7,14 @@ class BadgeIconButton extends StatefulWidget {
   final Color badgeTextColor;
   final Widget icon;
   final bool hideZeroCount;
+  final bool animation;
 
   BadgeIconButton({
     Key key,
     @required this.itemCount,
     @required this.icon,
     this.onPressed,
+    this.animation: true,
     this.hideZeroCount: true,
     this.badgeColor: Colors.red,
     this.badgeTextColor: Colors.white,
@@ -43,6 +45,22 @@ class BadgeIconButtonState extends State<BadgeIconButton>
       return widget.icon;
     }
 
+    Widget child = Material(
+        type: MaterialType.circle,
+        elevation: 2.0,
+        color: widget.badgeColor,
+        child: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Text(
+            widget.itemCount.toString(),
+            style: TextStyle(
+              fontSize: 13.0,
+              color: widget.badgeTextColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ));
+
     return Stack(
           overflow: Overflow.visible,
           children: [
@@ -50,24 +68,10 @@ class BadgeIconButtonState extends State<BadgeIconButton>
             Positioned(
               top: -8.0,
               right: -16.0,
-              child: SlideTransition(
+              child: widget.animation ? SlideTransition(
                 position: _badgePositionTween.animate(_animation),
-                child: Material(
-                    type: MaterialType.circle,
-                    elevation: 2.0,
-                    color: widget.badgeColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        widget.itemCount.toString(),
-                        style: TextStyle(
-                          fontSize: 13.0,
-                          color: widget.badgeTextColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    )),
-              ),
+                child: child,
+              ) : child,
             ),
           ],
         );

@@ -22,6 +22,8 @@ import 'package:samex_app/page/work_time_page.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/page/material_new_page.dart';
 import 'package:samex_app/model/order_material.dart';
+import 'package:samex_app/model/cm_attachments.dart';
+import 'package:samex_app/components/badge_icon_button.dart';
 
 class TaskDetailPage extends StatefulWidget {
 
@@ -45,6 +47,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   bool _expend = false;
 
   bool _show = false;
+
+  int _attachments = 0;
 
   GlobalKey<StepListState> _stepKey = new GlobalKey<StepListState>();
   GlobalKey<PeopleAndMaterialListState> _peopleAndMaterialKey = new GlobalKey<PeopleAndMaterialListState>();
@@ -296,7 +300,40 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     list.add(SizedBox(height: Style.separateHeight,));
 
     return list;
+  }
 
+  void _getAttachMents() async {
+
+    int  images = 0;
+    try{
+      Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
+      StepsResult result = new StepsResult.fromJson(response);
+
+      if(result.code == 0){
+        for(int i = 0; i < result.response.steps.length; i++){
+          images += result.response.steps[i].images.length;
+        }
+      }
+
+      response = await getApi(context).getCMAttachments(_info.ownerid);
+      CMAttachmentsResult result2 = new CMAttachmentsResult.fromJson(response);
+
+      if(result2.code == 0){
+        images += result2.response.length;
+      }
+
+      if(mounted){
+        setState(() {
+          _attachments = images;
+        });
+      }
+
+      setMemoryCache(cacheKey2, images);
+
+
+    } catch (e){
+      print (e);
+    }
   }
 
   Widget  _getHeader(){
@@ -311,7 +348,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text('基本信息'),
-                  SimpleButton(
+                  _attachments > 0 ? BadgeIconButton(itemCount: _attachments, animation: false, icon: SimpleButton(
                     onTap: (){
                       Navigator.push(context, new MaterialPageRoute(
                           builder: (_) => new AttachmentPage(order: _info, data: [])));
@@ -322,7 +359,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
                         Text('查看附件', style: Style.textStyleSelect,)
                       ],
                     ),
-                  )
+                  )) : Container()
                 ],
               ),
             ),
@@ -495,6 +532,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   @override
   Widget build(BuildContext context) {
 
+    _attachments = getMemoryCache(cacheKey2, callback: (){
+      _getAttachMents();
+    })??0;
+
     return
       LoadingView(
           show: _show,
@@ -536,6 +577,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   String get cacheKey {
     return 'task_detail_${widget.info.wonum}';
+  }
+
+  String get cacheKey2 {
+    return 'task_detail_${widget.info.wonum}_attachments_2';
   }
 
   @override
