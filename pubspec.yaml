@@ -77,6 +77,7 @@ flutter:
   - assets/images/order_pizhun.png
   - assets/images/order_daipizhun.png
   - assets/images/logout.png
+  - assets/images/szsw.png
 
   fonts:
     - family: Miui

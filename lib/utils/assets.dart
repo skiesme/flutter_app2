@@ -35,4 +35,7 @@ class ImageAssets {
 
   static const String logout = 'assets/images/logout.png';
 
+  static const String logo = 'assets/images/szsw.png';
+
+
 }
