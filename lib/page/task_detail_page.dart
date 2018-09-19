@@ -315,11 +315,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         }
       }
 
-      response = await getApi(context).getCMAttachments(_info.ownerid);
-      CMAttachmentsResult result2 = new CMAttachmentsResult.fromJson(response);
+      if(getOrderType(_info.worktype) == OrderType.CM){
+        response = await getApi(context).getCMAttachments(_info.ownerid);
+        CMAttachmentsResult result2 = new CMAttachmentsResult.fromJson(response);
 
-      if(result2.code == 0){
-        images += result2.response.length;
+        if(result2.code == 0){
+          images += result2.response.length;
+        }
       }
 
       if(mounted){
