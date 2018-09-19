@@ -1,4 +1,5 @@
 #! /bin/sh
+rm -rf build 
 
 pwd=`pwd`
 
