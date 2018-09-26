@@ -47,7 +47,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
               Expanded(child: Text(Func.getFullTimeString(f.actfinish),
                 textAlign: TextAlign.center,)),
               Text(f.error == null ? '正常' : '异常',
-                style: TextStyle(color: Colors.redAccent),),
+                style: Style.getStatusStyle(f.error == null ? '正常' : '异常')),
             ]
         ),
       ),
@@ -69,7 +69,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
                           leading: CircleAvatar(child: Text((str.stepno ~/ 10).toString(),)),
                           title: Text(str.description),
                           subtitle: Text("备注: "+str.remark),
-                          trailing: Text(str.status, style: TextStyle(color: Colors.redAccent),),
+                          trailing: Text(str.status, style: Style.getStatusStyle(str.status),),
                         )
                         )).toList(),));
         },));

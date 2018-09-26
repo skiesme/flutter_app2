@@ -194,6 +194,8 @@ class _StepPageState extends State<StepPage>{
 
   }
 
+
+
   Widget _getBody(){
 
     OrderStep data = widget.data;
@@ -241,7 +243,7 @@ class _StepPageState extends State<StepPage>{
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 const Text('状态: '),
-                                new Text(_status, style:  _status == '异常' ? TextStyle(color: Colors.redAccent) : null,),
+                                new Text(_status, style: Style.getStatusStyle(_status)),
                               ],
                             ),
 
