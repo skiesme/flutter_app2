@@ -152,18 +152,6 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
         _getCMAttachments();
       });
       child = _getCMAttachmentsWidget();
-
-      getMemoryCache(cacheKey, callback: (){
-        _getSteps();
-      });
-
-      child = new Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            child,
-            _getAttachmentsWidget()
-          ]);
     }
 
     return new Scaffold(

@@ -48,7 +48,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
         assigncode: _data?.hrid?? Cache.instance.userName,
         actionid: widget.action.actionid,
         notes:  _controller.text,
-        ownerid: widget.id
+        ownerid: widget.id,
+        action: widget.action.instruction,
+        site: Cache.instance.site,
+        wonum : widget.wonum
       );
 
       UserResult result = new UserResult.fromJson(response);

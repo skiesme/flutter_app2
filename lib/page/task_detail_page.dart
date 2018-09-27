@@ -302,35 +302,37 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return list;
   }
 
-  void _getAttachMents() async {
+  void _getAttachments() async {
 
-    int  images = 0;
     try{
-      Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
-      StepsResult result = new StepsResult.fromJson(response);
 
-      if(result.code == 0){
-        for(int i = 0; i < result.response.steps.length; i++){
-          images += result.response.steps[i].images.length;
-        }
-      }
 
-      if(getOrderType(_info.worktype) == OrderType.CM){
-        response = await getApi(context).getCMAttachments(_info.ownerid);
+      var images = new List();
+
+      if(getOrderType(_info.worktype) != OrderType.XJ){
+        Map response = await getApi(context).getCMAttachments(_info.ownerid);
         CMAttachmentsResult result2 = new CMAttachmentsResult.fromJson(response);
 
         if(result2.code == 0){
-          images += result2.response.length;
+          images.addAll(result2.response);
+        }
+      } else  {
+        Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
+        StepsResult result = new StepsResult.fromJson(response);
+        if(result.code == 0){
+          for(int i = 0; i < result.response.steps.length; i++){
+            images.addAll(result.response.steps[i].images);
+          }
         }
       }
 
       if(mounted){
         setState(() {
-          _attachments = images;
+          _attachments = images.length;
         });
       }
 
-      setMemoryCache(cacheKey2, images);
+      setMemoryCache(cacheKey2, images.length);
 
 
     } catch (e){
@@ -535,7 +537,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   Widget build(BuildContext context) {
 
     _attachments = getMemoryCache(cacheKey2, callback: (){
-      _getAttachMents();
+      _getAttachments();
     })??0;
 
     return

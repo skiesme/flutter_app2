@@ -9,6 +9,8 @@ import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/steps.dart';
+import 'package:samex_app/components/picture_list.dart';
+import 'package:dio/dio.dart';
 
 class StepNewPage extends StatefulWidget {
 
@@ -25,6 +27,10 @@ class _StepNewPageState extends State<StepNewPage> {
 
   bool _show = false;
   OrderStep _step;
+
+  GlobalKey<PictureListState> _key = new GlobalKey<PictureListState>();
+  CalculationManager _manager;
+
 
   TextEditingController _controller;
   TextEditingController _controller2;
@@ -61,6 +67,13 @@ class _StepNewPageState extends State<StepNewPage> {
 
     _controller = new TextEditingController(text: _step.description??'');
     _controller2 = new TextEditingController(text: _step.remark??'');
+
+  }
+
+  void setMountState(VoidCallback func) {
+    if (mounted) {
+      setState(func);
+    }
   }
 
   @override
@@ -68,10 +81,11 @@ class _StepNewPageState extends State<StepNewPage> {
     super.dispose();
     _controller?.dispose();
     _controller2?.dispose();
+    _manager?.stop();
 
   }
 
-  void postStep() async{
+  void _post() async{
     Func.closeKeyboard(context);
 //    print('postStep : ${_controller.text}');
 
@@ -89,15 +103,68 @@ class _StepNewPageState extends State<StepNewPage> {
     _step.description = _controller.text;
 
     try{
-      Map response = await getApi(context).postStep(
-          _step, []);
-      StepsResult result = new StepsResult.fromJson(response);
-      if (result.code != 0) {
-        Func.showMessage(result.message);
+
+      List<String> origin = new List();
+      origin.addAll(_step.images ?? []);
+
+      List<ImageData> list = _key.currentState.getImages();
+
+      if(_step.images == null){
+        _step.images = new List();
+      }
+
+      for(int i =0, len = list.length; i< len; i++){
+        _step.images.add(list[i].toString());
+      }
+      List<String> images = _step.getUploadImages();
+
+      print('found len=${images.length}  upload');
+      List<UploadFileInfo> lists = new List();
+
+      var postStep = () async {
+        try {
+          _manager?.stop();
+          Map response = await getApi(context).postStep(
+              _step, lists,
+              onProgress: (send, total){
+
+              });
+          StepsResult result = new StepsResult.fromJson(response);
+          if (result.code != 0) {
+            Func.showMessage(result.message);
+          } else {
+            Func.showMessage('提交成功');
+            Navigator.pop(context, true);
+            return;
+          }
+        } catch (e){
+          widget.step.images.clear();
+          widget.step.images.addAll(origin);
+          print(e);
+          Func.showMessage('网络出现异常, 步骤提交失败');
+        }
+
+        setMountState(() {
+          _show = false;
+        });
+      };
+
+      if(images.length > 0) {
+        _manager = new CalculationManager(
+            images: images,
+            onProgressListener: (int step){
+            },
+            onResultListener: (List<UploadFileInfo> files)  {
+              print('onResultListener ....len=${files.length}');
+              lists = files;
+              postStep();
+
+            });
+
+        _manager?.start();
+
       } else {
-        Func.showMessage('提交成功');
-        Navigator.pop(context, true);
-        return;
+        postStep();
       }
 
     } catch (e) {
@@ -105,12 +172,6 @@ class _StepNewPageState extends State<StepNewPage> {
       Func.showMessage('出现异常, 新建任务失败');
     }
 
-    if(mounted){
-      setState(() {
-        _show = false;
-      });
-
-    }
   }
 
   @override
@@ -188,6 +249,12 @@ class _StepNewPageState extends State<StepNewPage> {
                           crossAxisAlignment: CrossAxisAlignment.start
                       ),
 
+                      _getMenus(preText: '照片:', content:Row(
+                        children: <Widget>[
+                          new PictureList(canAdd: !widget.read, images: widget.step.images, key: _key,)
+                        ],
+                      )),
+
                       _getMenus(preText: '人员:', content:  Text(_step.executor??'')),
 
                     ],
@@ -204,7 +271,7 @@ class _StepNewPageState extends State<StepNewPage> {
                       child: RaisedButton(
                         padding:EdgeInsets.symmetric(horizontal: 40.0),
                         onPressed: (){
-                          postStep();
+                          _post();
                         },
                         child: Text('提交', style: TextStyle( color: Colors.white, fontSize: 18.0),),
                         color: Style.primaryColor,

@@ -17,8 +17,8 @@ import 'package:package_info/package_info.dart';
 Dio _dio = new Dio();
 
 class SaMexApi {
-//  static String ipAndPort = '192.168.60.12:40001';
-  static String ipAndPort = '172.19.1.63:40001';
+  static String ipAndPort = '192.168.60.12:40001';
+//  static String ipAndPort = '172.19.1.63:40001';
 
 //  static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.112:40001';
@@ -102,12 +102,23 @@ class SaMexApi {
     return response.data;
   }
 
-  Future<Map> submit({String assigncode, int ownerid = 0, String notes = "", String actionid=""}) async{
+  Future<Map> submit({
+    String assigncode,
+    int ownerid = 0,
+    String notes = "",
+    String actionid="",
+    String action = '',
+    String site='',
+    String wonum=''
+  }) async{
     final data = json.encode({
       'assigncode': assigncode ??  Cache.instance.userName,
       'ownerid': ownerid,
       "notes": notes,
-      "actionid": actionid
+      "actionid": actionid,
+      "action": action,
+      "site": site,
+      "wonum": wonum
     });
     print('submit post: $data');
 
