@@ -109,7 +109,9 @@ class SaMexApi {
     String actionid="",
     String action = '',
     String site='',
-    String wonum=''
+    String wonum='',
+    String woprof = '',
+    String faultlev = '',
   }) async{
     final data = json.encode({
       'assigncode': assigncode ??  Cache.instance.userName,
@@ -118,7 +120,9 @@ class SaMexApi {
       "actionid": actionid,
       "action": action,
       "site": site,
-      "wonum": wonum
+      "wonum": wonum,
+      "woprof": woprof,
+      "faultlev": faultlev,
     });
     print('submit post: $data');
 
