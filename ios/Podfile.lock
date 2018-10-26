@@ -1,16 +1,15 @@
 PODS:
   - barcode_scan (0.0.1):
     - Flutter
-    - SGQRCode
   - connectivity (0.0.1):
     - Flutter
     - Reachability
   - Flutter (1.0.0)
   - fluttertoast (0.0.2):
     - Flutter
-  - FMDB (2.7.2):
-    - FMDB/standard (= 2.7.2)
-  - FMDB/standard (2.7.2)
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
   - image_picker (0.0.1):
     - Flutter
   - open_file (0.0.1):
@@ -20,7 +19,6 @@ PODS:
   - path_provider (0.0.1):
     - Flutter
   - Reachability (3.2)
-  - SGQRCode (2.2.0)
   - shared_preferences (0.0.1):
     - Flutter
   - sqflite (0.0.1):
@@ -43,7 +41,6 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - FMDB
     - Reachability
-    - SGQRCode
 
 EXTERNAL SOURCES:
   barcode_scan:
@@ -68,17 +65,16 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  barcode_scan: 44a9c32453c4babafb4e45c6b399ef58211433db
+  barcode_scan: 4adfd7c506ea7235dcaf6f8328c473f6711ec7d0
   connectivity: d5992e3758d68b1c4b12d6e012fe0813f1aa1645
   Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
   fluttertoast: ad0527b15297baf11349f3f581dae4d40f24f340
-  FMDB: 6198a90e7b6900cfc046e6bc0ef6ebb7be9236aa
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   image_picker: ee00aab0487cedc80a304085219503cc6d0f2e22
   open_file: 40d524de730775bb4edb021fa137cc1d2fa13f1c
   package_info: d7c98b64f60add4c2908b9d94d82a45d3c8827ad
   path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  SGQRCode: 6cd7f03ea6b74d1267820d427b07d1451b387c79
   shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
   sqflite: d1612813fa7db7c667bed9f1d1b508deffc56999
 

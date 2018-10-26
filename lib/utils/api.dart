@@ -17,10 +17,10 @@ import 'package:package_info/package_info.dart';
 Dio _dio = new Dio();
 
 class SaMexApi {
-  static String ipAndPort = '192.168.60.12:40001';
+  // static String ipAndPort = '192.168.60.12:40001';
 //  static String ipAndPort = '172.19.1.63:40001';
 
-//  static String ipAndPort = '172.19.1.30:40001';
+ static String ipAndPort = '172.19.1.30:40001';
 //    static String ipAndPort = '192.168.50.112:40001';
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
