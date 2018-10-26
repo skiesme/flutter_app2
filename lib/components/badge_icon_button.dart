@@ -50,7 +50,8 @@ class BadgeIconButtonState extends State<BadgeIconButton>
         elevation: 2.0,
         color: widget.badgeColor,
         child: Padding(
-          padding: const EdgeInsets.all(5.0),
+          // padding: const EdgeInsets.all(5.0),
+          padding: const EdgeInsets.fromLTRB(5, 3, 5, 5),
           child: Text(
             widget.itemCount.toString(),
             style: TextStyle(
