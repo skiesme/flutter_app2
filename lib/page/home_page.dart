@@ -157,8 +157,8 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                         Material(color: Colors.transparent,
                           elevation: 2.0,
                           child: new Container(
-                            height: 20.0,
-                            padding: EdgeInsets.symmetric(horizontal: 2.0),
+                            height: 24.0,
+                            padding: EdgeInsets.fromLTRB(2.0, 1.0, 2.0, 2.0),
                             decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
                             child: Center( child: Text('${_user?.orders??0}', style: _textStyle, textAlign: TextAlign.center,)),
                           ),
@@ -167,7 +167,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                         Icon(Icons.navigate_next, color: Colors.white,)
                       ],
                     )),
-
               ],
             ),
           ),
@@ -276,7 +275,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                         physics: new AlwaysScrollableScrollPhysics(),
                         slivers: <Widget>[
                           SliverAppBar(
-                            title: Image.asset(ImageAssets.logo),//const Text('深水光明SAMEX系统',),
+                            title: Image.asset(ImageAssets.logo, width: 44, height: 44,),//const Text('深水光明SAMEX系统',),
                             pinned: true,
                             actions: <Widget>[
                               IconButton(
