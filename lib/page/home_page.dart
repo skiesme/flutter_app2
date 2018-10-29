@@ -141,7 +141,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                 ),
                 new SizedBox(height: 5.0,),
                 Text(Cache.instance.userDisplayName, style: TextStyle(fontSize: 18.0, color: Colors.white),),
-                new SizedBox(height: 5.0,),
+                new SizedBox(height: 10.0,),
 
                 new InkWell(
                     onTap: (){
