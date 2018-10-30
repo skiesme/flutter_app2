@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:samex_app/components/badge_icon_button.dart';
 
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
@@ -205,9 +206,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 //        print('已经在loadMore了...');
         return;
       }
-
-//      print('${widget.type} ...  _handleRefresh...');
-
 
       Func.closeKeyboard(context);
       int time = 0;
@@ -665,8 +663,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                               _option.startTime * 1000);
                           Func.selectDate(context, time, (DateTime date) {
                             setState(() {
-                              _option.startTime = (new DateTime(date.year, date.month, date.day).millisecondsSinceEpoch ~/ 1000).toInt();
-
+                               int start = (new DateTime(date.year, date.month, date.day).millisecondsSinceEpoch ~/ 1000).toInt();
+                               print("startTime --> :${start}");
+                              _option.startTime = start;
                             });
                           });
                         },
@@ -745,7 +744,26 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                 _expend = !_expend;
               });
             },
-            child: Row(
+            child: 
+            widget.helper.datas.length > 0 ? 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Material(color: Colors.transparent,
+                  elevation: 2.0,
+                  child: new Container(
+                    height: 20.0,
+                    padding: EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 2.0),
+                    decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
+                    child: Center( child: Text('${widget.helper.datas.length}', style: new TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,)),
+                  ),
+                ),
+                Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
+                Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+              ],
+            )
+            : Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
