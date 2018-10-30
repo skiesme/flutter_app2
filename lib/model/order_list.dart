@@ -1,3 +1,5 @@
+import 'package:samex_app/model/steps.dart';
+
 class OrderListResult {
   int code;
   String message;
@@ -38,6 +40,7 @@ class OrderShortInfo {
   String worktype;
   String changeby;
   String lead;
+  List<OrderStep> steps; // new add
   int reportDate;
   int actfinish;
   int ownerid;

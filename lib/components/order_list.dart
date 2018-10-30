@@ -329,6 +329,9 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         if(mounted) {
           setState(() {
             // setMemoryCache<List<OrderStep>>(cacheKey(wonum), result.response.steps);
+            List<OrderShortInfo> infos = widget.helper.datas.toList();
+            OrderShortInfo info = infos.where((e) => e.wonum == wonum).toList().first;
+            info.steps = result.response.steps;
           });
         }
       }
@@ -349,14 +352,16 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
         if(info.status.contains('进行中')){
           // TODO: -- 这里可能 还存在一些问题。 一开始 请求数据 无法获取到Step信息。
-          List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey(info.wonum), expired: false);
+          List<OrderStep> steps = info.steps;
           bool isDid = false;
-          if (list.length > 0) {
+          if (steps != null && steps.length > 0) {
             isDid = true;
-            for (var item in list) {
-              // isDid &= item.status??''.length > 0;
+            for (var item in steps) {
+              String status = item.status??'';
+              isDid &= status.length > 0;
             }
           }
+          print("isDid:${isDid}");
           image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
         }
         children.addAll(<Widget>[
