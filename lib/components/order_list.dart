@@ -5,6 +5,7 @@ import 'package:samex_app/components/badge_icon_button.dart';
 
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
+import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
@@ -168,8 +169,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           _query = query;
         });
       }
-
-
     });
 
     if(widget.helper.itemCount() == 0 && widget.helper.inital){
@@ -198,7 +197,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         return 'PM';
     }
   }
-
 
   Future<Null> _handleRefresh([int older = 0]) async {
     try{
@@ -268,6 +266,15 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         List<OrderShortInfo> info = result.response??[];
         if(info.length > 0){
           print('列表size: ${info.length}');
+
+          for (var item in info) {
+            String wonum = item.wonum;
+            getMemoryCache<List<OrderStep> >(cacheKey(wonum), callback: () {
+              String site = wonum.replaceAll(new RegExp('\\d+'), '');
+              getSteps(wonum, site);
+            });
+          }
+
           if(older == 0){
             widget.helper.datas.insertAll(0, info);
           } else {
@@ -308,14 +315,53 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   }
 
+  String cacheKey(String wonum) {
+    var key = wonum ??'';
+    if(key.isEmpty) return '';
+    return 'stepsList_$key';
+  }
+
+  void getSteps(String wonum, String site) async {
+    try{
+      Map response = await getApi(context).steps(sopnum: '', wonum: wonum, site: site);
+      StepsResult result = new StepsResult.fromJson(response);
+      if(result.code == 0){
+        if(mounted) {
+          setState(() {
+            // setMemoryCache<List<OrderStep>>(cacheKey(wonum), result.response.steps);
+          });
+        }
+      }
+
+    } catch (e){
+      print (e);
+      Func.showMessage('网络出现异常: 获取步骤列表失败');
+    }
+  }
+
   Widget _getSyncStatus(OrderShortInfo info){
 
     List<Widget> children = new List();
     switch (getOrderType(info.worktype)) {
       case OrderType.XJ:
+
+        String image = info.actfinish == 0 ? ImageAssets.order_ing : ImageAssets.order_done;
+
+        if(info.status.contains('进行中')){
+          // TODO: -- 这里可能 还存在一些问题。 一开始 请求数据 无法获取到Step信息。
+          List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey(info.wonum), expired: false);
+          bool isDid = false;
+          if (list.length > 0) {
+            isDid = true;
+            for (var item in list) {
+              // isDid &= item.status??''.length > 0;
+            }
+          }
+          image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
+        }
         children.addAll(<Widget>[
 //          Text('巡检工单', style: TextStyle(color: getOrderTextColor(info), fontWeight: FontWeight.w700),),
-          new CircleAvatar(child:new Padding(padding: EdgeInsets.all(8.0), child:  new Image.asset( info.actfinish == 0 ? ImageAssets.order_ing : ImageAssets.order_done , height: 40.0,)), backgroundColor: getColor(info),),
+          new CircleAvatar(child:new Padding(padding: EdgeInsets.all(8.0), child:  new Image.asset( image , height: 40.0,)), backgroundColor: getColor(info),),
           Text(info.status, style: TextStyle(color: getColor(info)),)
         ]);
         break;
@@ -867,7 +913,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       );
     }
 
-
     List<Widget> children = <Widget>[
       _query.isEmpty ? new RefreshIndicator(
           onRefresh: _handleRefresh,
@@ -903,10 +948,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     globalListeners.removeListener(hashCode);
     _searchQuery?.dispose();
   }
-
-
 }
-
 
 class FilterOption {
   bool isMe = true;

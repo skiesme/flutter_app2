@@ -72,6 +72,7 @@ flutter:
   - assets/images/task_detail_person.png
   - assets/images/scan.png
   - assets/images/order_ing.png
+  - assets/images/order_ing_red.png
   - assets/images/order_done.png
   - assets/images/order_daiyanshou.png
   - assets/images/order_pizhun.png
