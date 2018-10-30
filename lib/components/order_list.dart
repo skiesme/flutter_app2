@@ -102,6 +102,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   bool needAutoScroller;
 
   bool _expend = false;
+  bool _timeDescend = false;
 
   FilterOption _option = new FilterOption();
 
@@ -519,8 +520,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
   }
 
   List<OrderShortInfo> filter(){
-    if(_query.isEmpty) return widget.helper.datas;
-    return widget.helper.datas.where((i) => i.wonum.contains(_query?.toUpperCase()) || (i.assetnum??'').contains(_query?.toUpperCase())).toList();
+    List<OrderShortInfo> list = widget.helper.datas;
+    if(_query.isEmpty) {
+      list = widget.helper.datas.where((i) => i.wonum.contains(_query?.toUpperCase()) || (i.assetnum??'').contains(_query?.toUpperCase())).toList();
+    }
+    return _timeDescend ? list.reversed.toList() : list;
   }
 
   List<OrderShortInfo> getList(){
@@ -778,10 +782,58 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     );
   }
 
+  Widget _getSortOptionView(){
+    return Container(
+      padding: EdgeInsets.all(4.0),
+      child: Wrap(
+        children: <Widget>[
+          Text('按时间排序:'),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SimpleButton(
+                onTap: (){
+                  setState(() {
+                    _timeDescend = false;
+                  });
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('升序'),
+                    Icon(_timeDescend ? Icons.radio_button_unchecked :Icons.radio_button_checked, size: 16.0,),
+                  ],
+                ),
+              ),
+              SimpleButton(
+                onTap: (){
+                  setState(() {
+                    _timeDescend = true;
+                  });
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    SizedBox(width: 10.0,),
+                    Text('降序'),
+                    Icon(_timeDescend ? Icons.radio_button_checked :Icons.radio_button_unchecked, size: 16.0,),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ],
+        spacing: 12.0,
+        runSpacing: 8.0,
+        runAlignment: WrapAlignment.center
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 //    print('${widget.type} ... build, ${widget.helper.itemCount()}');
-
+    
     List<OrderShortInfo> list = filter().toList();
     _scrollController = widget.helper.createController();
     _scrollController.addListener((){
@@ -809,6 +861,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Card( child: _getFilterOptionView()),
+          Card( child: _getSortOptionView()),
           Expanded(child:view),
         ],
       );
