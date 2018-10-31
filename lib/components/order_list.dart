@@ -268,11 +268,11 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           print('列表size: ${info.length}');
 
           for (var item in info) {
-            String wonum = item.wonum;
-            getMemoryCache<List<OrderStep> >(cacheKey(wonum), callback: () {
+            if (item.steps == null) {
+              String wonum = item.wonum;
               String site = wonum.replaceAll(new RegExp('\\d+'), '');
               getSteps(wonum, site);
-            });
+            }
           }
 
           if(older == 0){
@@ -315,12 +315,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   }
 
-  String cacheKey(String wonum) {
-    var key = wonum ??'';
-    if(key.isEmpty) return '';
-    return 'stepsList_$key';
-  }
-
   void getSteps(String wonum, String site) async {
     try{
       Map response = await getApi(context).steps(sopnum: '', wonum: wonum, site: site);
@@ -328,7 +322,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       if(result.code == 0){
         if(mounted) {
           setState(() {
-            // setMemoryCache<List<OrderStep>>(cacheKey(wonum), result.response.steps);
             List<OrderShortInfo> infos = widget.helper.datas.toList();
             OrderShortInfo info = infos.where((e) => e.wonum == wonum).toList().first;
             info.steps = result.response.steps;
@@ -355,13 +348,14 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           List<OrderStep> steps = info.steps;
           bool isDid = false;
           if (steps != null && steps.length > 0) {
-            isDid = true;
             for (var item in steps) {
               String status = item.status??'';
-              isDid &= status.length > 0;
+              if (status.length > 0) {
+                isDid = true;
+                break;
+              }
             }
           }
-          print("isDid:${isDid}");
           image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
         }
         children.addAll(<Widget>[
