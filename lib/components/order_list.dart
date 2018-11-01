@@ -33,7 +33,6 @@ final List<_OrderTypeSelect> _orderTypeList = <_OrderTypeSelect>[
 ];
 
 final List<_OrderTypeSelect> _orderXJTypeList = <_OrderTypeSelect>[
-  _OrderTypeSelect(OrderType.XJ, '全部'),
   _OrderTypeSelect(OrderType.XJ1, '一级巡检'),
   _OrderTypeSelect(OrderType.XJ2, '二级巡检'),
   _OrderTypeSelect(OrderType.XJ3, '三级巡检'),

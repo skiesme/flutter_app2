@@ -254,14 +254,20 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     );
   }
 
+  Color getColor(int actfinish){
+    if(actfinish == 0){
+      return Colors.blue.shade900;
+    } else {
+      return Colors.green;
+    }
+  }
   List<Widget> _getList(){
     List<Widget> list = <Widget>[];
     list.addAll(<Widget>[
       Text('工单编号: ${_info.wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
       Text('标题名称: ${_data?.description??''}'),
-      Text('工单状态: ${_data?.status??''}'),
-//      Text('描述详细: '),
+      Text('工单状态: ${_data?.status??''}',style: TextStyle(color: getColor(_data?.actfinish)),),
     ]);
 
     if(_expend){
