@@ -344,7 +344,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         String image = info.actfinish == 0 ? ImageAssets.order_ing : ImageAssets.order_done;
 
         if(info.status.contains('进行中')){
-          // TODO: -- 这里可能 还存在一些问题。 一开始 请求数据 无法获取到Step信息。
           List<OrderStep> steps = info.steps;
           bool isDid = false;
           if (steps != null && steps.length > 0) {
@@ -386,7 +385,18 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         String image= '';
 
         if(info.status.contains('进行中')){
-          image = ImageAssets.order_ing;
+          List<OrderStep> steps = info.steps;
+          bool isDid = false;
+          if (steps != null && steps.length > 0) {
+            for (var item in steps) {
+              String status = item.status??'';
+              if (status.length > 0) {
+                isDid = true;
+                break;
+              }
+            }
+          }
+          image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
         }  else if(info.status.contains('待验收')){
           image = ImageAssets.order_pending_accept;
         } else {
@@ -509,10 +519,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                 ));
                 if(result != null) {
                   removeAt(index);
-
-                  setState(() {
-
-                  });
                 }
               },
               child:  new Column(
@@ -548,7 +554,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                                 widget.type == OrderType.ALL ?
 //                                Text('完成时间: ${Func.getFullTimeString(info.actfinish)}')
                                 Text('上报时间: ${Func.getFullTimeString(info.reportDate)}'):
-                            Text('更新时间: ${Func.getFullTimeString(info.reportDate)}')
+                                Text('更新时间: ${Func.getFullTimeString(info.reportDate)}')
                           ],
                         ))
                       ],
