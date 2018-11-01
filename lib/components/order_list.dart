@@ -30,11 +30,13 @@ final List<_OrderTypeSelect> _orderTypeList = <_OrderTypeSelect>[
   _OrderTypeSelect(OrderType.CM, '报修'),
   _OrderTypeSelect(OrderType.XJ, '巡检'),
   _OrderTypeSelect(OrderType.PM, '保养'),
+];
+
+final List<_OrderTypeSelect> _orderXJTypeList = <_OrderTypeSelect>[
   _OrderTypeSelect(OrderType.XJ1, '一级巡检'),
   _OrderTypeSelect(OrderType.XJ2, '二级巡检'),
   _OrderTypeSelect(OrderType.XJ3, '三级巡检'),
   _OrderTypeSelect(OrderType.XJ4, '四级巡检'),
-
 ];
 
 class _OrderTypeSelect{
@@ -48,6 +50,13 @@ final List<_OrderStatusSelect> _orderStatusList = <_OrderStatusSelect>[
   _OrderStatusSelect('', '全部'),
   _OrderStatusSelect('inactive', '已完成'),
   _OrderStatusSelect('active', '进行中'),
+];
+
+final List<_OrderStatusSelect> _orderXJStatusList = <_OrderStatusSelect>[
+  _OrderStatusSelect('一级巡检', '一级巡检'),
+  _OrderStatusSelect('二级巡检', '二级巡检'),
+  _OrderStatusSelect('三级巡检', '三级巡检'),
+  _OrderStatusSelect('四级巡检', '四级巡检'),
 ];
 
 final List<_OrderStatusSelect> _orderCMStatusList = <_OrderStatusSelect>[
@@ -597,7 +606,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       case OrderType.PM:
         return _orderPMStatusList;
       case OrderType.XJ:
-        return _orderStatusList;
+        // return _orderStatusList;
+        return _orderXJStatusList;
       default:
         return _orderALLStatusList;
     }
@@ -657,19 +667,50 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                           Text('${_option.type.value}'),
                           Align(child: const Icon(Icons.arrow_drop_down))
                         ],
-                      ),                      itemBuilder: (BuildContext context) {
-                      return _orderTypeList.map((_OrderTypeSelect status) {
-                        return new PopupMenuItem<_OrderTypeSelect>(
-                          value: status,
-                          child: new Text(status.value),
-                        );
-                      }).toList();
+                      ),                      
+                      itemBuilder: (BuildContext context) {
+                        return _orderTypeList.map((_OrderTypeSelect status) {
+                          if (status.key == OrderType.XJ) {
+                            return new PopupMenuItem<_OrderTypeSelect>(
+                              value: status,
+                              child: new PopupMenuButton<_OrderTypeSelect>(
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(status.value),
+                                    Align(child: const Icon(Icons.arrow_right))
+                                  ],
+                                ),
+                                itemBuilder: (BuildContext context) {
+                                  return _orderXJTypeList.map((_OrderTypeSelect xjStatus) {
+                                    return new PopupMenuItem<_OrderTypeSelect>(
+                                      value: xjStatus,
+                                      child: new Text(xjStatus.value),
+                                    );
+                                  }).toList();
+                                },
+                                onSelected: (_OrderTypeSelect xjValue) {
+                                  setState(() {
+                                    print("巡检菜单 value:${xjValue.value}");
+                                    _option.type = xjValue;
+                                    _option.status = _orderStatusList[0];
+                                  });
+                                },
+                              )
+                            );
+                          } else {
+                            return new PopupMenuItem<_OrderTypeSelect>(
+                              value: status,
+                              child: new Text(status.value),
+                            );
+                          }
+                        }
+                      ).toList();
                     },
                       onSelected: (_OrderTypeSelect value) {
                         setState(() {
+                          print("一级菜单 value:${value.value}");
                           _option.type = value;
                           _option.status = _orderStatusList[0];
-
                         });
                       },
                     )
