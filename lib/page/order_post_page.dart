@@ -70,7 +70,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
         otherConfig = true;
       }
     }
-
   }
 
   void _submit() async {

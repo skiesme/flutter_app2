@@ -32,5 +32,4 @@ class Style {
 
     return TextStyle(color: Colors.redAccent);
   }
-
 }

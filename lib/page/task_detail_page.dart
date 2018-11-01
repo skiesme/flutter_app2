@@ -254,20 +254,47 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     );
   }
 
-  Color getColor(int actfinish){
-    if(actfinish == 0){
-      return Colors.blue.shade900;
-    } else {
-      return Colors.green;
+  Color getColor(String status){
+    String type = getWorkTypeString();
+    if(type.contains('报修')){ 
+      if(status.contains('待批准')){
+        return Colors.red.shade900;
+      } else if(status.contains('已批准')){
+        return Colors.cyan;
+      } else if(status.contains('待验收')){
+        return Colors.yellow.shade600;
+      } else if(status.contains('重做')){
+        return Colors.red.shade400;
+      } else {
+        return Colors.green;
+      }
+    } else if(type.contains('巡检')){ 
+      if(status.contains('进行中')){
+        return Colors.blue.shade900;
+      } else {
+        return Colors.green;
+      }
+    } else if(type.contains('保养')){ 
+      if(status.contains('进行中')){
+        return Colors.blue.shade900;
+      } else if(status.contains('待验收')){
+        return Colors.yellow.shade600;
+      } else if(status.contains('重做')){
+        return Colors.red.shade400;
+      } else {
+        return Colors.green;
+      }
     }
+    return Colors.deepOrangeAccent;
   }
+
   List<Widget> _getList(){
     List<Widget> list = <Widget>[];
     list.addAll(<Widget>[
       Text('工单编号: ${_info.wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
       Text('标题名称: ${_data?.description??''}'),
-      Text('工单状态: ${_data?.status??''}',style: TextStyle(color: getColor(_data?.actfinish)),),
+      Text('工单状态: ${_data?.status??''}',style: TextStyle(color: getColor(_data?.status??'')),),
     ]);
 
     if(_expend){
