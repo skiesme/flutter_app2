@@ -33,6 +33,7 @@ final List<_OrderTypeSelect> _orderTypeList = <_OrderTypeSelect>[
 ];
 
 final List<_OrderTypeSelect> _orderXJTypeList = <_OrderTypeSelect>[
+  _OrderTypeSelect(OrderType.XJ, '全部'),
   _OrderTypeSelect(OrderType.XJ1, '一级巡检'),
   _OrderTypeSelect(OrderType.XJ2, '二级巡检'),
   _OrderTypeSelect(OrderType.XJ3, '三级巡检'),
@@ -351,7 +352,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       case OrderType.XJ:
 
         String image = info.actfinish == 0 ? ImageAssets.order_ing : ImageAssets.order_done;
-
         if(info.status.contains('进行中')){
           List<OrderStep> steps = info.steps;
           bool isDid = false;
@@ -690,7 +690,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                                 },
                                 onSelected: (_OrderTypeSelect xjValue) {
                                   setState(() {
-                                    print("巡检菜单 value:${xjValue.value}");
                                     _option.type = xjValue;
                                     _option.status = _orderStatusList[0];
                                   });
@@ -708,7 +707,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                     },
                       onSelected: (_OrderTypeSelect value) {
                         setState(() {
-                          print("一级菜单 value:${value.value}");
                           _option.type = value;
                           _option.status = _orderStatusList[0];
                         });

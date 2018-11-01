@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/vertical_marquee.dart';
 
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/data/root_model.dart';
@@ -29,8 +30,23 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   bool _loading = true;
 
+  MarqueeController _controller;
+
   OrderType getType() {
     return  getOrderType(widget.data?.worktype??'');
+  }
+
+  List<String> getStatusTexts(List<HistoryError> errors) {
+    List<String> texts = new List<String>();
+    if (errors == null) {
+      String info = '正常';
+      texts.add(info);
+    } else {
+      errors.forEach((ele) {
+        texts.add(ele.status);
+      });
+    }
+    return texts;
   }
 
   List<Widget> getXJHistoryWidget() {
@@ -44,10 +60,23 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
             children: <Widget>[
               Text('记录:'),
               Text(f.changby),
-              Expanded(child: Text(Func.getFullTimeString(f.actfinish),
-                textAlign: TextAlign.center,)),
-              Text(f.error == null ? '正常' : '异常',
-                style: Style.getStatusStyle(f.error == null ? '正常' : '异常')),
+              SizedBox(width: 50),
+              Expanded(
+                child: Text(Func.getFullTimeString(f.actfinish),
+                textAlign: TextAlign.left,)
+              ),
+              Container(
+                width: 40,
+                height: 20,
+                child: Marquee(
+                  textList: getStatusTexts(f.error),
+                  fontSize: 14.0,
+                  scrollDuration: Duration(seconds: 1),
+                  stopDuration: Duration(seconds: 2),
+                  tapToNext: false,
+                  controller: _controller,
+                )
+              ),
             ]
         ),
       ),
@@ -131,6 +160,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
     super.initState();
 
     _loading = getMemoryCache(cacheKey) == null;
+    _controller = MarqueeController();
   }
 
   @override
