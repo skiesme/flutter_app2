@@ -108,20 +108,22 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
               color: Style.backgroundColor,
               padding: const EdgeInsets.all(10.0),
               child: Column(children: <Widget>[
-
-
-                Card(child: SimpleButton(
+                Card(
+                  child: SimpleButton(
                     onTap:(){
                       _key.currentState?.showButtonMenu();
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Container(child: new MyPopupMenuButton<_StatusSelect>(
+                        Container(
+                          height:40,
+                          child: new MyPopupMenuButton<_StatusSelect>(
                           key:_key,
                           child: new Row(
                             children: <Widget>[
-                              new Text(locationSite[_location.key]??'全部'),
+                              new Text('当前仓库:  '),
+                              new Text(locationSite[_location.key]??'全部', style: TextStyle(color: Colors.blue),),
                               Align(child: const Icon(Icons.arrow_drop_down),)
                             ],
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -143,7 +145,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
                         )),
                       ],
                     ),
-                )),
+                  ),
+                ),
 
                 SizedBox(height: 10.0,),
                 new TextField(

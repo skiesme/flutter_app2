@@ -256,7 +256,7 @@ class _StepPageState extends State<StepPage>{
                                     return _statusList.map((_StatusSelect status) {
                                       return new PopupMenuItem<_StatusSelect>(
                                         value: status,
-                                        child: new Text(status.value),
+                                        child: new Text(status.value, style: Style.getStatusStyle(status.value)),
                                       );
                                     }).toList();
                                   },

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/components/simple_button.dart';
 
 import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
 
@@ -44,7 +45,11 @@ class PictureListState extends State<PictureList> {
 
     if(image != null){
       setState(() {
-        ImageData data = new ImageData(path: image.path, time: Func.getYYYYMMDDHHMMSSString());
+        ImageData data = new ImageData(
+          path: image.path, 
+          time: Func.getYYYYMMDDHHMMSSString(), 
+          userName: '${Cache.instance.userName}-${Cache.instance.userDisplayName}'
+        );
         _images.add(data);
 //        getModel(context).step.images.add(data.toString());
       });
@@ -222,12 +227,13 @@ class PictureListState extends State<PictureList> {
 class ImageData {
   String path;
   String time;
+  String userName;
 
-  ImageData({@required this.path, @required this.time});
+  ImageData({@required this.path, @required this.time, @required this.userName});
 
   @override
   String toString() {
-    return '$path,$time';
+    return '$path,$time,$userName';
   }
 
   ImageData.fromString([String data = '']) {
@@ -235,6 +241,7 @@ class ImageData {
       List<String> list = data.split(',');
       path = list[0];
       time = list[1];
+      userName = list[2];
     } else {
       throw new Exception('图片格式有误:$data');
     }
@@ -265,10 +272,18 @@ class _PageSelector extends StatelessWidget {
                   return new Stack(
                     children: <Widget>[
                       SizedBox.expand(child: new GridPhotoViewer(path: icon.path)),
-                      Align(
-                        child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
-                        alignment: Alignment.topCenter,
-                      ),
+                      Column(
+                        children: <Widget>[
+                          Align(
+                            child: Text(icon.userName, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+                            alignment: Alignment.topCenter,
+                          ),
+                          Align(
+                            child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+                            alignment: Alignment.topCenter,
+                          ),
+                        ],
+                      )
                     ],
                   );
                 }).toList()
