@@ -226,8 +226,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
                 if(widget.needReturn){
                   Navigator.pop(context, asset);
                 } else {
-                  Navigator.push(context, new MaterialPageRoute(builder:
-                  (_) => new AssetNumDetailPage(asset: asset.assetnum)));
+                  Navigator.push(context, new MaterialPageRoute(builder: (_) => new AssetNumDetailPage(asset: asset.assetnum)));
                 }
               },
             ),
