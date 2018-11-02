@@ -849,7 +849,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
                     elevation: 2.0,
                     child: new Container(
                       height: 20.0,
-                      padding: EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 2.0),
+                      padding: EdgeInsets.all(2.0),
                       decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
                       child: Center( child: Text('${widget.helper.datas.length}', style: new TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,)),
                     ),

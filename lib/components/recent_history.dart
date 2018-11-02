@@ -60,19 +60,25 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
         padding: Style.pagePadding,
         child: Row(
             children: <Widget>[
-              Text('记录:'),
-              Text(f.changby),
-              SizedBox(width: 50),
+              Container(
+                width: 100,
+                child: Row(
+                  children: <Widget> [
+                    Text('记录:${f.changby}', overflow: TextOverflow.ellipsis),
+                  ]
+                )
+              ),
+              SizedBox(width:5),
               Expanded(
                 child: Text(Func.getFullTimeString(f.actfinish),
                 textAlign: TextAlign.left,)
               ),
               Container(
-                width: 60,
+                width: 55,
                 height: 20,
                 child: Marquee(
                   textList: getStatusTexts(f.error),
-                  fontSize: 14.0,
+                  fontSize: 12.0,
                   scrollDuration: Duration(seconds: 1),
                   stopDuration: Duration(seconds: 2),
                   tapToNext: false,
