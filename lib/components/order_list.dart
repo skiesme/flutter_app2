@@ -839,30 +839,36 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
             },
             child: 
             widget.helper.datas.length > 0 ? 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Material(color: Colors.transparent,
-                  elevation: 2.0,
-                  child: new Container(
-                    height: 20.0,
-                    padding: EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 2.0),
-                    decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
-                    child: Center( child: Text('${widget.helper.datas.length}', style: new TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,)),
+            Container(
+              height: 35,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Material(color: Colors.transparent,
+                    elevation: 2.0,
+                    child: new Container(
+                      height: 20.0,
+                      padding: EdgeInsets.fromLTRB(2.0, 0.0, 2.0, 2.0),
+                      decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
+                      child: Center( child: Text('${widget.helper.datas.length}', style: new TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,)),
+                    ),
                   ),
-                ),
-                Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
-                Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
-              ],
+                  Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
+                  Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+                ],
+              ),
             )
-            : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
-                Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
-              ],
+            : Container(
+              height: 35,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
+                  Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+                ],
+              ),
             )
         ),
         _getOptionView()
@@ -873,6 +879,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
   Widget _getSortOptionView(){
     return Container(
+      height: 40,
       padding: EdgeInsets.all(4.0),
       child: Wrap(
         children: <Widget>[

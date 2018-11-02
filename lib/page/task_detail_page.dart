@@ -530,6 +530,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     });
   }
 
+  List<Widget> getRightActions() {
+    
+  }
+
   List<PopupMenuItem<String>> getPopupMenuButton(){
     List<PopupMenuItem<String>> list = new List();
     switch(getOrderType(widget.info.worktype)){
@@ -576,6 +580,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     _attachments = getMemoryCache(cacheKey2, callback: (){
       _getAttachments();
     })??0;
+
 
     return
       LoadingView(

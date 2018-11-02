@@ -123,7 +123,10 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
                           child: new Row(
                             children: <Widget>[
                               new Text('当前仓库:  '),
-                              new Text(locationSite[_location.key]??'全部', style: TextStyle(color: Colors.blue),),
+                              new Text(
+                                locationSite[_location.key]??'全部',
+                                style: TextStyle(color: Colors.blue),
+                              ),
                               Align(child: const Icon(Icons.arrow_drop_down),)
                             ],
                             mainAxisAlignment: MainAxisAlignment.center,

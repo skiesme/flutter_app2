@@ -19,7 +19,7 @@ uploadAndroid(){
     echo "开始上传 ${apk_release_file} 到蒲公英...."
     curl -F "file=@${apk_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
 
-    echo "\n android done"
+    echo "\n android done"uploadAndroid
 }
 
 uploadIos() {
