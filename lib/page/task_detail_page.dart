@@ -290,11 +290,15 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   List<Widget> _getList(){
     List<Widget> list = <Widget>[];
+    String status = _data?.status??'';
     list.addAll(<Widget>[
       Text('工单编号: ${_info.wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
       Text('标题名称: ${_data?.description??''}'),
-      Text('工单状态: ${_data?.status??''}',style: TextStyle(color: getColor(_data?.status??'')),),
+      Row(children: <Widget>[
+        Text('工单状态: '),
+        Text('${status}', style: TextStyle(color: getColor(status)),),
+      ]),
     ]);
 
     if(_expend){

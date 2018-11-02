@@ -42,8 +42,10 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
       String info = '正常';
       texts.add(info);
     } else {
+      bool isOne = errors.length == 1;
       errors.forEach((ele) {
-        texts.add(ele.status);
+        String stepNo = isOne ?'':'${ele.stepno ~/ 10}.';
+        texts.add('${stepNo}${ele.status}');
       });
     }
     return texts;
@@ -66,7 +68,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
                 textAlign: TextAlign.left,)
               ),
               Container(
-                width: 40,
+                width: 60,
                 height: 20,
                 child: Marquee(
                   textList: getStatusTexts(f.error),
@@ -75,7 +77,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
                   stopDuration: Duration(seconds: 2),
                   tapToNext: false,
                   controller: _controller,
-                )
+                ),
               ),
             ]
         ),

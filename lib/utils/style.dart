@@ -18,15 +18,15 @@ class Style {
 
   static TextStyle getStatusStyle(String  _status){
 
-    if(_status == '正常'){
+    if(_status.contains('正常')){
       return TextStyle(color: Colors.greenAccent);
     }
 
-    if(_status == '待用'){
+    if(_status.contains('待用')){
       return TextStyle(color: Colors.yellow);
     }
 
-    if(_status == '挂牌'){
+    if(_status.contains('挂牌')){
       return TextStyle(color: Colors.indigoAccent);
     }
 
