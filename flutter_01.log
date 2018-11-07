@@ -1,0 +1,121 @@
+Flutter crash report; please file at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter --suppress-analytics build bundle --target-platform=ios --target=lib/main.dart --debug --depfile=build/snapshot_blob.bin.d --asset-dir=/Users/hdkj/WorkSpace/samex/samex_app/ios/Flutter/flutter_assets
+
+## exception
+
+HttpException: HttpException: , uri = https://storage.googleapis.com/flutter_infra/flutter/74625aed323d04f2add0410e84038d250f51b616/sky_engine.zip
+
+```
+#0      _attempt (package:flutter_tools/src/base/net.dart:63:39)
+<asynchronous suspension>
+#1      fetchUrl (package:flutter_tools/src/base/net.dart:22:36)
+<asynchronous suspension>
+#2      _downloadFile (package:flutter_tools/src/cache.dart:618:37)
+<asynchronous suspension>
+#3      CachedArtifact._downloadArchive.<anonymous closure> (package:flutter_tools/src/cache.dart:304:17)
+<asynchronous suspension>
+#4      CachedArtifact._withDownloadFile (package:flutter_tools/src/cache.dart:333:26)
+<asynchronous suspension>
+#5      CachedArtifact._downloadArchive (package:flutter_tools/src/cache.dart:300:12)
+#6      CachedArtifact._downloadZipArchive (package:flutter_tools/src/cache.dart:320:12)
+#7      FlutterEngine.updateInner (package:flutter_tools/src/cache.dart:493:13)
+<asynchronous suspension>
+#8      CachedArtifact.update (package:flutter_tools/src/cache.dart:263:11)
+<asynchronous suspension>
+#9      Cache.updateAll (package:flutter_tools/src/cache.dart:219:26)
+<asynchronous suspension>
+#10     FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:366:19)
+<asynchronous suspension>
+#11     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:317:33)
+<asynchronous suspension>
+#12     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:142:29)
+<asynchronous suspension>
+#13     _rootRun (dart:async/zone.dart:1124:13)
+#14     _CustomZone.run (dart:async/zone.dart:1021:19)
+#15     _runZoned (dart:async/zone.dart:1516:10)
+#16     runZoned (dart:async/zone.dart:1463:12)
+#17     AppContext.run (package:flutter_tools/src/base/context.dart:141:18)
+<asynchronous suspension>
+#18     FlutterCommand.run (package:flutter_tools/src/runner/flutter_command.dart:308:20)
+#19     CommandRunner.runCommand (package:args/command_runner.dart:194:27)
+<asynchronous suspension>
+#20     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:401:21)
+<asynchronous suspension>
+#21     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:142:29)
+<asynchronous suspension>
+#22     _rootRun (dart:async/zone.dart:1124:13)
+#23     _CustomZone.run (dart:async/zone.dart:1021:19)
+#24     _runZoned (dart:async/zone.dart:1516:10)
+#25     runZoned (dart:async/zone.dart:1463:12)
+#26     AppContext.run (package:flutter_tools/src/base/context.dart:141:18)
+<asynchronous suspension>
+#27     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:361:19)
+<asynchronous suspension>
+#28     CommandRunner.run.<anonymous closure> (package:args/command_runner.dart:109:29)
+#29     new Future.sync (dart:async/future.dart:224:31)
+#30     CommandRunner.run (package:args/command_runner.dart:109:11)
+#31     FlutterCommandRunner.run (package:flutter_tools/src/runner/flutter_command_runner.dart:241:18)
+#32     run.<anonymous closure> (package:flutter_tools/runner.dart:59:20)
+<asynchronous suspension>
+#33     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:142:29)
+<asynchronous suspension>
+#34     _rootRun (dart:async/zone.dart:1124:13)
+#35     _CustomZone.run (dart:async/zone.dart:1021:19)
+#36     _runZoned (dart:async/zone.dart:1516:10)
+#37     runZoned (dart:async/zone.dart:1463:12)
+#38     AppContext.run (package:flutter_tools/src/base/context.dart:141:18)
+<asynchronous suspension>
+#39     runInContext (package:flutter_tools/src/context_runner.dart:44:24)
+<asynchronous suspension>
+#40     run (package:flutter_tools/runner.dart:50:10)
+#41     main (package:flutter_tools/executable.dart:52:9)
+<asynchronous suspension>
+#42     main (file:///Users/hdkj/flutter/packages/flutter_tools/bin/flutter_tools.dart:8:3)
+#43     _startIsolate.<anonymous closure> (dart:isolate/runtime/libisolate_patch.dart:287:32)
+#44     _RawReceivePortImpl._handleMessage (dart:isolate/runtime/libisolate_patch.dart:171:12)
+```
+
+## flutter doctor
+
+```
+[!] Flutter (Channel beta, v0.9.4, on Mac OS X 10.13.6 17G65, locale zh-Hans-CN)
+    • Flutter version 0.9.4 at /Users/hdkj/flutter
+    • Framework revision f37c235c32 (6 weeks ago), 2018-10-26 01:30:21 -0400
+    • Engine revision 6c2ade9fa2
+    • Dart version 2.1.0 (build 2.1.0-dev.8.0 bf26f760b1)
+    ✗ Downloaded executables cannot execute on host.
+      See https://github.com/flutter/flutter/issues/6207 for more information
+
+
+[!] Android toolchain - develop for Android devices (Android SDK 28.0.3)
+    • Android SDK at /Users/hdkj/Library/Android/sdk
+    • Android NDK location not configured (optional; useful for native profiling support)
+    • Platform android-28, build-tools 28.0.3
+    • Java binary at: /Applications/Android Studio.app/Contents/jre/jdk/Contents/Home/bin/java
+    • Java version OpenJDK Runtime Environment (build 1.8.0_152-release-1136-b06)
+    ✗ Android license status unknown.
+
+[✓] iOS toolchain - develop for iOS devices (Xcode 10.0)
+    • Xcode at /Applications/Xcode.app/Contents/Developer
+    • Xcode 10.0, Build version 10A255
+    • ios-deploy 2.0.0
+    • CocoaPods version 1.5.3
+
+[✓] Android Studio (version 3.2)
+    • Android Studio at /Applications/Android Studio.app/Contents
+    • Flutter plugin version 29.1.1
+    • Dart plugin version 181.5656
+    • Java version OpenJDK Runtime Environment (build 1.8.0_152-release-1136-b06)
+
+[✓] VS Code (version 1.28.2)
+    • VS Code at /Applications/Visual Studio Code.app/Contents
+    • Flutter extension version 2.20.0
+
+[✓] Connected device (1 available)
+    • 最帅的手机 • 584856cb852c225990d1e5bd41bd5e7e21ae148f • ios • iOS 12.0
+
+! Doctor found issues in 2 categories.
+```

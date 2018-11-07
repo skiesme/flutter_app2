@@ -650,128 +650,128 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if (widget.info.actfinish == 0) {
         // 判断是否为 待批准 报修单
         List<Widget> actions = new List<Widget>();
-        if(getOrderType(_info?.worktype) == OrderType.CM && _info.status.contains("等待批准")) {
-          actions.add(
-            new IconButton(
-              icon: Icon(Icons.edit),
-              tooltip: '编辑',
-              onPressed: (){
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                      String label = 'test';
-                      return StatefulBuilder(
-                          builder: (context, state) {
-                              print('label = $label');
-                              return SimpleDialog(
-                                title: Text('信息编辑', style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center,),
-                                children: <Widget>[
-                                  _getMenus(preText: '工单编号:', content:  Text(_data.wonum ?? '', style: TextStyle(color: _data.wonum == null ? Colors.grey: Colors.black))),
-                                  _getMenus(
-                                    preText: '位置:',
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    content: SimpleButton(
-                                        padding: EdgeInsets.symmetric(vertical: 8.0),
-                                        onTap: () async {
-                                          final DescriptionData result = await Navigator.push( context,
-                                          new MaterialPageRoute( builder: (context) =>
-                                            new ChooseAssetPage(
-                                              chooseLocation: true,
-                                          )));
+        // if(getOrderType(_info?.worktype) == OrderType.CM && _info.status.contains("等待批准")) {
+        //   actions.add(
+        //     new IconButton(
+        //       icon: Icon(Icons.edit),
+        //       tooltip: '编辑',
+        //       onPressed: (){
+        //         showDialog(
+        //           context: context,
+        //           builder: (context) {
+        //               String label = 'test';
+        //               return StatefulBuilder(
+        //                   builder: (context, state) {
+        //                       print('label = $label');
+        //                       return SimpleDialog(
+        //                         title: Text('信息编辑', style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center,),
+        //                         children: <Widget>[
+        //                           _getMenus(preText: '工单编号:', content:  Text(_data.wonum ?? '', style: TextStyle(color: _data.wonum == null ? Colors.grey: Colors.black))),
+        //                           _getMenus(
+        //                             preText: '位置:',
+        //                             padding: EdgeInsets.only(left: 8.0),
+        //                             content: SimpleButton(
+        //                                 padding: EdgeInsets.symmetric(vertical: 8.0),
+        //                                 onTap: () async {
+        //                                   final DescriptionData result = await Navigator.push( context,
+        //                                   new MaterialPageRoute( builder: (context) =>
+        //                                     new ChooseAssetPage(
+        //                                       chooseLocation: true,
+        //                                   )));
 
-                                          if (result != null) {
-                                            state(() {
-                                              _data.location = result.location;
-                                              _data.locationDescription = result.locationDescription;
-                                            });
-                                          }
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                              _data.location ?? '请选择位置',
-                                              style: TextStyle(
-                                                  color: _data.location == null
-                                                      ? Colors.grey
-                                                      : Colors.black),
-                                            ),
-                                            Icon(
-                                              Icons.navigate_next,
-                                              color: Colors.black87,
-                                            ),
-                                          ],
-                                        )
-                                      )
-                                    ),
-                                  _getMenus(
-                                    preText: '资产:',
-                                    padding: EdgeInsets.only(left: 8.0),
-                                    content: SimpleButton(
-                                        padding:
-                                        EdgeInsets.symmetric(vertical: 8.0),
-                                        onTap: () async {
-                                          final DescriptionData result =
-                                          await Navigator.push( context,
-                                          new MaterialPageRoute(
-                                              builder: (context) =>
-                                              new ChooseAssetPage(
-                                                location: _data.location,
-                                              )));
+        //                                   if (result != null) {
+        //                                     state(() {
+        //                                       _data.location = result.location;
+        //                                       _data.locationDescription = result.locationDescription;
+        //                                     });
+        //                                   }
+        //                                 },
+        //                                 child: Row(
+        //                                   mainAxisAlignment:
+        //                                   MainAxisAlignment.spaceBetween,
+        //                                   children: <Widget>[
+        //                                     Text(
+        //                                       _data.location ?? '请选择位置',
+        //                                       style: TextStyle(
+        //                                           color: _data.location == null
+        //                                               ? Colors.grey
+        //                                               : Colors.black),
+        //                                     ),
+        //                                     Icon(
+        //                                       Icons.navigate_next,
+        //                                       color: Colors.black87,
+        //                                     ),
+        //                                   ],
+        //                                 )
+        //                               )
+        //                             ),
+        //                           _getMenus(
+        //                             preText: '资产:',
+        //                             padding: EdgeInsets.only(left: 8.0),
+        //                             content: SimpleButton(
+        //                                 padding:
+        //                                 EdgeInsets.symmetric(vertical: 8.0),
+        //                                 onTap: () async {
+        //                                   final DescriptionData result =
+        //                                   await Navigator.push( context,
+        //                                   new MaterialPageRoute(
+        //                                       builder: (context) =>
+        //                                       new ChooseAssetPage(
+        //                                         location: _data.location,
+        //                                       )));
 
-                                          if (result != null) {
-                                            state(() {
-                                              _data.assetnum = result.assetnum;
-                                              _data.assetDescription = result.description;
-                                              _data.location = result.location;
-                                              _data.locationDescription = result.locationDescription;
-                                            });
-                                          }
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Text(
-                                              _data.assetnum ?? '请选择资产',
-                                              style: TextStyle(
-                                                  color: _data.assetnum == null
-                                                      ? Colors.grey
-                                                      : Colors.black),
-                                            ),
-                                            Icon(
-                                              Icons.navigate_next,
-                                              color: Colors.black87,
-                                            ),
-                                          ],
-                                        )
-                                      )
-                                    ),
-                                    SimpleButton(
-                                      onTap: (){
-                                        _post();
-                                      },
-                                      elevation: 2.0,
-                                      shape: new RoundedRectangleBorder(
-                                      borderRadius: new BorderRadius.circular(4.0)),
-                                      padding: EdgeInsets.all(4),
-                                      color: Colors.blueAccent,
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text('提交', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
-                                        ],
-                                      )
-                                    )
-                        ],
-                      );
-                    },
-                  );
-                }
-              );
-            }),
-          );
-        }
+        //                                   if (result != null) {
+        //                                     state(() {
+        //                                       _data.assetnum = result.assetnum;
+        //                                       _data.assetDescription = result.description;
+        //                                       _data.location = result.location;
+        //                                       _data.locationDescription = result.locationDescription;
+        //                                     });
+        //                                   }
+        //                                 },
+        //                                 child: Row(
+        //                                   mainAxisAlignment:
+        //                                   MainAxisAlignment.spaceBetween,
+        //                                   children: <Widget>[
+        //                                     Text(
+        //                                       _data.assetnum ?? '请选择资产',
+        //                                       style: TextStyle(
+        //                                           color: _data.assetnum == null
+        //                                               ? Colors.grey
+        //                                               : Colors.black),
+        //                                     ),
+        //                                     Icon(
+        //                                       Icons.navigate_next,
+        //                                       color: Colors.black87,
+        //                                     ),
+        //                                   ],
+        //                                 )
+        //                               )
+        //                             ),
+        //                             SimpleButton(
+        //                               onTap: (){
+        //                                 _post();
+        //                               },
+        //                               elevation: 2.0,
+        //                               shape: new RoundedRectangleBorder(
+        //                               borderRadius: new BorderRadius.circular(4.0)),
+        //                               padding: EdgeInsets.all(4),
+        //                               color: Colors.blueAccent,
+        //                               child: Row(
+        //                                 children: <Widget>[
+        //                                   Text('提交', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+        //                                 ],
+        //                               )
+        //                             )
+        //                 ],
+        //               );
+        //             },
+        //           );
+        //         }
+        //       );
+        //     }),
+        //   );
+        // }
 
         // refresh work_flow
         actions.add(

@@ -77,7 +77,26 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     return new Scaffold(
       appBar: new AppBar(
         title: Text(_getTitle()),
+        centerTitle: true,
         actions: <Widget>[
+          new IconButton(
+              icon: Text('无'),
+              tooltip: '无数据',
+              onPressed: () {
+                if (!_loading) {
+                  DescriptionData asset = new DescriptionData();
+                  if (widget.chooseLocation) {
+                    asset.location = '无';
+                    asset.locationDescription = '无';
+                  } else {
+                    asset.assetnum = '无';
+                    asset.description = '无';
+                    asset.location = '无';
+                    asset.locationDescription = '无';
+                  }
+                  Navigator.pop(context, asset);
+                }
+              }),
           new IconButton(
               icon: Icon(Icons.refresh),
               tooltip: '数据刷新',
@@ -85,7 +104,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
                 if (!_loading) {
                   _getAsset();
                 }
-              })
+              }),
         ],
       ),
       floatingActionButton: new FloatingActionButton(

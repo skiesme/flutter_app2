@@ -271,7 +271,38 @@ class _StepNewPageState extends State<StepNewPage> {
                       child: RaisedButton(
                         padding:EdgeInsets.symmetric(horizontal: 40.0),
                         onPressed: (){
-                          _post();
+                          // add dialog
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext bctx) {
+                              return AlertDialog(
+                                title: Text('确认提交'),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      Text('是否确认提交任务单？'),
+                                    ],
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('取消'),
+                                    onPressed: () {
+                                      Navigator.of(bctx).pop();
+                                    },
+                                  ),
+                                  FlatButton(
+                                    child: Text('确定'),
+                                    onPressed: () {
+                                      _post();
+                                      Navigator.of(bctx).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            }
+                          );
                         },
                         child: Text('提交', style: TextStyle( color: Colors.white, fontSize: 18.0),),
                         color: Style.primaryColor,

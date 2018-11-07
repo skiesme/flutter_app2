@@ -340,7 +340,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     } catch (e){
       print (e);
-      Func.showMessage('网络出现异常: 获取步骤列表失败');
     }
   }
 
