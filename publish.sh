@@ -44,8 +44,16 @@ uploadIos() {
 
     xcodebuild archive -workspace "${workspace}" -scheme "${scheme}" -configuration "Release" -archivePath "${archivePath}"
 
-    xcodebuild -exportArchive -archivePath "${archivePath}" -exportOptionsPlist "${exportOptionsPlist}" -exportPath "${exportPath}"
+    # xcodebuild -exportArchive -archivePath "${archivePath}" -exportOptionsPlist "${exportOptionsPlist}" -exportPath "${exportPath}"
 
+    if [ $xcodeversion -lt 830 ]
+    then
+    xcodebuild -exportArchive -archivePath "${archivePath}" -exportOptionsPlist "${exportOptionsPlist}" -exportPath "${exportPath}"     #"Debug"
+    else
+    xcodebuild -exportArchive -archivePath "${archivePath}" -exportPath "${exportPath}" -exportOptionsPlist "${exportOptionsPlist}" -allowProvisioningUpdates
+    echo "==============================make ipa end `date "+%Y.%m.%d_%H.%M.%S"`=============================="
+    fi
+    
     cd ${pwd}
 
     git checkout -- ios
@@ -60,19 +68,19 @@ uploadIos() {
     curl -F "file=@${ios_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
 }
 
-if [ "$1" = "63" ]; then
-    dart='main_publish2.dart'
+if [ "$1" = "all" ]; 
+then
+    echo "1..build android release ..."
     uploadAndroid
+    echo "2.build ios release ..."
+    uploadIos
+elif [ "$1" = "ios" ]
+then
+    echo "build ios release ..."
     uploadIos
 else
-    if [ "$1" = "ios" ]; then
-        echo "build ios release ..."
-        uploadIos
-    else
-        echo "build android release ..."
-        uploadAndroid
-    fi
-
+    echo "build android release ..."
+    uploadAndroid
 fi
 
 

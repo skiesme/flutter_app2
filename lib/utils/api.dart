@@ -18,10 +18,14 @@ Dio _dio = new Dio();
 
 class SaMexApi {
   // static String ipAndPort = '192.168.60.12:40001';
-//  static String ipAndPort = '172.19.1.63:40001'; // 生产
+  // static String ipAndPort = '172.19.1.63:40001'; // 生产
 
- static String ipAndPort = '172.19.1.30:40001'; // 测试
-//    static String ipAndPort = '192.168.50.112:40001';
+  // static String ipAndPort = '172.19.1.30:40001'; // 测试
+  // static String ipAndPort = '192.168.50.112:40001';
+
+  // static bool inProduction = true;
+  static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
+  static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
 
