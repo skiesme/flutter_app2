@@ -57,6 +57,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
         child:ListView.builder(
             itemCount: data.length,
             itemBuilder: (_, int index) {
+              print('index:${index}');
               OrderStep step = data[index];
               return new Column(
                 mainAxisAlignment: MainAxisAlignment.start,

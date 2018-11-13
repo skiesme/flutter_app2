@@ -77,22 +77,22 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     return new Scaffold(
       appBar: new AppBar(
         title: Text(_getTitle()),
-        centerTitle: true,
         actions: <Widget>[
           new IconButton(
               icon: Text('无'),
               tooltip: '无数据',
               onPressed: () {
                 if (!_loading) {
+                  String nullStr = '无';
                   DescriptionData asset = new DescriptionData();
                   if (widget.chooseLocation) {
-                    asset.location = '无';
-                    asset.locationDescription = '无';
+                    asset.location = nullStr;
+                    asset.locationDescription = nullStr;
                   } else {
-                    asset.assetnum = '无';
-                    asset.description = '无';
-                    asset.location = '无';
-                    asset.locationDescription = '无';
+                    asset.assetnum = nullStr;
+                    asset.description = nullStr;
+                    asset.location = nullStr;
+                    asset.locationDescription = nullStr;
                   }
                   Navigator.pop(context, asset);
                 }

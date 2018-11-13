@@ -251,7 +251,7 @@ class _StepNewPageState extends State<StepNewPage> {
 
                       _getMenus(preText: '照片:', content:Row(
                         children: <Widget>[
-                          new PictureList(canAdd: !widget.read, images: widget.step.images, key: _key,)
+                          new PictureList(canAdd: !widget.read, images: widget.step.images, key: _key, customStr: '')
                         ],
                       )),
 

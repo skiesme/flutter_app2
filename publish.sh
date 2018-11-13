@@ -17,7 +17,7 @@ uploadAndroid(){
     apk_release_file=${pwd}/build/app/outputs/apk/release/app-release.apk
 
     echo "开始上传 ${apk_release_file} 到蒲公英...."
-    curl -F "file=@${apk_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
+    # curl -F "file=@${apk_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
 
     echo "\n android done"uploadAndroid
 }
@@ -44,7 +44,7 @@ uploadIos() {
 
     xcodebuild archive -workspace "${workspace}" -scheme "${scheme}" -configuration "Release" -archivePath "${archivePath}"
 
-    # xcodebuild -exportArchive -archivePath "${archivePath}" -exportOptionsPlist "${exportOptionsPlist}" -exportPath "${exportPath}"
+    xcodebuild -exportArchive -archivePath "${archivePath}" -exportOptionsPlist "${exportOptionsPlist}" -exportPath "${exportPath}"
 
     if [ $xcodeversion -lt 830 ]
     then
@@ -78,9 +78,12 @@ elif [ "$1" = "ios" ]
 then
     echo "build ios release ..."
     uploadIos
-else
-    echo "build android release ..."
+elif [ "$1" = "apk" ]
+then
+    echo "build ios release ..."
     uploadAndroid
+else
+    echo "please choose platform eg: 'sh public.sh ios/apk/all'"
 fi
 
 

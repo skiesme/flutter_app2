@@ -23,7 +23,9 @@ class PictureList extends StatefulWidget {
   final List<String> images;
   final int count;
 
-  PictureList({Key key, this.canAdd = true,  this.images, this.count = 3}):super(key:key);
+  final String customStr;
+
+  PictureList({Key key, this.canAdd = true,  this.images, this.count = 3, this.customStr}):super(key:key);
 
   @override
   PictureListState createState() => new PictureListState();
@@ -228,8 +230,9 @@ class ImageData {
   String path;
   String time;
   String userName;
+  String customStr;
 
-  ImageData({@required this.path, @required this.time, @required this.userName});
+  ImageData({@required this.path, @required this.time, @required this.userName, this.customStr});
 
   @override
   String toString() {
@@ -241,9 +244,14 @@ class ImageData {
       List<String> list = data.split(',');
       path = list[0];
       time = list[1];
-      userName = list[2];
+      if(list.length > 2) {
+        userName = list[2];
+      }
+      if(list.length > 3) {
+        customStr = list[3];
+      }
     } else {
-      throw new Exception('图片格式有误:$data');
+      print('图片格式有误:$data');
     }
   }
 }
@@ -252,6 +260,16 @@ class _PageSelector extends StatelessWidget {
   const _PageSelector({ this.icons });
 
   final List<ImageData> icons;
+
+  Align getCustomText(String str) {
+    if (str.length > 0) {
+      return Align(
+        child: Text(str, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+        alignment: Alignment.topCenter,
+      );
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -282,6 +300,7 @@ class _PageSelector extends StatelessWidget {
                             child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
                             alignment: Alignment.topCenter,
                           ),
+                          getCustomText(icon.customStr)
                         ],
                       )
                     ],
