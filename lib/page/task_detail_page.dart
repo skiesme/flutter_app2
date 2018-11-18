@@ -310,9 +310,11 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         Text('位置描述: ${_data?.locationDescription??''}'),
         Text('资产编号: ${_data?.assetnum??''}'),
         Text('资产描述: ${_data?.assetDescription??''}'),
-        Text('汇报人员: ${_data?.reportedby ??''}'),
-        Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'),
       ]);
+      if (_type != OrderType.XJ) {
+        list.add(Text('汇报人员: ${_data?.reportedby ??''}'));
+      }
+      list.add(Text('上报时间: ${Func.getFullTimeString( _data?.reportdate)}'));
 
       if(_data != null && _data.actfinish > 0){
         list.add(Text('完成时间: ${Func.getFullTimeString( _data?.actfinish)}'));
