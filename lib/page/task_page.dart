@@ -31,6 +31,9 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   int _tabIndex = 1;
   TabController _controller;
   TextEditingController _searchQuery;
+  final PageController _pageController = new PageController();
+  double _currentPage = 1.0;
+
   bool _isSearching = false;
   bool _showFloatActionButton = false;
 
@@ -48,15 +51,10 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       taskPageHelpers.add(new PageHelper());
       taskPageHelpers.add(new PageHelper());
     }
+    
+    _setupIndex();
 
-    // 获取数据
     _creatOrderLists();
-
-    String title = Cache.instance.userTitle;
-    if(title != null && title.contains('部长')){
-      _tabIndex = 0;
-    }
-
   }
 
   void _startSearch() {
@@ -95,6 +93,15 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     }
   }
 
+  void _setupIndex() {
+      _tabIndex = 1;
+
+      String title = Cache.instance.userTitle;
+      if(title != null && title.contains('部长')){
+        _tabIndex = 0;
+      }   
+  }
+
   List<BottomNavigationBarItem> _getBottomBar(Map<OrderType, int> badges){
 
     if(badges == null) badges = Map();
@@ -109,29 +116,72 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         title: Text('报修', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
-        icon: BadgeIconButton(itemCount: badges[OrderType.XJ]??0, icon: new Image.asset(ImageAssets.task_xj, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0)),
+        icon: BadgeIconButton(
+          itemCount: badges[OrderType.XJ]??0, 
+          icon: new Image.asset(ImageAssets.task_xj, 
+          color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
+          height: 24.0)),
         title: Text('巡检', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
-        icon: BadgeIconButton(itemCount: badges[OrderType.PM]??0, icon: new Image.asset(ImageAssets.task_pm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey,height: 24.0)),
+        icon: BadgeIconButton(
+          itemCount: badges[OrderType.PM]??0, 
+          icon: new Image.asset(ImageAssets.task_pm, 
+          color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
+          height: 24.0)),
         title: Text('保养', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     return list;
   }
 
   Widget _getBody(){
-    if(!widget.isTask) return taskOrderLists[0];
-    switch(_tabIndex){
-      case 0:
-        return taskOrderLists[0];
-      case 1:
-        return taskOrderLists[1];
-      default:
-        return taskOrderLists[2];
+
+    Widget show = taskOrderLists[0];
+    double width = MediaQuery.of(context).size.width;
+
+    if(!widget.isTask) {
+      return show;
+    } else {
+
+      return new LayoutBuilder(builder: (context, constraints) => new NotificationListener(
+      onNotification: (ScrollNotification note) {
+        setState(() {
+          _currentPage = _pageController.page;
+          _tabIndex = _currentPage.floor();
+        });
+      },
+      child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            controller: _pageController,
+            // physics: const NeverScrollableScrollPhysics(),
+            physics: const PageScrollPhysics(parent: const BouncingScrollPhysics()),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Container(
+                    width: width,
+                    child: taskOrderLists[0],
+                  ),
+                  Container(
+                    width: width,
+                    child: taskOrderLists[1],
+                  ),
+                  Container(
+                    width: width,
+                    child: taskOrderLists[2],
+                  ),
+                ],
+              ),
+            ),
+          )
+    ));
     }
   }
-
-
 
   List<Widget> _buildActions() {
     if (_isSearching) {
@@ -194,7 +244,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     globalListeners.queryChanges(newQuery??'');
   }
   
-  Widget getBottomBar(Map<OrderType, int> badges){
+  BottomNavigationBar getBottomBar(Map<OrderType, int> badges){
     return  new BottomNavigationBar(
       items: _getBottomBar(badges),
       currentIndex: _tabIndex,
@@ -204,6 +254,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
             _updateSearchQuery(_searchQuery.text);
           }
           _tabIndex = index;
+          
+          _pageController.jumpToPage(index);
         });
       },
     );
@@ -220,14 +272,14 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         actions: _buildActions(),
       ),
       body: _getBody(),
-      bottomNavigationBar: widget.isTask ? StreamBuilder<Map<OrderType, int> >(stream: bloc.outBadges, builder: (context, snapshot){
-
+      bottomNavigationBar: widget.isTask ? StreamBuilder<Map<OrderType, int> >(
+        stream: bloc.outBadges, 
+        builder: (context, snapshot){
           if(snapshot.hasData){
             return getBottomBar(snapshot.data);
           } else {
             return getBottomBar(null);
           }
-        
       },) : null,
       floatingActionButton: _showFloatActionButton ?new FloatingActionButton(
 
@@ -238,7 +290,6 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       ) : null,
     );
   }
-
 
   @override
   void deactivate() {

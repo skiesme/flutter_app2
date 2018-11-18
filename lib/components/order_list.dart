@@ -95,10 +95,16 @@ class OrderList extends StatefulWidget {
 
   final PageHelper<OrderShortInfo> helper;
   final OrderType type;
+  _OrderListState _state;
 
   OrderList({Key key, @required this.helper, this.type = OrderType.ALL}) :super(key:key);
+
+
   @override
-  _OrderListState createState() => new _OrderListState();
+    State<StatefulWidget> createState() {
+      _state = new _OrderListState();
+      return _state;
+    }
 }
 
 class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>{
@@ -144,6 +150,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         _searchQuery = new TextEditingController(text: '');
         break;
     }
+
+    Future.delayed(Duration.zero,() =>_handleLoadData());
   }
 
   @override
@@ -183,7 +191,6 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     if(widget.helper.itemCount() == 0 && widget.helper.inital){
       _handleRefresh();
     }
-
   }
 
   String _getWorkType(){
@@ -322,6 +329,65 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
 
     }
 
+  }
+
+
+  Future<Null> _handleLoadData([int older = 0]) async {
+    try{
+
+      int time = 0;
+      int startTime = 0;
+
+      if(widget.type == OrderType.ALL){
+        time = _option.endTime;
+        startTime = _option.startTime;
+      }
+
+      Map response = await getApi(context).orderList(
+          type:_getWorkType(),
+          status: _option.status.key,
+          time: time,
+          query: _searchQuery?.text,
+          all: _option.isMe ? 0 : 1,
+          start: startTime,
+          older: older,
+          task: widget.type == OrderType.ALL ? 0 : 1,
+          count: widget.type == OrderType.ALL ? 20 : 100);
+      OrderListResult result = new OrderListResult.fromJson(response);
+
+      if(result.code == 0){
+        widget.helper.datas = new List();
+        
+        if(widget.type == OrderType.ALL) {
+          setMemoryCache<FilterOption>(option_cache_key, _option);
+        }
+
+        List<OrderShortInfo> info = result.response??[];
+        if(info.length > 0){
+          print('列表size: ${info.length}');
+          if(older == 0){
+            widget.helper.datas.insertAll(0, info);
+          } else {
+            widget.helper.addData(info);
+          }
+        }
+
+        try {
+          final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
+
+          if (widget.type != OrderType.ALL) {
+            bloc.badgeChange.add(
+                new BadgeInEvent(widget.helper.itemCount(), widget.type));
+          }
+        } catch (e){
+          print('badgeChange   error: $e');
+        }
+      }
+
+    } catch(e){
+      print(e);
+      Func.showMessage('网络出现异常, 获取工单列表失败');
+    }
   }
 
   void getSteps(String wonum, String site) async {
