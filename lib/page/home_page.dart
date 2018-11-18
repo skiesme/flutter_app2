@@ -171,7 +171,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
             ),
           ),
           new Container(
-            margin: new EdgeInsets.only(top: 150.0),
+            margin: new EdgeInsets.only(top: 170.0),
             width: MediaQuery.of(context).size.width,
             child: new Table(
               defaultVerticalAlignment: TableCellVerticalAlignment.middle,
