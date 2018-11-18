@@ -265,7 +265,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       } else if(status.contains('已批准')){
         return Colors.cyan;
       } else if(status.contains('待验收')){
-        return Colors.yellow.shade600;
+        return Colors.orange.shade600;
       } else if(status.contains('重做')){
         return Colors.red.shade400;
       } else {
@@ -281,7 +281,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(status.contains('进行中')){
         return Colors.blue.shade900;
       } else if(status.contains('待验收')){
-        return Colors.yellow.shade600;
+        return Colors.orange.shade600;
       } else if(status.contains('重做')){
         return Colors.red.shade400;
       } else {

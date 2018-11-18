@@ -19,11 +19,11 @@ class Style {
   static TextStyle getStatusStyle(String  _status){
 
     if(_status.contains('正常')){
-      return TextStyle(color: Colors.greenAccent);
+      return TextStyle(color: Colors.green);
     }
 
     if(_status.contains('待用')){
-      return TextStyle(color: Colors.yellow);
+      return TextStyle(color: Colors.orange);
     }
 
     if(_status.contains('挂牌')){
