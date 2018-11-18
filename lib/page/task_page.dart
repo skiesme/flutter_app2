@@ -24,6 +24,7 @@ class TaskPage extends StatefulWidget {
 }
 
 List<PageHelper<OrderShortInfo> > taskPageHelpers = new List();
+List<OrderList> taskOrderLists = new List();
 
 class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin, AfterLayoutMixin<TaskPage> {
 
@@ -37,16 +38,19 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
 
-
     _controller = new TabController(length: 3, vsync: this, initialIndex: _tabIndex);
     _searchQuery = new TextEditingController();
 
+    // 创建页面
     if(taskPageHelpers.length == 0){
       taskPageHelpers.add(new PageHelper());
       taskPageHelpers.add(new PageHelper());
       taskPageHelpers.add(new PageHelper());
       taskPageHelpers.add(new PageHelper());
     }
+
+    // 获取数据
+    _creatOrderLists();
 
     String title = Cache.instance.userTitle;
     if(title != null && title.contains('部长')){
@@ -80,13 +84,28 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     });
   }
 
+  void _creatOrderLists() {
+    taskOrderLists = new List();
+    if(!widget.isTask) {
+      taskOrderLists.add(new OrderList(helper: taskPageHelpers[3], type: OrderType.ALL));
+    } else {
+      taskOrderLists.add(new OrderList(helper: taskPageHelpers[0], type: OrderType.CM, key: ValueKey(0)));
+      taskOrderLists.add(new OrderList(helper: taskPageHelpers[1], type: OrderType.XJ, key: ValueKey(1)));
+      taskOrderLists.add(new OrderList(helper: taskPageHelpers[2], type: OrderType.PM, key: ValueKey(2)));
+    }
+  }
+
   List<BottomNavigationBarItem> _getBottomBar(Map<OrderType, int> badges){
 
     if(badges == null) badges = Map();
     List<BottomNavigationBarItem> list = <BottomNavigationBarItem>[];
     int index = 0;
     list.add(new BottomNavigationBarItem(
-        icon: BadgeIconButton(itemCount: badges[OrderType.CM]??0, icon:  new Image.asset(ImageAssets.task_cm, color:  index == _tabIndex ? Style.primaryColor : Colors.grey, height: 24.0,)),
+        icon: BadgeIconButton(
+          itemCount: badges[OrderType.CM]??0, 
+          icon:  new Image.asset(ImageAssets.task_cm, 
+          color:  index == _tabIndex ? Style.primaryColor : Colors.grey, 
+          height: 24.0,)),
         title: Text('报修', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
@@ -101,16 +120,18 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   }
 
   Widget _getBody(){
-    if(!widget.isTask) return new OrderList(helper: taskPageHelpers[3], type: OrderType.ALL,);
+    if(!widget.isTask) return taskOrderLists[0];
     switch(_tabIndex){
       case 0:
-        return new OrderList(helper: taskPageHelpers[0], type: OrderType.CM, key: ValueKey(0));
+        return taskOrderLists[0];
       case 1:
-        return new OrderList(helper: taskPageHelpers[1], type: OrderType.XJ, key: ValueKey(1));
+        return taskOrderLists[1];
       default:
-        return new OrderList(helper: taskPageHelpers[2], type: OrderType.PM, key: ValueKey(2));
+        return taskOrderLists[2];
     }
   }
+
+
 
   List<Widget> _buildActions() {
     if (_isSearching) {
