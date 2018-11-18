@@ -62,8 +62,6 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _showLoading = false;
     });
-
-
   }
 
   Widget _buildLoginForm() {
@@ -75,8 +73,10 @@ class _LoginPageState extends State<LoginPage> {
         children: <Widget>[
           Text('深水光明系统登录', style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center, ),
           new SizedBox(height: 40.0),
-          TextFormField(
+          TextField(
             controller: _controller,
+            cursorColor: Colors.white,
+            keyboardType: TextInputType.text,
             style: TextStyle(color: Colors.white, fontSize: 16.0),
             decoration: new InputDecoration(
               prefixIcon: new Padding(
@@ -91,9 +91,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           new SizedBox(height: 10.0),
-          TextFormField(
+          TextField(
             controller: _controller2,
             obscureText: _obscureText,
+            cursorColor: Colors.white,
             style: TextStyle(color: Colors.white, fontSize: 16.0),
             decoration: new InputDecoration(
               prefixIcon: new Padding(
