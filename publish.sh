@@ -17,7 +17,7 @@ uploadAndroid(){
     apk_release_file=${pwd}/build/app/outputs/apk/release/app-release.apk
 
     echo "开始上传 ${apk_release_file} 到蒲公英...."
-    # curl -F "file=@${apk_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
+    curl -F "file=@${apk_release_file}" -F "_api_key=${_api_key}" https://www.pgyer.com/apiv2/app/upload
 
     echo "\n android done"uploadAndroid
 }
@@ -70,7 +70,7 @@ uploadIos() {
 
 if [ "$1" = "all" ]; 
 then
-    echo "1..build android release ..."
+    echo "1.build android release ..."
     uploadAndroid
     echo "2.build ios release ..."
     uploadIos
