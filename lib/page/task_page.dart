@@ -31,7 +31,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   int _tabIndex = 1;
   TabController _controller;
   TextEditingController _searchQuery;
-  final PageController _pageController = new PageController();
+  PageController _pageController;
   double _currentPage = 1.0;
 
   bool _isSearching = false;
@@ -100,6 +100,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       if(title != null && title.contains('部长')){
         _tabIndex = 0;
       }   
+
+      _pageController = new PageController(initialPage: _tabIndex);
   }
 
   List<BottomNavigationBarItem> _getBottomBar(Map<OrderType, int> badges){
@@ -153,7 +155,6 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             controller: _pageController,
-            // physics: const NeverScrollableScrollPhysics(),
             physics: const PageScrollPhysics(parent: const BouncingScrollPhysics()),
             child: ConstrainedBox(
               constraints: BoxConstraints(
