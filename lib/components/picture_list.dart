@@ -293,11 +293,11 @@ class _PageSelector extends StatelessWidget {
                       Column(
                         children: <Widget>[
                           Align(
-                            child: Text(icon.userName, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+                            child: Text(icon.userName??"", style: TextStyle(color: Colors.red, fontSize: 18.0),),
                             alignment: Alignment.topCenter,
                           ),
                           Align(
-                            child: Text(icon.time, style: TextStyle(color: Colors.red, fontSize: 18.0),),
+                            child: Text(icon.time??"", style: TextStyle(color: Colors.red, fontSize: 18.0),),
                             alignment: Alignment.topCenter,
                           ),
                           getCustomText(icon.customStr)
