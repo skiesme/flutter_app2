@@ -282,19 +282,18 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
         List<OrderShortInfo> info = result.response??[];
         if(info.length > 0){
           print('列表size: ${info.length}');
-
-          for (var item in info) {
-            if (item.steps == null) {
-              String wonum = item.wonum;
-              String site = wonum.replaceAll(new RegExp('\\d+'), '');
-              getSteps(wonum, site);
-            }
-          }
-
           if(older == 0){
             widget.helper.datas.insertAll(0, info);
           } else {
             widget.helper.addData(info);
+          }
+          // 加载步骤
+          for (var item in info) {
+            if (item.steps == null) {
+              String wonum = item.wonum;
+              String site = wonum.replaceAll(new RegExp('\\d+'), '');
+              loadSteps(wonum, site);
+            }
           }
         }
 
@@ -370,6 +369,15 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
           } else {
             widget.helper.addData(info);
           }
+
+          // 加载步骤
+          for (var item in info) {
+            if (item.steps == null) {
+              String wonum = item.wonum;
+              String site = wonum.replaceAll(new RegExp('\\d+'), '');
+              loadSteps(wonum, site);
+            }
+          }
         }
 
         try {
@@ -390,7 +398,7 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
     }
   }
 
-  void getSteps(String wonum, String site) async {
+  void loadSteps(String wonum, String site) async {
     try{
       Map response = await getApi(context).steps(sopnum: '', wonum: wonum, site: site);
       StepsResult result = new StepsResult.fromJson(response);
