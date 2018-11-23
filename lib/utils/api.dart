@@ -23,9 +23,10 @@ class SaMexApi {
   // static String ipAndPort = '172.19.1.30:40001'; // 测试
   // static String ipAndPort = '192.168.50.112:40001';
 
-  // static bool inProduction = true;
   static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
   static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
+  // static String ipAndPort = '192.168.60.182.40001'; // 嘉兴测试
+
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
 
@@ -358,6 +359,8 @@ class SaMexApi {
     String reportedby,
     String images,
     String phone,
+    String woprof,
+    String faultlev,
     List<UploadFileInfo> files,
     OnUploadProgress onProgress
   }) async {
@@ -372,7 +375,9 @@ class SaMexApi {
       "reportedby": reportedby,
       "images": images,
       "phone": phone,
-      "files": files
+      "files": files,
+      "woprof": woprof,
+      "faultlev": faultlev,
     };
 
     print('${uri.toString()}: ${jsonData.toString()}, length=${files?.length}');

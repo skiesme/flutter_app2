@@ -18,6 +18,31 @@ import 'package:samex_app/model/cm_history.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/page/task_detail_page.dart';
 
+
+/** 报修工单分类 */
+final List<_StatusSelect> _woprofList = <_StatusSelect>[
+  _StatusSelect(0, '机械'),
+  _StatusSelect(1, '电器'),
+  _StatusSelect(2, '仪表'),
+  _StatusSelect(3, '自控'),
+  _StatusSelect(4, '其他'),
+];
+
+/** 故障等级 */
+final List<_StatusSelect> _faultlevList = <_StatusSelect>[
+  _StatusSelect(0, 'AA'),
+  _StatusSelect(1, 'A'),
+  _StatusSelect(2, 'B'),
+  _StatusSelect(3, 'C'),
+];
+
+
+class _StatusSelect{
+  int key;
+  String value;
+  _StatusSelect(this.key, this.value);
+}
+
 class OrderNewPage extends StatefulWidget {
   final OrderPostData data;
 
@@ -50,6 +75,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
   TextEditingController _controller;
   TextEditingController _controller2;
 
+  String _woprof = '';          //报修工单分类
+  String _faultlev = '';        // 故障等级
 
   String _tips;
 
@@ -200,7 +227,14 @@ class _OrderNewPageState extends State<OrderNewPage> {
       Func.showMessage('请填写联系电话');
       return;
     }
-
+    if(_woprof.length == 0){
+      Func.showMessage('请设置报修工单分类');
+      return;
+    }
+    if(_faultlev.length == 0){
+      Func.showMessage('请设置故障等级');
+      return;
+    }
     setState(() {
       _show = true;
     });
@@ -238,6 +272,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
               location: _data.location,
               description: _controller.text,
               phone: _controller2.text,
+              woprof: _woprof,
+              faultlev: _faultlev,
               reportedby: Cache.instance.userName,
               images: images,
               files: list,
@@ -306,7 +342,6 @@ class _OrderNewPageState extends State<OrderNewPage> {
     } catch (e) {
       print(e);
     }
-
   }
 
   Widget _getMenus({
@@ -470,6 +505,80 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                         color: _data.location == null
                                             ? Colors.grey
                                             : Colors.black))),
+                            _getMenus(
+                              preText: '报修工单分类:',
+                              padding: EdgeInsets.only(left: 8.0),
+                              content: SimpleButton(
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    new Text(
+                                      _woprof.length > 0 ? _woprof : '报修工单分类',
+                                      style: TextStyle(
+                                        color: _woprof.length > 0 ? Colors.black : Colors.grey
+                                      ),
+                                    ),
+                                    new Expanded(
+                                      child: new PopupMenuButton<_StatusSelect>(
+                                        
+                                        tooltip:'请选择工单分类',
+                                        child: Align(child: const Icon(Icons.arrow_drop_down), alignment: Alignment.centerRight, heightFactor: 1.5,),
+                                        itemBuilder: (BuildContext context) {
+                                          return _woprofList.map((_StatusSelect status) {
+                                            return new PopupMenuItem<_StatusSelect>(
+                                              value: status,
+                                              child: new Text(status.value),
+                                            );
+                                          }).toList();
+                                        },
+                                        onSelected: (_StatusSelect value) {
+                                          setState(() {
+                                            _woprof = value.value;
+                                          });
+                                        },
+                                      ))
+                                  ],
+                                )
+                              )
+                            ),
+                            _getMenus(
+                              preText: '故障等级:',
+                              padding: EdgeInsets.only(left: 8.0),
+                              content: SimpleButton(
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    new Text(
+                                      _faultlev.length > 0 ? _faultlev : '故障等级',
+                                      style: TextStyle(
+                                        color: _faultlev.length > 0 ? Colors.black : Colors.grey
+                                      ),
+                                    ),
+                                    new Expanded(
+                                      child: new PopupMenuButton<_StatusSelect>(
+                                        
+                                        tooltip:'请选择故障等级',
+                                        child: Align(child: const Icon(Icons.arrow_drop_down), alignment: Alignment.centerRight, heightFactor: 1.5,),
+                                        itemBuilder: (BuildContext context) {
+                                          return _faultlevList.map((_StatusSelect status) {
+                                            return new PopupMenuItem<_StatusSelect>(
+                                              value: status,
+                                              child: new Text(status.value),
+                                            );
+                                          }).toList();
+                                        },
+                                        onSelected: (_StatusSelect value) {
+                                          setState(() {
+                                            _faultlev = value.value;
+                                          });
+                                        },
+                                      ))
+                                  ],
+                                )
+                              )
+                            ),
                             _getMenus(
                                 preText: '照片:',
                                 content: PictureList(

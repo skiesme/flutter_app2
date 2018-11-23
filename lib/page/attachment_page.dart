@@ -49,6 +49,8 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
 
   Widget _getAttachmentsWidget(){
 
+    // 判断是XJ 还是 CM
+
     List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
     data = _filter(data);
 

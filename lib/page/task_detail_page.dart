@@ -362,6 +362,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
         StepsResult result = new StepsResult.fromJson(response);
         if(result.code == 0){
+          
+          setMemoryCache<List<OrderStep>>(cacheStepsKey, result.response.steps);
+
           for(int i = 0; i < result.response.steps.length; i++){
             images.addAll(result.response.steps[i].images);
           }
@@ -824,6 +827,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   String get cacheKey {
     return 'task_detail_${widget.info.wonum}';
+  }
+  String get cacheStepsKey {
+    return 'stepsList_${widget.info.wonum}';
   }
 
   String get cacheKey2 {
