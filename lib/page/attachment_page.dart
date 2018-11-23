@@ -98,8 +98,8 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
 
   Widget _getCMAttachmentsWidget(){
 
-    List<String> data = getMemoryCache<List<String>>(cacheKey2, expired: false);
-
+    List<String> data = new List();
+    data = getMemoryCache<List<String>>(cacheKey2, expired: false);
 
     if(data == null) {
 

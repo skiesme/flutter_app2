@@ -260,8 +260,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
       List<UploadFileInfo> list = new List();
 
-      List<String> uploadImages =
-      getUploadImages(_key.currentState.getImages());
+      List<String> uploadImages = getUploadImages(_key.currentState.getImages());
 
       var post = () async {
         try {
@@ -514,7 +513,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                   MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     new Text(
-                                      _woprof.length > 0 ? _woprof : '报修工单分类',
+                                      _woprof.length > 0 ? _woprof : '请选择工单分类',
                                       style: TextStyle(
                                         color: _woprof.length > 0 ? Colors.black : Colors.grey
                                       ),
@@ -551,7 +550,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                   MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     new Text(
-                                      _faultlev.length > 0 ? _faultlev : '故障等级',
+                                      _faultlev.length > 0 ? _faultlev : '请选择故障等级',
                                       style: TextStyle(
                                         color: _faultlev.length > 0 ? Colors.black : Colors.grey
                                       ),

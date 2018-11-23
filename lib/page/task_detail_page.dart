@@ -83,10 +83,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       print(e);
       Func.showMessage('网络出现异常: 获取工单详情失败');
     }
-
-    setState(() {
-      _show = false;
-    });
   }
 
   String getWorkTypeString(){

@@ -262,13 +262,10 @@ class _PageSelector extends StatelessWidget {
   final List<ImageData> icons;
 
   Align getCustomText(String str) {
-    if (str.length > 0) {
-      return Align(
-        child: Text(str, style: TextStyle(color: Colors.red, fontSize: 18.0),),
-        alignment: Alignment.topCenter,
-      );
-    }
-    return null;
+    return Align(
+      child: Text(str??'', style: TextStyle(color: Colors.red, fontSize: 18.0),),
+      alignment: Alignment.topCenter,
+    );
   }
 
   @override
