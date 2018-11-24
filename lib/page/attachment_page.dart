@@ -36,20 +36,19 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
     List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
 
     if(data == null){
-      return Center(child: CircularProgressIndicator());
-    } else  {
       return Center(child: Text(info));
+    } else  {
+      return Center(child: CircularProgressIndicator());
     }
   }
 
   List<OrderStep> _filter(List<OrderStep> data) {
     if(data == null) return null;
-    return data.where((i) => (i.images != null && i.images.length > 0)).toList();
+    // return data.where((i) => (i.images != null && i.images.length > 0)).toList();
+    return data;
   }
 
   Widget _getAttachmentsWidget(){
-
-    // 判断是XJ 还是 CM
 
     List<OrderStep> data = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
     data = _filter(data);

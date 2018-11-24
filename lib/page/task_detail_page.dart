@@ -348,22 +348,22 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       var images = new List();
 
       if(getOrderType(_info.worktype) != OrderType.XJ){
-        Map response = await getApi(context).getCMAttachments(_info.ownerid);
-        CMAttachmentsResult result2 = new CMAttachmentsResult.fromJson(response);
 
+        Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
+        StepsResult result2 = new StepsResult.fromJson(response);
+        
         if(result2.code == 0){
-          images.addAll(result2.response);
+          images.addAll(result2.response.images);
         }
       } else  {
         Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
         StepsResult result = new StepsResult.fromJson(response);
         if(result.code == 0){
-          
-          setMemoryCache<List<OrderStep>>(cacheStepsKey, result.response.steps);
-
-          for(int i = 0; i < result.response.steps.length; i++){
-            images.addAll(result.response.steps[i].images);
+          List <OrderStep> setps =  result.response.steps;
+          for (OrderStep item in setps) {
+            images.addAll(item.images);
           }
+          setMemoryCache<List<OrderStep>>(cacheStepsKey, setps);
         }
       }
 

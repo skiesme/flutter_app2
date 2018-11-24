@@ -118,7 +118,7 @@ class _RecentHistoryState extends State<RecentHistory> with AfterLayoutMixin<Rec
 
   List<Widget> getCMHistoryWidget(){
     List<CMHistoryData> _cmHistoryList = getMemoryCache<List<CMHistoryData>>(cacheKey, expired: false);
-//    print('getCMHistoryWidget, length=${_cmHistoryList.length}');
+   print('getCMHistoryWidget, length=${_cmHistoryList.length}');
 
     List<Widget> children = <Widget>[];
     for (int i = 0, len = _cmHistoryList.length; i < len; i++) {
