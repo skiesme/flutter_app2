@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/center_popup_menu.dart';
+import 'package:samex_app/model/site.dart';
 
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -19,6 +21,36 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _controller2;
   bool _obscureText = true;
   bool _showLoading = false;
+  GlobalKey<PopupMenuButtonState<Site>> _key = new GlobalKey();
+  List<Site> _siteList = new List();
+  Site _defSite;
+
+  String get cacheKey => '__Cache.instance.site_list';
+  void loadSiteDatas() async {
+    try {
+      final response = await getApi(context).getSites();
+      SiteResult res = new SiteResult.fromJson(response);
+      if (res.code != 0) {
+        if(res.code == 20000) {
+          _controller.clear();
+        }
+        _controller2.clear();
+        Func.showMessage(res.message);
+      } else {
+        setMemoryCache<List<Site>>(cacheKey, res.response);
+        setState(() {
+          _siteList = res.response;
+
+          if(_defSite == null && _siteList != null && _siteList.length > 0) {
+            _defSite = _siteList.first;
+          }
+        });
+      }
+    } catch (e) {
+      setMemoryCache<List<Site>>(cacheKey, getMemoryCache(cacheKey)??[]);
+      print(e);
+    }
+  }
 
   void _submit() async {
     Func.closeKeyboard(context);
@@ -38,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await getApi(context).login(
-          _controller.text, _controller2.text);
+          _controller.text, _controller2.text, _defSite != null ? _defSite.siteid : '');
       LoginResult result = new LoginResult.fromJson(response);
       if(result.code != 0){
         if(result.code == 20000) {
@@ -72,6 +104,38 @@ class _LoginPageState extends State<LoginPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text('深水光明系统登录', style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center, ),
+          new SizedBox(height: 5.0),
+          new Container(
+            height:20,
+            alignment: AlignmentDirectional.topCenter,
+            child: new MyPopupMenuButton<Site>(
+              key:_key,
+              child: new Row(
+                children: <Widget>[
+                new Text(
+                  _defSite != null ? _defSite.description : '',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              itemBuilder: (BuildContext context) {
+                return _siteList.map((Site site) {
+                  return new PopupMenuItem<Site>(
+                    value: site,
+                    child: new Text(site.description??''),
+                    );
+                  }).toList();
+                },
+                onSelected: (Site value) {
+                  print('status = ${value}');
+                  setState(() {
+                    _defSite = value;
+                  });
+                },
+              )
+          ),
           new SizedBox(height: 40.0),
           TextField(
             controller: _controller,
@@ -139,7 +203,22 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _controller = new TextEditingController(text:  Cache.instance.userName??'');
+    _controller2 = new TextEditingController();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _siteList = getMemoryCache(cacheKey, callback: (){
+      loadSiteDatas();
+    });
+    
+    if(_defSite == null && _siteList != null && _siteList.length > 0) {
+      _defSite = _siteList.first;
+    }
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: new LoadingView(
@@ -160,12 +239,5 @@ class _LoginPageState extends State<LoginPage> {
         },
       ),
     ));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = new TextEditingController(text:  Cache.instance.userName??'');
-    _controller2 = new TextEditingController();
   }
 }
