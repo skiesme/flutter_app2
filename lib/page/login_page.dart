@@ -105,36 +105,15 @@ class _LoginPageState extends State<LoginPage> {
         children: <Widget>[
           Text('深水光明系统登录', style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center, ),
           new SizedBox(height: 5.0),
-          new Container(
-            height:20,
-            alignment: AlignmentDirectional.topCenter,
-            child: new MyPopupMenuButton<Site>(
-              key:_key,
-              child: new Row(
-                children: <Widget>[
-                new Text(
-                  _defSite != null ? _defSite.description : '',
-                  style: TextStyle(fontSize: 14, color: Colors.white),
-                  textAlign: TextAlign.center,
-                ),
-                ],
-                mainAxisAlignment: MainAxisAlignment.center,
-              ),
-              itemBuilder: (BuildContext context) {
-                return _siteList.map((Site site) {
-                  return new PopupMenuItem<Site>(
-                    value: site,
-                    child: new Text(site.description??''),
-                    );
-                  }).toList();
-                },
-                onSelected: (Site value) {
-                  print('status = ${value}');
-                  setState(() {
-                    _defSite = value;
-                  });
-                },
-              )
+          new GestureDetector(
+            onTap: (){
+              sitesDialog(context);
+            },
+            child: new Text(
+              _defSite != null ? _defSite.description : '',
+              style: TextStyle(fontSize: 14, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
           ),
           new SizedBox(height: 40.0),
           TextField(
@@ -195,11 +174,30 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _submit
           ),
           new SizedBox(height: 120.0),
-
-
         ],
       ),
     );
+  }
+
+  Widget sitesDialog(ctx) {
+    List<Site> mSiteList = ctx.state._siteList;
+    showDialog(
+        context: ctx,
+        child: new SimpleDialog(
+          contentPadding: const EdgeInsets.all(10.0),
+          title: new  Text('选择水厂', style: new TextStyle(fontSize: 18.0, color: Colors.black), textAlign: TextAlign.center, ),
+          children: mSiteList != null ? mSiteList.map((Site site) {
+            return new ListTile (
+              title: new Text(site.description),
+              onTap: () {
+                Navigator.pop(context, false);
+                setState(() {
+                  ctx.state._defSite = site;               
+                });
+              },
+            );
+          }).toList() : null,
+        ));
   }
 
   @override

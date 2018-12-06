@@ -110,6 +110,7 @@ void clearMemoryCacheWithKeys(String key){
 
 void clearMemoryCache(){
   _memoryCache.clear();
+  _memoryCache = new Map();
 }
 
 class GlobListeners {

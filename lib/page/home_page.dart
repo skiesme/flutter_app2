@@ -315,6 +315,9 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                               Navigator.of(context).pop(false);
                               Cache.instance.remove(KEY_TOKEN);
 
+                              // 清除缓存
+                              clearMemoryCache();
+
                               Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_)=> new LoginPage()));
                             },
                             child: new Text('退出', style: TextStyle(color: Colors.redAccent),),
