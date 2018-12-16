@@ -9,3 +9,5 @@ build/
 .idea/
 
 .flutter-plugins
+
+samex_module/
