@@ -22,35 +22,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   bool _showLoading = false;
   GlobalKey<PopupMenuButtonState<Site>> _key = new GlobalKey();
-  List<Site> _siteList = new List();
-  Site _defSite;
-
-  String get cacheKey => '__Cache.instance.site_list';
-  void loadSiteDatas() async {
-    try {
-      final response = await getApi(context).getSites();
-      SiteResult res = new SiteResult.fromJson(response);
-      if (res.code != 0) {
-        if(res.code == 20000) {
-          _controller.clear();
-        }
-        _controller2.clear();
-        Func.showMessage(res.message);
-      } else {
-        setMemoryCache<List<Site>>(cacheKey, res.response);
-        setState(() {
-          _siteList = res.response;
-
-          if(_defSite == null && _siteList != null && _siteList.length > 0) {
-            _defSite = _siteList.first;
-          }
-        });
-      }
-    } catch (e) {
-      setMemoryCache<List<Site>>(cacheKey, getMemoryCache(cacheKey)??[]);
-      print(e);
-    }
-  }
 
   void _submit() async {
     Func.closeKeyboard(context);
@@ -69,8 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final response = await getApi(context).login(
-          _controller.text, _controller2.text, _defSite != null ? _defSite.siteid : '');
+      final response = await getApi(context).login(_controller.text, _controller2.text);
       LoginResult result = new LoginResult.fromJson(response);
       if(result.code != 0){
         if(result.code == 20000) {
@@ -167,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -177,14 +147,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    _siteList = getMemoryCache(cacheKey, callback: (){
-      loadSiteDatas();
-    });
-    
-    if(_defSite == null && _siteList != null && _siteList.length > 0) {
-      _defSite = _siteList.first;
-    }
-
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       body: new LoadingView(

@@ -17,11 +17,6 @@ import 'package:package_info/package_info.dart';
 Dio _dio = new Dio();
 
 class SaMexApi {
-  // static String ipAndPort = '192.168.60.12:40001';
-  // static String ipAndPort = '172.19.1.63:40001'; // 生产
-
-  // static String ipAndPort = '172.19.1.30:40001'; // 测试
-  // static String ipAndPort = '192.168.50.112:40001';
 
   // static const bool inProduction = true;
   static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
@@ -107,11 +102,10 @@ class SaMexApi {
     return response.data;
   }
 
-  Future<Map> login(String userName, String password, String defsite) async {
+  Future<Map> login(String userName, String password) async {
     Response response =  await _dio.post(baseUrl+'/login', data: json.encode({
       'username': userName,
-      'password': password,
-      'defsite' : defsite
+      'password': password
     }));
     print('login:$baseUrl ${response.data}');
     return response.data;
