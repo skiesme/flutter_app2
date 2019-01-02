@@ -109,12 +109,15 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     if(badges == null) badges = Map();
     List<BottomNavigationBarItem> list = <BottomNavigationBarItem>[];
     int index = 0;
+    double imH = 24.0;
+
     list.add(new BottomNavigationBarItem(
         icon: BadgeIconButton(
           itemCount: badges[OrderType.CM]??0, 
           icon:  new Image.asset(ImageAssets.task_cm, 
-          color:  index == _tabIndex ? Style.primaryColor : Colors.grey, 
-          height: 24.0,)),
+          color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
+          height: imH)
+        ),
         title: Text('报修', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
@@ -122,7 +125,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
           itemCount: badges[OrderType.XJ]??0, 
           icon: new Image.asset(ImageAssets.task_xj, 
           color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
-          height: 24.0)),
+          height: imH)
+        ),
         title: Text('巡检', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     list.add(new BottomNavigationBarItem(
@@ -130,7 +134,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
           itemCount: badges[OrderType.PM]??0, 
           icon: new Image.asset(ImageAssets.task_pm, 
           color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
-          height: 24.0)),
+          height: imH)
+        ),
         title: Text('保养', style: index++ == _tabIndex ? Style.textStyleSelect : Style.textStyleNormal ,)));
 
     return list;

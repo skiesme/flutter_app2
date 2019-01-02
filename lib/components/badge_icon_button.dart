@@ -8,6 +8,8 @@ class BadgeIconButton extends StatefulWidget {
   final Widget icon;
   final bool hideZeroCount;
   final bool animation;
+  final double badgeHeight;
+  final int badgeMax;
 
   BadgeIconButton({
     Key key,
@@ -18,6 +20,8 @@ class BadgeIconButton extends StatefulWidget {
     this.hideZeroCount: true,
     this.badgeColor: Colors.red,
     this.badgeTextColor: Colors.white,
+    this.badgeHeight: 15.0,
+    this.badgeMax: 99
   })  : assert(itemCount >= 0),
         assert(badgeColor != null),
         assert(badgeTextColor != null),
@@ -46,21 +50,23 @@ class BadgeIconButtonState extends State<BadgeIconButton>
     }
 
     Widget child = Material(
-        type: MaterialType.circle,
-        elevation: 2.0,
-        color: widget.badgeColor,
-        child: Padding(
-          // padding: const EdgeInsets.all(5.0),
-          padding: const EdgeInsets.fromLTRB(5, 3, 5, 5),
-          child: Text(
-            widget.itemCount.toString(),
-            style: TextStyle(
-              fontSize: 13.0,
-              color: widget.badgeTextColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ));
+      type: MaterialType.canvas,
+      elevation: 2.0,
+      borderRadius: BorderRadius.all(Radius.circular(widget.badgeHeight * 0.5)),
+      color: widget.badgeColor,
+      child: Container(
+        height: widget.badgeHeight,
+        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        child: Text(
+          widget.itemCount > widget.badgeMax ? "${widget.badgeMax}+" : widget.itemCount.toString(),
+          style: TextStyle(
+            fontSize: 13.0,
+            color: widget.badgeTextColor,
+            fontWeight: FontWeight.bold,
+          )
+        ),
+      )
+    );
 
     return Stack(
           overflow: Overflow.visible,
