@@ -104,17 +104,6 @@ class _LoginPageState extends State<LoginPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Text('深水光明系统登录', style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center, ),
-          new SizedBox(height: 5.0),
-          new GestureDetector(
-            onTap: (){
-              sitesDialog(context);
-            },
-            child: new Text(
-              _defSite != null ? _defSite.description : '',
-              style: TextStyle(fontSize: 14, color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          ),
           new SizedBox(height: 40.0),
           TextField(
             controller: _controller,
@@ -178,28 +167,7 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  Widget sitesDialog(ctx) {
-    List<Site> mSiteList = ctx.state._siteList;
-    showDialog(
-        context: ctx,
-        child: new SimpleDialog(
-          contentPadding: const EdgeInsets.all(10.0),
-          title: new  Text('选择水厂', style: new TextStyle(fontSize: 18.0, color: Colors.black), textAlign: TextAlign.center, ),
-          children: mSiteList != null ? mSiteList.map((Site site) {
-            return new ListTile (
-              title: new Text(site.description),
-              onTap: () {
-                Navigator.pop(context, false);
-                setState(() {
-                  ctx.state._defSite = site;               
-                });
-              },
-            );
-          }).toList() : null,
-        ));
-  }
-
+  
   @override
   void initState() {
     super.initState();
