@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:samex_app/components/orders/hd_orders.dart';
+import 'package:samex_app/components/orders/order_list.dart';
 
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
-import 'package:samex_app/components/order_list.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/data/root_model.dart';
@@ -24,7 +25,7 @@ class TaskPage extends StatefulWidget {
 }
 
 List<PageHelper<OrderShortInfo> > taskPageHelpers = new List();
-List<OrderList> taskOrderLists = new List();
+List<HDOrders> taskOrderLists = new List();
 
 class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin, AfterLayoutMixin<TaskPage> {
 
@@ -85,11 +86,11 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
   void _creatOrderLists() {
     taskOrderLists = new List();
     if(!widget.isTask) {
-      taskOrderLists.add(new OrderList(helper: taskPageHelpers[3], type: OrderType.ALL));
+      taskOrderLists.add(new HDOrders(helper: taskPageHelpers[3], type: OrderType.ALL));
     } else {
-      taskOrderLists.add(new OrderList(helper: taskPageHelpers[0], type: OrderType.CM, key: ValueKey(0)));
-      taskOrderLists.add(new OrderList(helper: taskPageHelpers[1], type: OrderType.XJ, key: ValueKey(1)));
-      taskOrderLists.add(new OrderList(helper: taskPageHelpers[2], type: OrderType.PM, key: ValueKey(2)));
+      taskOrderLists.add(new HDOrders(helper: taskPageHelpers[0], type: OrderType.CM, key: ValueKey(0)));
+      taskOrderLists.add(new HDOrders(helper: taskPageHelpers[1], type: OrderType.XJ, key: ValueKey(1)));
+      taskOrderLists.add(new HDOrders(helper: taskPageHelpers[2], type: OrderType.PM, key: ValueKey(2)));
     }
   }
 
