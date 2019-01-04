@@ -327,8 +327,8 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
           setState(() {
             _isAll = !_isAll;
             if(_isAll){
-              widget.type = _orderTypeItmes[0].type;
-              _selectedStatus = _orderStatusList[0];
+              widget.type = OrderType.ALL;
+              _selectedStatus = _statusList(OrderType.ALL)[0];
             }
           });
         },
