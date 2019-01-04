@@ -110,7 +110,7 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   bool _expend = false;
   TextEditingController _searchQuery = new TextEditingController(text: '');
   _OrderStatusItem _selectedStatus;
-  static const double padding = 5.0;
+  static const double padding = 3.0;
   static const double ICON_SIZE = 16.0;
   static const itemPadding = const EdgeInsets.symmetric(horizontal: padding, vertical: padding);
 
@@ -260,7 +260,7 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
     }
 
     return Container(
-      height: 35,
+      height: 30,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -551,7 +551,7 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
           },
           elevation: 2.0,
           shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(4.0)),
-          padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 24.0),
+          padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 24.0),
           color: Colors.blueAccent,
           child: Text('确定', style: TextStyle(color: Colors.white),)
         )
