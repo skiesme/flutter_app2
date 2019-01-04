@@ -48,7 +48,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     super.initState();
 
     setup();
-
     _selectedtType = widget.type;
 
     _scrollController = widget.helper.createController();
@@ -65,6 +64,10 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   void afterFirstLayout(BuildContext context) {
     setState(() {
       _queryInfo = _orderOptions.def;
+
+      if(_orderOptions != null && _orderOptions.def != null) {
+        _selectedtType = _orderOptions.def.type;
+      }
     });
 
     if(_scrollController.initialScrollOffset > 0){
@@ -139,6 +142,14 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       _query().isEmpty ? refreshView : view
     ];
 
+    if(list.length == 0){
+      children.add(
+        new Center(
+          child: (widget.helper.inital && _query().isEmpty) ? CircularProgressIndicator() : Text('没发现任务')
+        )
+      );
+    }
+
     return new Container(
       color: const Color(0xFFF0F0F0),
       child: GestureDetector(
@@ -196,32 +207,16 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         return;
       }
 
-      int time = 0;
-      int startTime = 0;
+      int time = _queryInfo.endTime;
+      int startTime = _queryInfo.startTime;
 
-      if(widget.type == OrderType.ALL){
-        time = _queryInfo.endTime;
-        startTime = _queryInfo.startTime;
-
-        if(older == 0 && widget.helper.itemCount() > 0) {
-          var data = widget.helper.datas[0];
-          startTime = data.reportDate;
-        }
-
-        if(older == 1 && widget.helper.itemCount() > 0){
-          var data = widget.helper.datas[widget.helper.itemCount() - 1];
-          time = data.reportDate;
-        }
-      } else {
-        if(widget.helper.itemCount() > 0){
-          var data = widget.helper.datas[0];
-          time = data.reportDate;
-        }
-
-        if(older == 1 && widget.helper.itemCount() > 0){
-          var data = widget.helper.datas[widget.helper.itemCount() - 1];
-          time = data.reportDate;
-        }
+      if(older == 0 && widget.helper.itemCount() > 0) {
+        var data = widget.helper.datas[0];
+        startTime = data.reportDate;
+      }
+      if(older == 1 && widget.helper.itemCount() > 0){
+        var data = widget.helper.datas[widget.helper.itemCount() - 1];
+        time = data.reportDate;
       }
 
       _canLoadMore = false;
@@ -245,11 +240,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
-
-        if(widget.type == OrderType.ALL) {
-//          setMemoryCache<FilterOption>(option_cache_key, _option);
-        }
-
         List<OrderShortInfo> info = result.response??[];
         if(info.length > 0){
           print('列表size: ${info.length}');

@@ -68,6 +68,7 @@ class _OrderStatusItem {
 
 /** HDOrderOptionsResult */
 class HDOrderOptionsResult {
+  OrderType type;
   String query;
   bool isAll; // 所有工单
   int startTime;
@@ -79,10 +80,12 @@ class HDOrderOptionsResult {
   int task;
   int count;
 
-  HDOrderOptionsResult({this.query, this.isAll, this.startTime, this.endTime, this.isUp, this.workType, this.status, this.task, this.count});
+  HDOrderOptionsResult({this.type, this.query, this.isAll, this.startTime, this.endTime, this.isUp, this.workType, this.status, this.task, this.count});
 }
 
 /** HDOrderOptions */
+const option_cache_key = 'filter_option_key';
+
 class HDOrderOptions extends StatefulWidget {
   HDOrderOptionsState _state;
   OrderType type;
@@ -98,6 +101,11 @@ class HDOrderOptions extends StatefulWidget {
   State<StatefulWidget> createState() {
     _state = new HDOrderOptionsState();
     return _state;
+  }
+
+  void cached(HDOrderOptionsResult res) {
+    def = res;
+    setMemoryCache<HDOrderOptionsResult>(option_cache_key, res);
   }
 }
 
@@ -141,18 +149,31 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
   void _setupDatas() {
     _selectedStatus = _statusList(widget.type)[0];
-
-    widget.def = HDOrderOptionsResult(
-      query: _searchQuery?.text,
-      isAll: _isAll,
-      startTime: _startTime,
-      endTime: _endTime,
-      isUp: _isUp,
-      workType: _workType(),
-      status: _status(),
-      task: _task(),
-      count: _count()
-    );
+    widget.def = getMemoryCache<HDOrderOptionsResult>(option_cache_key, expired: false);
+    if (widget.def == null){
+      widget.def = HDOrderOptionsResult(
+        type: widget.type,
+        query: _searchQuery?.text,
+        isAll: _isAll,
+        startTime: _startTime,
+        endTime: _endTime,
+        isUp: _isUp,
+        workType: _workType(),
+        status: _statusKey(),
+        task: _task(),
+        count: _count()
+      );
+    } else {
+      setState(() {        
+        widget.type = widget.def.type;
+        _selectedStatus = _status(widget.def.status);
+        _searchQuery.text = widget.def.query;
+        _isAll = widget.def.isAll;
+        _startTime = widget.def.startTime;
+        _endTime = widget.def.endTime;
+        _isUp = widget.def.isUp;
+      });
+    }
   }
 
   String _workType() {
@@ -176,8 +197,12 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
     }
   }
 
-  String _status() {
+  String _statusKey() {
     return _selectedStatus.key;
+  }
+
+  _OrderStatusItem _status(String key) {
+    return _statusList(widget.type).where((e) => e.key == key).toList().first;
   }
 
   int _task() {
@@ -536,16 +561,18 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
             if(widget.onSureBtnClicked != null) {
               // option -> model
               HDOrderOptionsResult res = new HDOrderOptionsResult(
+                type: widget.type,
                 query: _searchQuery?.text,
                 isAll: _isAll,
                 startTime: _startTime,
                 endTime: _endTime,
                 isUp: _isUp,
                 workType: _workType(),
-                status: _status(),
+                status: _statusKey(),
                 task: _task(),
                 count: _count()
               );
+              widget.cached(res);
               widget.onSureBtnClicked(res);
             }
           },
