@@ -14,6 +14,7 @@ final List<OrderItem> _orderTypeItmes = <OrderItem>[
 ];
 
 final List<OrderItem> _orderXJTypeSubItems = <OrderItem>[
+  OrderItem(OrderType.XJ, '全部巡检', null),
   OrderItem(OrderType.XJ1, '一级巡检', null),
   OrderItem(OrderType.XJ2, '二级巡检', null),
   OrderItem(OrderType.XJ3, '三级巡检', null),
@@ -73,15 +74,20 @@ class HDOrderOptionsResult {
   int endTime;
   bool isUp; // 是否为升序
 
-  HDOrderOptionsResult(this.query, this.isAll, this.startTime, this.endTime, this.isUp);
+  String workType; // 工单类型
+  String status; // 选择的状态
+  int task;
+  int count;
+
+  HDOrderOptionsResult({this.query, this.isAll, this.startTime, this.endTime, this.isUp, this.workType, this.status, this.task, this.count});
 }
 
 /** HDOrderOptions */
 class HDOrderOptions extends StatefulWidget {
-
   HDOrderOptionsState _state;
   OrderType type;
   int badgeCount = 0;
+  HDOrderOptionsResult def;
 
   final onSureBtnClicked;
   final onTimeSortChanged;
@@ -96,14 +102,13 @@ class HDOrderOptions extends StatefulWidget {
 }
 
 class HDOrderOptionsState extends State<HDOrderOptions> {
-  String _query = '';
-  bool _isAll = false; // 是否选择所有工单
+  bool _isAll = true;
   int _startTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 - 365*24*60*60;
   int _endTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 +24*60*60;
-  bool _isUp = true; // 是否为升序
+  bool _isUp = false;
 
   bool _expend = false;
-  TextEditingController _searchQuery;
+  TextEditingController _searchQuery = new TextEditingController(text: '');
   _OrderStatusItem _selectedStatus;
   static const double padding = 5.0;
   static const double ICON_SIZE = 16.0;
@@ -131,34 +136,27 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   @override
   void dispose() {
     super.dispose();
+    _searchQuery?.dispose();
   }
 
   void _setupDatas() {
-    // switch(widget.type){
-    //   case OrderType.PM:
-    //     // _option.status = _orderStatusList[2];
-    //     break;
-    //   case OrderType.XJ:
-    //     // _option.status = _orderStatusList[2];
-    //     break;
-    //   case OrderType.CM:
-    //     // _option.status = _orderStatusList[2];
-    //     break;
-    //   default:
-    //     // FilterOption  option = getMemoryCache<FilterOption>(option_cache_key, expired: false);
-    //     // if(option != null){
-    //     //   _option = option;
-    //     // }
-    //     // _option.type = _orderTypeList[0];
-    //     // _option.status = _orderStatusList[0];
-    //     // _searchQuery = new TextEditingController(text: '');
-    //     break;
-    // }
     _selectedStatus = _statusList(widget.type)[0];
+
+    widget.def = HDOrderOptionsResult(
+      query: _searchQuery?.text,
+      isAll: _isAll,
+      startTime: _startTime,
+      endTime: _endTime,
+      isUp: _isUp,
+      workType: _workType(),
+      status: _status(),
+      task: _task(),
+      count: _count()
+    );
   }
 
-  String _workType(OrderType type){
-    switch (type){
+  String _workType() {
+    switch (widget.type){
       case OrderType.PM:
         return 'PM';
       case OrderType.CM:
@@ -176,6 +174,18 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
       default:
         return '';
     }
+  }
+
+  String _status() {
+    return _selectedStatus.key;
+  }
+
+  int _task() {
+    return widget.type == OrderType.ALL ? 0: 1;
+  }
+
+  int _count() {
+    return widget.type == OrderType.ALL ? 20 :100;
   }
 
   String _typeName(OrderType type){
@@ -522,7 +532,17 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
             if(widget.onSureBtnClicked != null) {
               // option -> model
-              HDOrderOptionsResult res = new HDOrderOptionsResult(_query, _isAll, _startTime, _endTime, _isUp);
+              HDOrderOptionsResult res = new HDOrderOptionsResult(
+                query: _searchQuery?.text,
+                isAll: _isAll,
+                startTime: _startTime,
+                endTime: _endTime,
+                isUp: _isUp,
+                workType: _workType(),
+                status: _status(),
+                task: _task(),
+                count: _count()
+              );
               widget.onSureBtnClicked(res);
             }
           },

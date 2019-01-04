@@ -36,8 +36,8 @@ class CMHistoryData {
   String worktype;
   int actfinish;
 
-  CMHistoryData({this.wonum, this.lead, this.status, this.actfinish});
 
+  CMHistoryData({this.wonum, this.lead, this.status, this.actfinish});
   CMHistoryData.fromJson(Map<String, dynamic> json) {
     wonum = json['wonum'];
     lead = json['lead'];

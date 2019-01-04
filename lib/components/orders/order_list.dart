@@ -1013,17 +1013,22 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       }
     });
 
-    Widget view = Scrollbar(child: new ListView.builder(
+    Widget view = Scrollbar(
+      child: new ListView.builder(
         physics: _query.isEmpty ? const AlwaysScrollableScrollPhysics() : new ClampingScrollPhysics(),
         controller: _scrollController,
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index){
           return Container(
-              color:  Colors.transparent,
-              padding: EdgeInsets.symmetric(vertical: 5.0),
-              child: Card(
-                  child:_getCell(list[index], index)));
-        }));
+            color:  Colors.transparent,
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: Card(
+              child:_getCell(list[index], index)
+            )
+          );
+        }
+      )
+    );
 
     if(widget.type == OrderType.ALL){
       view = Column(
