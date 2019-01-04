@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:samex_app/components/orders/hd_order_option.dart';
@@ -21,7 +23,6 @@ class HDOrders extends StatefulWidget {
     state = new HDOrdersState();
     return state;
   }
-
 }
 
 class HDOrdersState extends State<HDOrders> {
@@ -31,11 +32,18 @@ class HDOrdersState extends State<HDOrders> {
   void initState() {
     super.initState();
 
-    orderOptions = new HDOrderOptions(type: widget.type,);
+    orderOptions = new HDOrderOptions(
+      type: widget.type,
+      badgeCount: 10,
+      onSureBtnClicked: (res) => optionSureClickedHandle(res),
+      onTimeSortChanged: (isUp) => optionTimeSortChangedHandle(isUp),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    // orderOptions.badgeCount = Random().nextInt(100);
+    
     return new Container(
         color: const Color(0xFFF0F0F0),
         child: GestureDetector(
@@ -51,6 +59,14 @@ class HDOrdersState extends State<HDOrders> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void optionSureClickedHandle(HDOrderOptionsResult res) {
+    print("option query:${res.query}, isAll:${res.isAll}, startTime:${res.startTime}, endTime:${res.endTime}, isUp:${res.isUp}");
+  }
+  void optionTimeSortChangedHandle(bool isTimeUp) {
+    String res = isTimeUp ? 'Yes' : 'No';
+    print("current is tiem up? ${res}!");
   }
 
 }
