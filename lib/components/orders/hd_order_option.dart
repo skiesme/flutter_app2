@@ -244,16 +244,17 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
   /** FilterOptionView */
   Widget _titleView() {
+    bool showBadge = widget.badgeCount > 0;
 
     Widget badge() {
-      String badgeStr = widget.badgeCount > 0 ? widget.badgeCount.toString() : '';
+      String badgeStr = showBadge ? widget.badgeCount.toString() : '';
       return Material(color: Colors.transparent,
         elevation: 2.0,
-        child: new Container(
+        child: Container(
           height: 20.0,
           padding: EdgeInsets.all(2.0),
-          decoration: new BoxDecoration(color: const Color(0xFFFF232D), borderRadius: new BorderRadius.circular(5.0)),
-          child: Center( child: Text('${badgeStr}', style: new TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,)),
+          decoration: BoxDecoration(color: const Color(0xFFFF232D), borderRadius: BorderRadius.circular(5.0)),
+          child: Center(child: Text('${badgeStr}', style: TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,))
         ),
       );
     }
@@ -264,7 +265,7 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          badge(),
+          showBadge ? badge() : Center(),
           Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
           Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
         ],
@@ -278,15 +279,17 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
       child: Row (
         children: <Widget>[
           Text('内容过滤: ', style: const TextStyle(color: Colors.black87)),
-          Expanded( child: new TextField(
-            controller: _searchQuery,
-            decoration: const InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-              hintText: '输入工单号/资产编号进行查询',
-              border: InputBorder.none,
-            ),
-            style: const TextStyle(color: Colors.black87, fontSize: 16.0),
-          ))
+          Expanded( 
+            child: TextField(
+              controller: _searchQuery,
+              decoration: const InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+                hintText: '输入工单号/资产编号进行查询',
+                border: InputBorder.none,
+              ),
+              style: const TextStyle(color: Colors.black87, fontSize: 16.0),
+            )
+          )
         ],
       ),
     );
