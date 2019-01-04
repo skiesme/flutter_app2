@@ -10,6 +10,7 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/steps.dart';
+import 'package:samex_app/page/task_detail_page.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
@@ -540,8 +541,11 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     }
 
     return SimpleButton(
-      onTap: (){
-
+      onTap: () async {
+        Navigator.push(context, new MaterialPageRoute(
+          builder: (_) => new TaskDetailPage(info:  info,),
+          settings: RouteSettings(name: TaskDetailPage.path)
+        ));
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
