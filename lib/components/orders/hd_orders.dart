@@ -48,6 +48,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     super.initState();
 
     setup();
+    widget.helper.inital = true;
     _selectedtType = widget.type;
 
     _scrollController = widget.helper.createController();
@@ -84,7 +85,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         return;
       }
     });
-
     Future.delayed(Duration.zero,() =>_handleLoadDatas());
   }
 
@@ -145,7 +145,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     if(list.length == 0){
       children.add(
         new Center(
-          child: (widget.helper.inital && _query().isEmpty) ? CircularProgressIndicator() : Text('没发现任务')
+          child: widget.helper.inital ? CircularProgressIndicator() : Text('没发现任务')
         )
       );
     }
