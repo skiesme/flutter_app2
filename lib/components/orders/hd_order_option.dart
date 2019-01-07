@@ -87,6 +87,7 @@ class HDOrderOptionsResult {
 const option_cache_key = 'filter_option_key';
 
 class HDOrderOptions extends StatefulWidget {
+  bool showView = false;
   HDOrderOptionsState _state;
   OrderType type;
   int badgeCount = 0;
@@ -95,7 +96,8 @@ class HDOrderOptions extends StatefulWidget {
   final onSureBtnClicked;
   final onTimeSortChanged;
 
-  HDOrderOptions({Key key, @required this.type, this.badgeCount, this.onSureBtnClicked, this.onTimeSortChanged}) :super(key:key);
+  HDOrderOptions({Key key, @required this.showView, @required this.type, this.badgeCount, this.onSureBtnClicked, this.onTimeSortChanged}) :super(key:key);
+
 
   @override
   State<StatefulWidget> createState() {
@@ -132,12 +134,14 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
   @override
   Widget build(BuildContext context) {
+    
+    List<Widget> children = widget.showView ? <Widget>[
+      Card( child: _filterOptionView()),
+      Card( child: _sortOptionView())
+    ] : new List();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Card( child: _filterOptionView()),
-        Card( child: _sortOptionView())
-      ],
+      children: children,
     );
   }
 

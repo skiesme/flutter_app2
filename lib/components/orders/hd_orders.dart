@@ -36,6 +36,8 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   static const double _padding = 16.0;
   static const force_scroller_head = 'force_scroller_head';
 
+  bool _showOptionView = false;
+
   HDOrderOptions _orderOptions;
   HDOrderOptionsResult _queryInfo;
   bool _canLoadMore = true;
@@ -48,17 +50,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     super.initState();
 
     setup();
-    widget.helper.inital = true;
-    _selectedtType = widget.type;
-
-    _scrollController = widget.helper.createController();
-    _scrollController.addListener((){
-      if(_scrollController.offset > context.size.height){
-        globalListeners.boolChanges(ChangeBool_Scroll, true);
-      } else {
-        globalListeners.boolChanges(ChangeBool_Scroll, false);
-      }
-    });
   }
 
   @override
@@ -108,24 +99,21 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       )
     );
 
-    Widget view = listView;
-
     _orderOptions = HDOrderOptions(
+      showView: _showOptionView,
       type: _selectedtType,
       badgeCount: _filterDatas.length,
       onSureBtnClicked: (res) => optionSureClickedHandle(res),
       onTimeSortChanged: (isUp) => optionTimeSortChangedHandle(isUp),
     );
 
-    if(widget.type == OrderType.ALL){
-      view = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _orderOptions,
-          Expanded(child:view),
-        ],
-      );
-    }
+    Widget view = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _orderOptions,
+        Expanded(child:listView),
+      ],
+    );
 
     Widget refreshView = RefreshIndicator(
         onRefresh: _handleLoadNewDatas,
@@ -168,9 +156,23 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
 
   void setup() {
+    _selectedtType = widget.type;
+    _showOptionView = widget.type == OrderType.ALL;
+
     widget.helper.clear();
     setState(() {
       _filterDatas = filter();
+    });
+
+    widget.helper.inital = true;
+
+    _scrollController = widget.helper.createController();
+    _scrollController.addListener((){
+      if(_scrollController.offset > context.size.height){
+        globalListeners.boolChanges(ChangeBool_Scroll, true);
+      } else {
+        globalListeners.boolChanges(ChangeBool_Scroll, false);
+      }
     });
   }
 
