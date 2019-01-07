@@ -20,8 +20,8 @@ class SaMexApi {
 
   // static const bool inProduction = true;
   static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
-  static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
-  // static String ipAndPort = '192.168.60.182:40001'; // 嘉兴测试
+ static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
+  //  static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
 
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
@@ -99,6 +99,14 @@ class SaMexApi {
     print(uri.toString());
     Response response = await _dio.get(uri.toString(), options: _options());
     print('${uri.toString()}: ${response.data}');
+    return response.data;
+  }
+
+  Future<Map> changeSite(String siteID) async {
+    Response response =  await _dio.post(baseUrl+'/changedefsite', data: json.encode({
+      'defsite': siteID,
+    }), options: _options());
+    print('changedefsite:$baseUrl ${response.data}');
     return response.data;
   }
 
@@ -218,7 +226,7 @@ class SaMexApi {
     String type='',           // 工单类型
     int time = 0,             // 末尾时间点
     int count = 20,           // 数量
-    int older = 0,            // 前/后
+    int older = 0,            // 前/后l
     int start = 0,            // 开始时间点
     String query= '',         // 搜索内容(工单编号/资产编号)
     int all = 0,              // 0: 跟账号相关  1: 全部
