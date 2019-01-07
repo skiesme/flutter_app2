@@ -114,7 +114,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
 
     list.add(new BottomNavigationBarItem(
         icon: BadgeIconButton(
-          itemCount: badges[OrderType.CM]??0, 
+          itemCount: 9, 
+          // itemCount: badges[OrderType.CM]??0, 
           icon:  new Image.asset(ImageAssets.task_cm, 
           color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
           height: imH)
@@ -123,7 +124,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
 
     list.add(new BottomNavigationBarItem(
         icon: BadgeIconButton(
-          itemCount: badges[OrderType.XJ]??0, 
+          itemCount: 20, 
+          // itemCount: badges[OrderType.XJ]??0, 
           icon: new Image.asset(ImageAssets.task_xj, 
           color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
           height: imH)
@@ -132,7 +134,8 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
 
     list.add(new BottomNavigationBarItem(
         icon: BadgeIconButton(
-          itemCount: badges[OrderType.PM]??0, 
+          itemCount: 120, 
+          // itemCount: badges[OrderType.PM]??0, 
           icon: new Image.asset(ImageAssets.task_pm, 
           color:  index == _tabIndex ? Style.primaryColor : Colors.grey,
           height: imH)
