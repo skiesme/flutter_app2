@@ -1,3 +1,4 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/site.dart';
 import 'package:samex_app/model/user.dart';
@@ -44,20 +45,66 @@ class SettingsPage extends StatefulWidget {
   _SettingsPageState createState() => new _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends State<SettingsPage> with AfterLayoutMixin<SettingsPage>  {
   List<Site> _siteList = new List();
-  UserInfo _user;
-  String _defSite; 
+  String _defSite = Cache.instance.site; 
   GalleryTextScaleValue _textScaleFactor = GalleryTextScaleValue(null, '系统默认');
 
   String get cacheKey => '__Cache.instance.site_list';
+  @override
+  void initState() {
+    super.initState();
+    _siteList = getMemoryCache<List<Site> >(cacheKey, expired: false);
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    if(_siteList == null || _siteList.length == 0) {
+      loadSiteDatas();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    
+    if(_defSite == null && _siteList != null && _siteList.length > 0) {
+      _defSite = _siteList.first.description;
+    }
+    
+    double _scale = Cache.instance.textScaleFactor;
+    if(_scale != null){
+      for(int i = 1; i < kAllGalleryTextScaleValues.length ; i++){
+        if((kAllGalleryTextScaleValues[i].scale * 10).toInt() == (_scale*10).toInt()){
+          _textScaleFactor = kAllGalleryTextScaleValues[i];
+          break;
+        }
+      }
+    }
+
+    print('_scale=$_scale, ${_textScaleFactor.scale??0} - ${_textScaleFactor.label}');
+
+    return new Scaffold(
+      appBar: new AppBar(
+        title: Text('设置'),
+      ),
+      body: new Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            _fontSizeItem(),
+            Divider(height: 1),
+            _sitesSelectItem(),
+            Divider(height: 1),
+          ],
+        ),
+      )
+    );
+  }
   void loadSiteDatas() async {
     try {
       final response = await getApi(context).getSites();
       SiteResult res = new SiteResult.fromJson(response);
       if (res.code != 0) {
-        if(res.code == 20000) {
-        }
         Func.showMessage(res.message);
       } else {
         setMemoryCache<List<Site>>(cacheKey, res.response);
@@ -76,32 +123,20 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void updateUserSite(String siteID) async {
-        // TODO -- 增加接口 用户水厂 修改
-    // try {
-    //   final response = await getApi(context).getSites();
-    //   SiteResult res = new SiteResult.fromJson(response);
-    //   if (res.code != 0) {
-    //     if(res.code == 20000) {
-    //     }
-    //     Func.showMessage(res.message);
-    //   } else {
-    //   }
-    // } catch (e) {
-    //   print(e);
-    // }
-  }
-
-
-  String _defaultSiteName() {
-    String siteID = Cache.instance.site??'';
-    String name = '';
-    for (Site item in _siteList) {
-      if (item.siteid == siteID) {
-        name = item.description; 
-        break;
-      }
-    }
-    return name;
+     try {
+       final response = await getApi(context).changeSite(siteID);
+       UserResult res = new UserResult.fromJson(response);
+       if (res.code != 0) {
+         Func.showMessage(res.message);
+       } else {
+         Func.showMessage('水厂修改成功！');
+         setState(() {
+          Cache.instance.setStringValue(KEY_SITE, res.response.defsite);
+        });
+       }
+     } catch (e) {
+       print(e);
+     }
   }
 
   Widget _fontSizeItem() {
@@ -147,9 +182,48 @@ class _SettingsPageState extends State<SettingsPage> {
   }
   
   Widget _sitesSelectItem() {
-    String title = _defaultSiteName();
+    if(_siteList ==null) {
+      return ListTile();
+    }
 
-    return new ListTile(
+    String title = '';
+    String siteID = Cache.instance.site;
+    if (siteID != null) {
+      for (Site item in _siteList) {
+        if (item.siteid == siteID) {
+          title = item.description; 
+          break;
+        }
+      }
+    }
+
+    void showChooseDialog(BuildContext context) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return StatefulBuilder(
+                builder: (context, state) {
+                  return SimpleDialog(
+                    contentPadding: const EdgeInsets.all(10.0),
+                    title: new  Text('选择水厂', style: new TextStyle(fontSize: 18.0, color: Colors.black), textAlign: TextAlign.center),
+                    children: _siteList.map((Site site) {
+                      return new ListTile (
+                        trailing: site.description == title ? const Icon(Icons.check) : null,
+                        title: new Text(site.description),
+                        onTap: () {
+                          updateUserSite(site.siteid);
+                          Navigator.pop(context);
+                        },
+                      );
+                    }).toList(),
+                  );
+                },
+            );
+          }
+      );
+    }
+
+    return ListTile(
       trailing: Wrap(
         alignment: WrapAlignment.center,
         runAlignment: WrapAlignment.center,
@@ -162,72 +236,8 @@ class _SettingsPageState extends State<SettingsPage> {
       title: const Text('用户水厂'),
       enabled: true,
       onTap: () { 
-        showDialog(
-            context: context,
-            builder: (context) {
-              return StatefulBuilder(
-                  builder: (context, state) {
-                    return SimpleDialog(
-                      contentPadding: const EdgeInsets.all(10.0),
-                      title: new  Text('选择水厂', style: new TextStyle(fontSize: 18.0, color: Colors.black), textAlign: TextAlign.center),
-                      children: _siteList.map((Site site) {
-                        return new ListTile (
-                          trailing: site.description == title ? const Icon(Icons.check) : null,
-                          title: new Text(site.description),
-                          onTap: () {
-                            updateUserSite(site.siteid);
-                            Navigator.pop(context);
-                          },
-                        );
-                      }).toList(),
-                    );
-                  },
-              );
-            }
-        );
+        showChooseDialog(context);
       }
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _user = getUserInfo(context);
-
-    _siteList = getMemoryCache(cacheKey, callback: (){
-      loadSiteDatas();
-    });
-    
-    if(_defSite == null && _siteList != null && _siteList.length > 0) {
-      _defSite = _siteList.first.description;
-    }
-    
-    double _scale = Cache.instance.textScaleFactor;
-    if(_scale != null){
-      for(int i = 1; i < kAllGalleryTextScaleValues.length ; i++){
-        if((kAllGalleryTextScaleValues[i].scale * 10).toInt() == (_scale*10).toInt()){
-          _textScaleFactor = kAllGalleryTextScaleValues[i];
-          break;
-        }
-      }
-    }
-
-    print('_scale=$_scale, ${_textScaleFactor.scale??0} - ${_textScaleFactor.label}');
-
-    return new Scaffold(
-      appBar: new AppBar(
-        title: Text('设置'),
-      ),
-      body: new Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            _fontSizeItem(),
-            Divider(height: 1),
-            _sitesSelectItem(),
-            Divider(height: 1),
-          ],
-        ),
-      )
     );
   }
 }
