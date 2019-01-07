@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class BadgeIconButton extends StatefulWidget {
@@ -48,41 +50,35 @@ class BadgeIconButtonState extends State<BadgeIconButton>
     if (widget.hideZeroCount && widget.itemCount == 0) {
       return widget.icon;
     }
+
+    double badgeH = Platform.isAndroid ? widget.badgeHeight : widget.badgeHeight + 4;
+    double radius = (badgeH + 4) * 0.5;
     
-    double badgeH = widget.badgeHeight + 4;
-    Widget child = Material(
-      type: MaterialType.canvas,
-      elevation: 2.0,
-      borderRadius: BorderRadius.all(Radius.circular(badgeH * 0.5)),
-      color: widget.badgeColor,
+    String badgeStr = widget.itemCount > widget.badgeMax ? "${widget.badgeMax}+" : widget.itemCount.toString();
+    Widget badgeView = Material(
+      color: Colors.transparent,
       child: Container(
         height: badgeH,
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5.5),
-        child: Text(
-          widget.itemCount > widget.badgeMax ? "${widget.badgeMax}+" : widget.itemCount.toString(),
-          style: TextStyle(
-            fontSize: 13.0,
-            color: widget.badgeTextColor,
-            fontWeight: FontWeight.bold,
-          )
-        ),
-      )
+        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 4.0),
+        decoration: BoxDecoration(color: const Color(0xFFFF232D), borderRadius: BorderRadius.circular(radius)),
+        child: Center(child: Text('${badgeStr}', style: TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,))
+      ),
     );
 
     return Stack(
-          overflow: Overflow.visible,
-          children: [
-            widget.icon,
-            Positioned(
-              top: -8.0,
-              right: -16.0,
-              child: widget.animation ? SlideTransition(
-                position: _badgePositionTween.animate(_animation),
-                child: child,
-              ) : child,
-            ),
-          ],
-        );
+      overflow: Overflow.visible,
+      children: [
+        widget.icon,
+        Positioned(
+          top: -8.0,
+          right: -16.0,
+          child: widget.animation ? SlideTransition(
+            position: _badgePositionTween.animate(_animation),
+            child: badgeView,
+          ) : badgeView,
+        ),
+      ],
+    );
   }
 
   @override
