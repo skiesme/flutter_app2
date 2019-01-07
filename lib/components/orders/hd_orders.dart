@@ -208,33 +208,50 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 //        print('已经在loadMore了...');
         return;
       }
+      int time = 0;
+      int startTime = 0;
 
-      int time = _queryInfo.endTime;
-      int startTime = _queryInfo.startTime;
+      if(_showOptionView){
+        time = _queryInfo.endTime;
+        startTime = _queryInfo.startTime;
 
-      if(older == 0 && widget.helper.itemCount() > 0) {
-        var data = widget.helper.datas[0];
-        startTime = data.reportDate;
-      }
-      if(older == 1 && widget.helper.itemCount() > 0){
-        var data = widget.helper.datas[widget.helper.itemCount() - 1];
-        time = data.reportDate;
+        if(older == 0 && widget.helper.itemCount() > 0) {
+          var data = widget.helper.datas[0];
+          startTime = data.reportDate;
+        }
+        if(older == 1 && widget.helper.itemCount() > 0){
+          var data = widget.helper.datas[widget.helper.itemCount() - 1];
+          time = data.reportDate;
+        }
+        
+      } else {
+        if(older == 0 && widget.helper.itemCount() > 0) {
+          var data = widget.helper.datas[0];
+          startTime = data.reportDate;
+        }
+        if(older == 1 && widget.helper.itemCount() > 0){
+          var data = widget.helper.datas[widget.helper.itemCount() - 1];
+          time = data.reportDate;
+        }
       }
 
       _canLoadMore = false;
 
       print('hd-> query:${_queryInfo}, older:${older}, time:${time}, startTime:${startTime}');
 
+      int isAll = _queryInfo.isAll ? 0 : 1;
+      String status = _showOptionView ? _queryInfo.status : 'active';
       Map response = await getApi(context).orderList(
-          type:_queryInfo.workType,
-          status: _queryInfo.status,
-          time: time,
-          query: _query(),
-          all: _queryInfo.isAll ? 0 : 1,
-          start: startTime,
-          older: older,
-          task: _queryInfo.task,
-          count: _queryInfo.count);
+        type:_queryInfo.workType,
+        status: status,
+        time: time,
+        query: _query(),
+        all: isAll,
+        start: startTime,
+        older: older,
+        task: _queryInfo.task,
+        count: _queryInfo.count
+      );
       OrderListResult result = new OrderListResult.fromJson(response);
 
       _canLoadMore = true;
@@ -265,7 +282,8 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
           if (widget.type != OrderType.ALL) {
             bloc.badgeChange.add(
-                new BadgeInEvent(widget.helper.itemCount(), widget.type));
+              new BadgeInEvent(widget.helper.itemCount(), widget.type)
+            );
           }
         } catch (e){
           print('badgeChange   error: $e');
