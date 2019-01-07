@@ -47,7 +47,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   List<Site> _siteList = new List();
   UserInfo _user;
-  String _defSite;
+  String _defSite; 
   GalleryTextScaleValue _textScaleFactor = GalleryTextScaleValue(null, '系统默认');
 
   String get cacheKey => '__Cache.instance.site_list';
@@ -93,7 +93,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
 
   String _defaultSiteName() {
-    String siteID = _user.defsite??'';
+    String siteID = Cache.instance.site??'';
     String name = '';
     for (Site item in _siteList) {
       if (item.siteid == siteID) {

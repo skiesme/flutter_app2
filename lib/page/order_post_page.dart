@@ -111,7 +111,12 @@ class _OrderPostPageState extends State<OrderPostPage> {
         Func.showMessage(result.message);
 
       } else {
-        Navigator.pop(context, 'done');
+        if (otherConfig) {
+          Navigator.pop(context, 'done');
+        } else {
+          Navigator.of(context)..pop()..pop();
+        }
+
         Func.showMessage('提交成功');
       }
 
@@ -129,8 +134,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     _assignCode = _data?.displayname;
     return new Scaffold(
         appBar: new AppBar(
@@ -140,7 +143,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
               icon: Icon(Icons.done),
               tooltip: '提交',
               onPressed: (){
-                  _submit();
+               _submit();
               },
             )
           ],

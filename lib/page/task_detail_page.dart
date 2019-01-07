@@ -1,12 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
 
 import 'package:samex_app/data/root_model.dart';
-import 'package:samex_app/model/order_new.dart';
-import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
@@ -25,7 +22,6 @@ import 'package:samex_app/page/work_time_page.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/page/material_new_page.dart';
 import 'package:samex_app/model/order_material.dart';
-import 'package:samex_app/model/cm_attachments.dart';
 import 'package:samex_app/components/badge_icon_button.dart';
 
 class TaskDetailPage extends StatefulWidget {
@@ -527,15 +523,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           if(getModel(context).user.orders > 0){
             getModel(context).user.orders -= 1;
           }
-          Navigator.pop(context, 'done');
-
+          _popDone();
         }
       }
     });
-  }
-
-  List<Widget> getRightActions() {
-    
   }
 
   List<PopupMenuItem<String>> getPopupMenuButton(){
@@ -585,195 +576,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       _getAttachments();
     })??0;
 
-    Widget _getMenus({
-      String preText,
-      Widget content,
-      EdgeInsets padding,
-      CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
-
-    }){
-      return new Container(
-        padding: padding??EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: crossAxisAlignment,
-          children: <Widget>[
-            Text(preText),
-            SizedBox(width: Style.separateHeight,),
-            Expanded(child: content)
-          ],
-        ),
-        decoration: new BoxDecoration(
-            color: Colors.white,
-            border: new Border(
-                bottom: Divider.createBorderSide(context, width: 1.0)
-            )),
-      );
-    }
-
-  // Post
-  void _post() async {
-
-    setState(() {
-      _show = true;
-    });
-    
-    try {
-      // Map response = await getApi(context).postOrder(
-      //     worktype: _data.worktype,
-      //     assetnum: _data.assetnum,
-      //     location: _data.location,
-      //     description: _data.description,
-          
-      //     onProgress: (send, total){
-      //       int percent = ((send / total) * 100).toInt();
-      //       print('received: percent= $percent');
-      //     }
-      // );
-      // OrderNewResult result = new OrderNewResult.fromJson(response);
-      // if (result.code != 0) {
-      //   Func.showMessage(result.message);
-      // } else {
-      //   Func.showMessage('修改成功');
-      //   return;
-      // }
-    } catch (e) {
-      print(e);
-    }
-
-    if (mounted) {
-      setState(() {
-        _show = false;
-      });
-    }
-  }
-
     List<Widget> getBarActions() {
       if (widget.info.actfinish == 0) {
-        // 判断是否为 待批准 报修单
         List<Widget> actions = new List<Widget>();
-        // if(getOrderType(_info?.worktype) == OrderType.CM && _info.status.contains("等待批准")) {
-        //   actions.add(
-        //     new IconButton(
-        //       icon: Icon(Icons.edit),
-        //       tooltip: '编辑',
-        //       onPressed: (){
-        //         showDialog(
-        //           context: context,
-        //           builder: (context) {
-        //               String label = 'test';
-        //               return StatefulBuilder(
-        //                   builder: (context, state) {
-        //                       print('label = $label');
-        //                       return SimpleDialog(
-        //                         title: Text('信息编辑', style: TextStyle(fontSize: 18.0), textAlign: TextAlign.center,),
-        //                         children: <Widget>[
-        //                           _getMenus(preText: '工单编号:', content:  Text(_data.wonum ?? '', style: TextStyle(color: _data.wonum == null ? Colors.grey: Colors.black))),
-        //                           _getMenus(
-        //                             preText: '位置:',
-        //                             padding: EdgeInsets.only(left: 8.0),
-        //                             content: SimpleButton(
-        //                                 padding: EdgeInsets.symmetric(vertical: 8.0),
-        //                                 onTap: () async {
-        //                                   final DescriptionData result = await Navigator.push( context,
-        //                                   new MaterialPageRoute( builder: (context) =>
-        //                                     new ChooseAssetPage(
-        //                                       chooseLocation: true,
-        //                                   )));
-
-        //                                   if (result != null) {
-        //                                     state(() {
-        //                                       _data.location = result.location;
-        //                                       _data.locationDescription = result.locationDescription;
-        //                                     });
-        //                                   }
-        //                                 },
-        //                                 child: Row(
-        //                                   mainAxisAlignment:
-        //                                   MainAxisAlignment.spaceBetween,
-        //                                   children: <Widget>[
-        //                                     Text(
-        //                                       _data.location ?? '请选择位置',
-        //                                       style: TextStyle(
-        //                                           color: _data.location == null
-        //                                               ? Colors.grey
-        //                                               : Colors.black),
-        //                                     ),
-        //                                     Icon(
-        //                                       Icons.navigate_next,
-        //                                       color: Colors.black87,
-        //                                     ),
-        //                                   ],
-        //                                 )
-        //                               )
-        //                             ),
-        //                           _getMenus(
-        //                             preText: '资产:',
-        //                             padding: EdgeInsets.only(left: 8.0),
-        //                             content: SimpleButton(
-        //                                 padding:
-        //                                 EdgeInsets.symmetric(vertical: 8.0),
-        //                                 onTap: () async {
-        //                                   final DescriptionData result =
-        //                                   await Navigator.push( context,
-        //                                   new MaterialPageRoute(
-        //                                       builder: (context) =>
-        //                                       new ChooseAssetPage(
-        //                                         location: _data.location,
-        //                                       )));
-
-        //                                   if (result != null) {
-        //                                     state(() {
-        //                                       _data.assetnum = result.assetnum;
-        //                                       _data.assetDescription = result.description;
-        //                                       _data.location = result.location;
-        //                                       _data.locationDescription = result.locationDescription;
-        //                                     });
-        //                                   }
-        //                                 },
-        //                                 child: Row(
-        //                                   mainAxisAlignment:
-        //                                   MainAxisAlignment.spaceBetween,
-        //                                   children: <Widget>[
-        //                                     Text(
-        //                                       _data.assetnum ?? '请选择资产',
-        //                                       style: TextStyle(
-        //                                           color: _data.assetnum == null
-        //                                               ? Colors.grey
-        //                                               : Colors.black),
-        //                                     ),
-        //                                     Icon(
-        //                                       Icons.navigate_next,
-        //                                       color: Colors.black87,
-        //                                     ),
-        //                                   ],
-        //                                 )
-        //                               )
-        //                             ),
-        //                             SimpleButton(
-        //                               onTap: (){
-        //                                 _post();
-        //                               },
-        //                               elevation: 2.0,
-        //                               shape: new RoundedRectangleBorder(
-        //                               borderRadius: new BorderRadius.circular(4.0)),
-        //                               padding: EdgeInsets.all(4),
-        //                               color: Colors.blueAccent,
-        //                               child: Row(
-        //                                 children: <Widget>[
-        //                                   Text('提交', style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
-        //                                 ],
-        //                               )
-        //                             )
-        //                 ],
-        //               );
-        //             },
-        //           );
-        //         }
-        //       );
-        //     }),
-        //   );
-        // }
-
         // refresh work_flow
         actions.add(
           new PopupMenuButton<String>(
@@ -846,6 +651,48 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   @override
   void reassemble() {
     super.reassemble();
+  }
+
+  void _popDone() {
+    Navigator.popUntil(context, ModalRoute.withName(TaskDetailPage.path));
+    Navigator.pop(context, true);
+  }
+
+  // Post
+  void _post() async {
+
+    setState(() {
+      _show = true;
+    });
+    
+    try {
+      // Map response = await getApi(context).postOrder(
+      //     worktype: _data.worktype,
+      //     assetnum: _data.assetnum,
+      //     location: _data.location,
+      //     description: _data.description,
+          
+      //     onProgress: (send, total){
+      //       int percent = ((send / total) * 100).toInt();
+      //       print('received: percent= $percent');
+      //     }
+      // );
+      // OrderNewResult result = new OrderNewResult.fromJson(response);
+      // if (result.code != 0) {
+      //   Func.showMessage(result.message);
+      // } else {
+      //   Func.showMessage('修改成功');
+      //   return;
+      // }
+    } catch (e) {
+      print(e);
+    }
+
+    if (mounted) {
+      setState(() {
+        _show = false;
+      });
+    }
   }
 
 }
