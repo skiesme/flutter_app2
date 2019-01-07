@@ -280,8 +280,8 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
       return Material(color: Colors.transparent,
         elevation: 2.0,
         child: Container(
-          height: 20.0,
-          padding: EdgeInsets.all(2.0),
+          height: 22.0,
+          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5.0),
           decoration: BoxDecoration(color: const Color(0xFFFF232D), borderRadius: BorderRadius.circular(5.0)),
           child: Center(child: Text('${badgeStr}', style: TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,))
         ),

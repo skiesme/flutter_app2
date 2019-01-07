@@ -48,15 +48,16 @@ class BadgeIconButtonState extends State<BadgeIconButton>
     if (widget.hideZeroCount && widget.itemCount == 0) {
       return widget.icon;
     }
-
+    
+    double badgeH = widget.badgeHeight + 4;
     Widget child = Material(
       type: MaterialType.canvas,
       elevation: 2.0,
-      borderRadius: BorderRadius.all(Radius.circular(widget.badgeHeight * 0.5)),
+      borderRadius: BorderRadius.all(Radius.circular(badgeH * 0.5)),
       color: widget.badgeColor,
       child: Container(
-        height: widget.badgeHeight,
-        padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+        height: badgeH,
+        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5.5),
         child: Text(
           widget.itemCount > widget.badgeMax ? "${widget.badgeMax}+" : widget.itemCount.toString(),
           style: TextStyle(
