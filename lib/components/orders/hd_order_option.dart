@@ -98,7 +98,6 @@ class HDOrderOptions extends StatefulWidget {
 
   HDOrderOptions({Key key, @required this.showView, @required this.type, this.badgeCount, this.onSureBtnClicked, this.onTimeSortChanged}) :super(key:key);
 
-
   @override
   State<StatefulWidget> createState() {
     _state = new HDOrderOptionsState();
@@ -153,7 +152,8 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
   void _setupDatas() {
     _selectedStatus = _statusList(widget.type)[0];
-    widget.def = getMemoryCache<HDOrderOptionsResult>(option_cache_key, expired: false);
+    
+    widget.def = widget.showView ? getMemoryCache<HDOrderOptionsResult>(option_cache_key, expired: false) : null;
     if (widget.def == null){
       widget.def = HDOrderOptionsResult(
         type: widget.type,
