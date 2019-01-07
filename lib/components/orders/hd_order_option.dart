@@ -31,32 +31,32 @@ class OrderItem {
 /** HDOrderOptionsResult */
 final List<_OrderStatusItem> _orderStatusList = <_OrderStatusItem>[
   _OrderStatusItem('', '全部'),
-  _OrderStatusItem('inactive', '已完成'),
   _OrderStatusItem('active', '进行中'),
+  _OrderStatusItem('inactive', '已完成'),
 ];
 
 final List<_OrderStatusItem> _orderCMStatusList = <_OrderStatusItem>[
   _OrderStatusItem('', '全部'),
-  _OrderStatusItem('inactive', '已完成'),
   _OrderStatusItem('待批准', '待批准'),
   _OrderStatusItem('已批准', '已批准'),
   _OrderStatusItem('待验收', '待验收'),
+  _OrderStatusItem('inactive', '已完成'),
 ];
 
 final List<_OrderStatusItem> _orderPMStatusList = <_OrderStatusItem>[
   _OrderStatusItem('', '全部'),
-  _OrderStatusItem('inactive', '已完成'),
   _OrderStatusItem('进行中', '进行中'),
   _OrderStatusItem('待验收', '待验收'),
+  _OrderStatusItem('inactive', '已完成'),
 ];
 
 final List<_OrderStatusItem> _orderALLStatusList = <_OrderStatusItem>[
   _OrderStatusItem('', '全部'),
-  _OrderStatusItem('inactive', '已完成'),
   _OrderStatusItem('进行中', '进行中'),
-  _OrderStatusItem('待验收', '待验收'),
   _OrderStatusItem('待批准', '待批准'),
   _OrderStatusItem('已批准', '已批准'),
+  _OrderStatusItem('待验收', '待验收'),
+  _OrderStatusItem('inactive', '已完成'),
 ];
 
 class _OrderStatusItem {
