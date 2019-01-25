@@ -93,7 +93,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
     super.initState();
 
     _data = widget.data ?? new OrderPostData();
-    _controller = new TextEditingController(text: '');
+    _controller = new TextEditingController(text: _data.description);
     _controller2 = new TextEditingController(text: Cache.instance.userPhone ?? '');
 
     _manager?.stop();

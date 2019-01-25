@@ -74,7 +74,7 @@ class SaMexApi {
     String url = 'http://$ipAndPort/app/version/$projectCode';
 
     Response response =  await _dio.get(url,  options: _option);
-    print('$url: ${response.data}');
+//    print('$url: ${response.data}');
     return response.data;
   }
 
@@ -85,7 +85,7 @@ class SaMexApi {
       url = 'http://$ipAndPort$url';
     }
 
-    print('$url: download');
+//    print('$url: download');
 
     String save = cacheDir.path+'/release.apk';
 
@@ -96,9 +96,9 @@ class SaMexApi {
 
   Future<Map> getSites() async {
     Uri uri = new Uri.http(ipAndPort, '/app/api/site/all');
-    print(uri.toString());
+//    print(uri.toString());
     Response response = await _dio.get(uri.toString(), options: _options());
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
     return response.data;
   }
 
@@ -106,7 +106,7 @@ class SaMexApi {
     Response response =  await _dio.post(baseUrl+'/changedefsite', data: json.encode({
       'defsite': siteID,
     }), options: _options());
-    print('changedefsite:$baseUrl ${response.data}');
+//    print('changedefsite:$baseUrl ${response.data}');
     return response.data;
   }
 
@@ -141,10 +141,10 @@ class SaMexApi {
       "woprof": woprof,
       "faultlev": faultlev,
     });
-    print('submit post: $data');
+//    print('submit post: $data');
 
     Response response =  await _dio.post(baseUrl+'/workflow/submit', data: data, options: _options());
-    print('submit: ${response.data}');
+//    print('submit: ${response.data}');
     return response.data;
   }
 
@@ -156,7 +156,7 @@ class SaMexApi {
     try {
 
       Response response = await _dio.get(url, options: _options());
-      print('user: ${response.data}');
+//      print('user: ${response.data}');
 
       UserResult result = new UserResult.fromJson(response.data);
       if(result.code != 0) {
@@ -174,7 +174,7 @@ class SaMexApi {
 
       }
     } catch (e){
-      print('$url :  $e');
+//      print('$url :  $e');
       Func.showMessage('网络出现异常: 获取用户数据失败!');
     }
 
@@ -189,17 +189,17 @@ class SaMexApi {
     try {
 
       Response response = await _dio.get(url, options: _options());
-      print('user: ${response.data}');
+//      print('user: ${response.data}');
 
       UserResult result = new UserResult.fromJson(response.data);
       if(result.code != 0) {
-        print(result.message);
+//        print(result.message);
       } else {
         info = result.response;
 
       }
     } catch (e){
-      print('$url :  $e');
+//      print('$url :  $e');
 //        Func.showMessage('网络出现异常: 获取用户数据失败!');
     }
 
@@ -211,7 +211,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -247,7 +247,7 @@ class SaMexApi {
     });
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('time: ${new DateTime.now().millisecondsSinceEpoch - now.millisecondsSinceEpoch} - ${uri.toString()}: ${response.data}');
+//    print('time: ${new DateTime.now().millisecondsSinceEpoch - now.millisecondsSinceEpoch} - ${uri.toString()}: ${response.data}');
 
     return response.data;
 
@@ -260,7 +260,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -274,7 +274,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -284,7 +284,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -296,7 +296,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -306,7 +306,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -344,7 +344,7 @@ class SaMexApi {
     FormData formData = new FormData.from(jsonData);
     Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000,
         onProgress: onProgress), cancelToken: token = new CancelToken());
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
     return response.data;
   }
 
@@ -357,7 +357,7 @@ class SaMexApi {
 
     Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000,
         onProgress: onProgress), cancelToken:  token = new CancelToken());
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -392,14 +392,14 @@ class SaMexApi {
       "faultlev": faultlev,
     };
 
-    print('${uri.toString()}: ${jsonData.toString()}, length=${files?.length}');
+//    print('${uri.toString()}: ${jsonData.toString()}, length=${files?.length}');
 
     FormData formData = new FormData.from(jsonData);
 
 
     Response response = await _dio.post(uri.toString(), data: formData, options: _options(connectTimeout: 60000, receiveTimeout: 60000,
         onProgress: onProgress), cancelToken:  token = new CancelToken());
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -407,7 +407,7 @@ class SaMexApi {
 
   Future<Map> postXJ(String woNum) async {
     Response response =  await _dio.post(baseUrl+'/order/xj/$woNum', options: _options());
-    print('postXJ: ${response.data}');
+//    print('postXJ: ${response.data}');
     return response.data;
   }
 
@@ -419,11 +419,11 @@ class SaMexApi {
       'count': '$count'
     });
 
-    print(uri.toString());
+//    print(uri.toString());
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -435,11 +435,11 @@ class SaMexApi {
       'count': '$count'
     });
 
-    print(uri.toString());
+//    print(uri.toString());
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -449,7 +449,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -460,7 +460,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -469,26 +469,26 @@ class SaMexApi {
   Future<Map> postOrderMaterial(OrderMaterialData params) async {
     Response response =  await _dio.post(baseUrl+'/ordermaterial',
         data: json.encode(params.toJson()), options: _options());
-    print('postOrderMaterial: ${response.data}');
+//    print('postOrderMaterial: ${response.data}');
     return response.data;
   }
 
   Future<Map> delOrderMaterial(int id) async {
     Response response =  await _dio.delete(baseUrl+'/ordermaterial/$id', options: _options());
-    print('delOrderMaterial: ${response.data}');
+//    print('delOrderMaterial: ${response.data}');
     return response.data;
   }
 
   Future<Map> postWorkTime(WorkTimeData params) async {
     Response response =  await _dio.post(baseUrl+'/worktime',
         data: json.encode(params.toJson()), options: _options());
-    print('postWorkTime: ${response.data}');
+//    print('postWorkTime: ${response.data}');
     return response.data;
   }
 
   Future<Map> delWorkTime(int id) async {
     Response response =  await _dio.delete(baseUrl+'/worktime/$id', options: _options());
-    print('delWorkTime: ${response.data}');
+//    print('delWorkTime: ${response.data}');
     return response.data;
   }
 
@@ -497,7 +497,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -507,7 +507,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }
@@ -517,7 +517,7 @@ class SaMexApi {
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-    print('${uri.toString()}: ${response.data}');
+//    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }

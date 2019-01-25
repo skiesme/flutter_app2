@@ -75,7 +75,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text('备注: '),
-                        Expanded(child:Text(step.description))
+                        Expanded(child:Text('${step.description??''}\n${step.remark??''}'))
                       ],
                     ) ,),
                   Divider(height: 1.0,),

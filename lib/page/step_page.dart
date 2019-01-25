@@ -131,20 +131,19 @@ class _StepPageState extends State<StepPage>{
               Navigator.popUntil(context, ModalRoute.withName(StepPage.path));
               Navigator.pop(context, true);
             } else {
-              Navigator.pushReplacement(context, new MaterialPageRoute( builder:
-                  (_) {
-                print('${widget.info.toJson().toString()}');
-
-                return new OrderNewPage(
+              Navigator.pushReplacement(context, new MaterialPageRoute( 
+                builder: (_) {
+                  String description = widget.data.description+' '+_status + '\n' + widget.data.remark;
+                  return new OrderNewPage(
                     data: new OrderPostData(
-                        description: widget.data.description+' '+_status,
-                        assetnum: widget.data.assetnum,
-                        location: widget.info?.location,
-                        locationDescription: widget.info?.locationDescription,
-                        assetDescription: widget.data.assetDescription,
-                        images: result.response.images
+                      description: description,
+                      assetnum: widget.data.assetnum,
+                      location: widget.info?.location,
+                      locationDescription: widget.info?.locationDescription,
+                      assetDescription: widget.data.assetDescription,
+                      images: result.response.images
                     )
-                );
+                  );
               }));
             }
 

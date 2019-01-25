@@ -314,7 +314,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(_type != OrderType.XJ){
         list.addAll(<Widget>[
           Text('联系电话: ${_data?.phone ?? ''}'),
-//          Text('优先等级: ${_data?.wopriority ?? ''}'),
           Text('主管人员: ${_data?.supervisor??''}'),
           Text('负责人员: ${_data?.lead ?? ''}'),
         ]);
@@ -326,9 +325,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(_data.woprof.isNotEmpty){
         list.add(Text('报修工单分类: ${_data.woprof}'));
       }
-
-//      list.add(Text('站点编号: ${_data?.lead ?? ''}'));
-
     }
 
     list.add(SizedBox(height: Style.separateHeight,));
@@ -338,13 +334,16 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   void _getAttachments() async {
 
-    try{
+    if (_info == null) {
+      return;
+    }
 
+    try{
 
       var images = new List();
 
+      debugPrint('查询工单步骤 wonum：${_info.wonum??''}, site：${Cache.instance.site}');
       if(getOrderType(_info.worktype) != OrderType.XJ){
-
         Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
         StepsResult result2 = new StepsResult.fromJson(response);
         
@@ -370,11 +369,81 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       }
 
       setMemoryCache(cacheKey2, images.length);
-
-
+      debugPrint('当前工单步骤：${_info.wonum??''}, 附件个数为：${images.length}');
     } catch (e){
-      print (e);
+      debugPrint('获取附件信息失败，$e');
     }
+  }
+
+  Widget _baseInfo() {
+    Widget _attachmentBtn() {
+      bool has = _attachments > 0;
+      if (has) {
+        return BadgeIconButton(
+          itemCount: _attachments,
+          animation: false,
+          icon: SimpleButton(
+            onTap: (){
+              Navigator.push(context, new MaterialPageRoute(
+                  builder: (_) => new AttachmentPage(order: _info, data: [])));
+            },
+            child: Row(
+              children: <Widget>[
+                Icon(Icons.attach_file, color: Style.primaryColor, size: 16.0,),
+                Text('查看附件', style: Style.textStyleSelect,)
+              ],
+            ),
+          ),
+        );
+      }
+      return Container();
+    }
+
+    return Padding(
+      padding: Style.pagePadding2,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text('基本信息'),
+          _attachmentBtn() 
+        ],
+      )
+    );
+  }
+
+  Widget _expendBtn() {
+
+    Widget _btn = SimpleButton(
+      onTap: (){
+        setState(() {
+          _expend = !_expend;
+        });
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(_expend ? '收缩':'展开', style: Style.textStyleSelect,),
+          Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+        ],
+      ),
+    );
+
+    return Padding(
+      padding: Style.pagePadding2,
+      child: Stack(
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _getList(),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: _btn
+          )
+        ],
+      ),
+    );
   }
 
   Widget  _getHeader(){
@@ -383,56 +452,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       child: new Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            new Padding(
-              padding: Style.pagePadding2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text('基本信息'),
-                  _attachments > 0 ? BadgeIconButton(itemCount: _attachments, animation: false, icon: SimpleButton(
-                    onTap: (){
-                      Navigator.push(context, new MaterialPageRoute(
-                          builder: (_) => new AttachmentPage(order: _info, data: [])));
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.attach_file, color: Style.primaryColor, size: 16.0,),
-                        Text('查看附件', style: Style.textStyleSelect,)
-                      ],
-                    ),
-                  )) : Container()
-                ],
-              ),
-            ),
+            _baseInfo(),
             Divider(height: 1.0,),
-            new Padding(
-              padding: Style.pagePadding2,
-              child: new Stack(
-                children: <Widget>[
-                  Column(
-                    children: _getList(),
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
-                  Positioned(
-                      bottom: 0.0,
-                      right: 0.0,
-                      child: SimpleButton(
-                          onTap: (){
-                            setState(() {
-                              _expend = !_expend;
-                            });
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(_expend ? '收缩':'展开', style: Style.textStyleSelect,),
-                              Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
-                            ],
-                          )
-                      ))
-                ],
-              ),
-            ),
+            _expendBtn()
           ]),
 
     );
@@ -441,20 +463,20 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   Widget _getBody() {
     return new Container(
-        color: Style.backgroundColor,
-        child: new SingleChildScrollView(
-          key: ValueKey(_tabIndex),
-          child: new Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              _getHeader(),
-              SizedBox(height: Style.separateHeight,),
-              _data == null ? Func.centerLoading(): _getBody2(),
-            ],
-          ),
-        ));
+      color: Style.backgroundColor,
+      child: new SingleChildScrollView(
+        key: ValueKey(_tabIndex),
+        child: new Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            _getHeader(),
+            SizedBox(height: Style.separateHeight,),
+            _data == null ? Func.centerLoading(): _getBody2(),
+          ],
+        ),
+      ));
   }
 
 
@@ -513,7 +535,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     }
 
     _data.actions?.forEach((Actions f) async {
-      if(f.actionid == style){
+      if(f.actionid == style) {
 
         final result = await Navigator.push(context,
             new MaterialPageRoute(builder:(_) =>  new OrderPostPage(id: _data.ownerid, action: f, wonum: _data.wonum)));

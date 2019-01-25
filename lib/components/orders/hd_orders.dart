@@ -177,7 +177,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
 
   void optionSureClickedHandle(HDOrderOptionsResult res) {
-    print("option query:${res.query}, isAll:${res.isAll}, startTime:${res.startTime}, endTime:${res.endTime}, isUp:${res.isUp}");
     setState(() {
       _queryInfo = res;
       _selectedtType = _orderOptions.type;
@@ -186,7 +185,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
   void optionTimeSortChangedHandle(bool isTimeUp) {
     String res = isTimeUp ? 'Yes' : 'No';
-    print("current is tiem up? ${res}!");
+    debugPrint("current is tiem up? ${res}!");
     setState(() {
       _queryInfo.isUp = isTimeUp;
     });
@@ -237,7 +236,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
       _canLoadMore = false;
 
-      print('hd-> query:${_queryInfo}, older:${older}, time:${time}, startTime:${startTime}');
+      print('hd-> query:${_queryInfo.workType}, older:${older}, time:${time}, startTime:${startTime}');
 
       int isAll = _queryInfo.isAll ? 0 : 1;
       String status = _showOptionView ? _queryInfo.status : 'active';
@@ -255,13 +254,12 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       OrderListResult result = new OrderListResult.fromJson(response);
 
       _canLoadMore = true;
-
+      debugPrint('order List: ${result.toJson()}');
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
         List<OrderShortInfo> info = result.response??[];
         if(info.length > 0){
-          print('列表size: ${info.length}');
           if(older == 0){
             widget.helper.datas.insertAll(0, info);
           } else {
@@ -286,7 +284,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
             );
           }
         } catch (e){
-          print('badgeChange   error: $e');
+          debugPrint('badgeChange   error: $e');
         }
       }
 
@@ -294,7 +292,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         _filterDatas = filter();
       });
     } catch(e){
-      print(e);
+      debugPrint('获取工单列表失败，$e');
       Func.showMessage('网络出现异常, 获取工单列表失败');
     }
     if(widget.helper.inital) widget.helper.inital = false;
@@ -314,7 +312,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         }
       }
     } catch (e){
-      print (e);
+      debugPrint ('获取步骤信息失败，$e');
     }
   }
 

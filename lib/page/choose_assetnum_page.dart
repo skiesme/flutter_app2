@@ -188,17 +188,21 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
       if (_scroller.text.length > 0 || _scroller2.text.length > 0) {
         if (!widget.chooseLocation) {
-          if (
-            (f.assetnum.contains(_scroller.text.toUpperCase())  || (f.description??'').contains(_scroller.text.toUpperCase()) ) &&
-              ((f.location??'').contains(_scroller2.text.toUpperCase()) || (f.locationDescription ??'').contains(_scroller2.text.toUpperCase()))
-          ) {
+          bool assetFilter = f.assetnum.contains(_scroller.text.toUpperCase());
+          assetFilter = assetFilter || (f.description??'').contains(_scroller.text.toUpperCase());
+
+          bool locationFilter = (f.location??'').contains(_scroller2.text.toUpperCase());
+          locationFilter = locationFilter || (f.locationDescription ??'').contains(_scroller2.text.toUpperCase());
+
+          if ( assetFilter && locationFilter) {
             return true;
           } else {
             return false;
           }
         }
 
-        if ((f.location??'').contains(_scroller.text.toUpperCase()) || (f.description ??'').contains(_scroller.text.toUpperCase())) {
+        if ((f.location??'').contains(_scroller.text.toUpperCase()) 
+        || (f.description ??'').contains(_scroller.text.toUpperCase())) {
           return true;
         }
 
