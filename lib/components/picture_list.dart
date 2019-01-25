@@ -10,22 +10,19 @@ import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
-
 import 'package:image_picker/image_picker.dart';
-
 import 'package:cached_network_image/cached_network_image.dart';
-
-//import 'package:flutter_native_image/flutter_native_image.dart';
 
 class PictureList extends StatefulWidget {
 
   final bool canAdd;
   final List<String> images;
   final int count;
+  final onPictureListChanged;
 
   final String customStr;
 
-  PictureList({Key key, this.canAdd = true,  this.images, this.count = 3, this.customStr}):super(key:key);
+  PictureList({Key key, this.canAdd = true,  this.images, this.count = 3, this.customStr, this.onPictureListChanged}):super(key:key);
 
   @override
   PictureListState createState() => new PictureListState();
@@ -53,6 +50,7 @@ class PictureListState extends State<PictureList> {
           userName: '${Cache.instance.userName}-${Cache.instance.userDisplayName}'
         );
         _images.add(data);
+        widget.onPictureListChanged();
 //        getModel(context).step.images.add(data.toString());
       });
     }
@@ -93,19 +91,18 @@ class PictureListState extends State<PictureList> {
             shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
             onTap: (){
 
-              if(widget.images != null && widget.images != null && widget.images.length > index){
-                widget.images.removeAt(index);
-              } else if(_images.length > 0){
-                int preIndex = 0;
-                if(widget.images != null ){
-                  preIndex = widget.images.length;
+              setState(() {
+                if(widget.images != null && widget.images != null && widget.images.length > index){
+                  widget.images.removeAt(index);
+                } else if(_images.length > 0){
+                  int preIndex = 0;
+                  if(widget.images != null ){
+                    preIndex = widget.images.length;
+                  }
+                  _images.removeAt(index - preIndex);
                 }
 
-                _images.removeAt(index - preIndex);
-              }
-
-              setState(() {
-
+                widget.onPictureListChanged();
               });
             },
             child:Icon(Icons.delete, size: 20.0, color: Colors.white,) ,

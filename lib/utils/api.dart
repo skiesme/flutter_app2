@@ -233,7 +233,6 @@ class SaMexApi {
     int task = 0,             // 1: 任务箱  0:工单箱
     String status = 'active'  // 工单状态, '': 全部, 'active': 进行中, 'inactive':'完成'
   }) async {
-    DateTime now = new DateTime.now();
     Uri uri = new Uri.http(ipAndPort, '/app/api/order', {
       'worktype': type,
       'time': '$time',

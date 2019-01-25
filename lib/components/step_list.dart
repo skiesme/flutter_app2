@@ -15,8 +15,9 @@ import 'package:after_layout/after_layout.dart';
 
 class StepList extends StatefulWidget {
 
-  StepList({Key key, @required this.data}) : super(key:key);
   final OrderDetailData data;
+  final onImgChanged;
+  StepList({Key key, @required this.data, this.onImgChanged}) : super(key:key);
 
   @override
   StepListState createState() => new StepListState();
@@ -30,7 +31,6 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   Future<Null> gotoStep(String asset, [int index = -1]) async {
     List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
 
-
     if(list !=null && widget.data != null){
       final goo = (int i) async {
         final result = await Navigator.push(context, new MaterialPageRoute(
@@ -39,7 +39,11 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
               data: list[i],
               info: widget.data,
               isTask: widget.data.actfinish == 0,
-              isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,),
+              isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,
+              onImgChanged: (){
+                widget.onImgChanged();
+              },
+            ),
             settings: new RouteSettings(name: StepPage.path)
         ));
         if(result != null) {

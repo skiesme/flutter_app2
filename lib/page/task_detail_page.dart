@@ -223,7 +223,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         widget = new RecentHistory(data: _data,);
         break;
       case 1:
-        widget = new StepList(key: _stepKey, data: _data,);
+        widget = new StepList(
+          key: _stepKey, 
+          data: _data,
+          onImgChanged: (){
+            _getAttachments();
+          },
+        );
         break;
       case 2:
       case 3:
@@ -378,6 +384,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   Widget _baseInfo() {
     Widget _attachmentBtn() {
       bool has = _attachments > 0;
+      debugPrint('current has attachments? ${has ? 'Yes' : 'No'}， count:$_attachments');
       if (has) {
         return BadgeIconButton(
           itemCount: _attachments,
@@ -679,44 +686,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     Navigator.popUntil(context, ModalRoute.withName(TaskDetailPage.path));
     Navigator.pop(context, true);
   }
-
-  // Post
-  void _post() async {
-
-    setState(() {
-      _show = true;
-    });
-    
-    try {
-      // Map response = await getApi(context).postOrder(
-      //     worktype: _data.worktype,
-      //     assetnum: _data.assetnum,
-      //     location: _data.location,
-      //     description: _data.description,
-          
-      //     onProgress: (send, total){
-      //       int percent = ((send / total) * 100).toInt();
-      //       print('received: percent= $percent');
-      //     }
-      // );
-      // OrderNewResult result = new OrderNewResult.fromJson(response);
-      // if (result.code != 0) {
-      //   Func.showMessage(result.message);
-      // } else {
-      //   Func.showMessage('修改成功');
-      //   return;
-      // }
-    } catch (e) {
-      print(e);
-    }
-
-    if (mounted) {
-      setState(() {
-        _show = false;
-      });
-    }
-  }
-
 }
 
 class OrderPostStyle {

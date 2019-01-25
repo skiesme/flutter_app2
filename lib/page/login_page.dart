@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:samex_app/components/center_popup_menu.dart';
-import 'package:samex_app/model/site.dart';
 
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -21,7 +19,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _controller2;
   bool _obscureText = true;
   bool _showLoading = false;
-  GlobalKey<PopupMenuButtonState<Site>> _key = new GlobalKey();
 
   void _submit() async {
     Func.closeKeyboard(context);
