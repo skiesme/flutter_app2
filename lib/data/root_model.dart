@@ -1,3 +1,4 @@
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -57,6 +58,7 @@ OrderType getOrderType(String type){
 const ChangeBool_Scroll = 'changevoid_scroll';
 
 GlobListeners globalListeners = new GlobListeners();
+EventBus eventBus = new EventBus();
 
 class TimeCache<T> {
   int time =  DateTime.now().millisecondsSinceEpoch;

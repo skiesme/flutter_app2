@@ -1,4 +1,5 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:samex_app/components/load_more.dart';
@@ -7,6 +8,7 @@ import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/data/badge_bloc.dart';
 import 'package:samex_app/data/bloc_provider.dart';
 import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/helper/event_bus_helper.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/steps.dart';
@@ -50,17 +52,41 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     super.initState();
 
     setup();
+
+    eventBus.on<HDTaskEvent>().listen((event) {
+      if (mounted) {
+        if (event.type == HDTaskEventType.refresh) {
+          _handleLoadNewDatas();
+        } else if (event.type == HDTaskEventType.query) {
+          String query = event.value;
+          print('query: $query');
+          // _orderOptions.
+          if (mounted) {
+            setState(() {
+              _queryInfo.query = query;
+              _handleLoadDatas();
+            });
+          }
+        } else if (event.type == HDTaskEventType.scrollHeader) {
+          if(_scrollController != null) {
+            _scrollController.animateTo(1.0,  duration: Duration(milliseconds: 400),  curve: Curves.decelerate);
+          }
+        }
+      }
+    });
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
-    setState(() {
-      _queryInfo = _orderOptions.def;
+    if (mounted) {
+      setState(() {
+        _queryInfo = _orderOptions.def;
 
-      if(_orderOptions != null && _orderOptions.def != null) {
-        _selectedtType = _orderOptions.def.type;
-      }
-    });
+        if(_orderOptions != null && _orderOptions.def != null) {
+          _selectedtType = _orderOptions.def.type;
+        }
+      });
+    }
 
     if(_scrollController.initialScrollOffset > 0){
       Future.delayed(new Duration(milliseconds: 100), () {
@@ -68,14 +94,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       });
     }
 
-    globalListeners.addListener(hashCode, (String query){
-      if(query == force_scroller_head){
-        if(_scrollController != null) {
-          _scrollController.animateTo(1.0,  duration: Duration(milliseconds: 400),  curve: Curves.decelerate);
-        }
-        return;
-      }
-    });
     Future.delayed(Duration.zero,() =>_handleLoadDatas());
   }
 
@@ -152,7 +170,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   @override
   void dispose() {
     super.dispose();
-    globalListeners.removeListener(hashCode);
   }
 
   void setup() {
@@ -160,19 +177,18 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     _showOptionView = widget.type == OrderType.ALL;
 
     widget.helper.clear();
-    setState(() {
-      _filterDatas = filter();
-    });
+    if (mounted) {
+      setState(() {
+        _filterDatas = filter();
+      });
+    }
 
     widget.helper.inital = true;
 
     _scrollController = widget.helper.createController();
     _scrollController.addListener((){
-      if(_scrollController.offset > context.size.height){
-        globalListeners.boolChanges(ChangeBool_Scroll, true);
-      } else {
-        globalListeners.boolChanges(ChangeBool_Scroll, false);
-      }
+      bool showTopBtn = _scrollController.offset > context.size.height;
+      eventBus.fire(new HDTaskEvent(type: HDTaskEventType.showFloatTopBtn, value: showTopBtn));
     });
   }
 
@@ -236,7 +252,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
       _canLoadMore = false;
 
-      print('hd-> query:${_queryInfo.workType}, older:${older}, time:${time}, startTime:${startTime}');
+      print('hd-> query:${_queryInfo.query}, worktype:${_queryInfo.workType}, older:${older}, time:${time}, startTime:${startTime}');
 
       int isAll = _queryInfo.isAll ? 0 : 1;
       String status = _showOptionView ? _queryInfo.status : 'active';
@@ -287,10 +303,11 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           debugPrint('badgeChange   error: $e');
         }
       }
-
-      setState(() {
-        _filterDatas = filter();
-      });
+      if (mounted) {
+        setState(() {
+          _filterDatas = filter();
+        });
+      }
     } catch(e){
       debugPrint('获取工单列表失败，$e');
       Func.showMessage('网络出现异常, 获取工单列表失败');
@@ -318,7 +335,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
   List<OrderShortInfo> filter(){
     List<OrderShortInfo> list = widget.helper.datas;
-    if(_query().isEmpty) {
+    if(_query().isNotEmpty) {
       list = widget.helper.datas.where((i) => i.wonum.contains(_query()?.toUpperCase()) || (i.assetnum??'').contains(_query()?.toUpperCase())).toList();
     }
     return list;
