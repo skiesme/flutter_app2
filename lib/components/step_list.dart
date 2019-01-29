@@ -41,7 +41,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
               isTask: widget.data.actfinish == 0,
               isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,
               onImgChanged: (){
-                widget.onImgChanged();
+                widget.onImgChanged(widget.data);
               },
             ),
             settings: new RouteSettings(name: StepPage.path)

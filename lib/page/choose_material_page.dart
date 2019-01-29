@@ -1,3 +1,4 @@
+import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 
 import 'package:samex_app/model/material.dart';
@@ -19,55 +20,40 @@ class ChooseMaterialPage extends StatefulWidget {
   _ChooseMaterialPageState createState() => _ChooseMaterialPageState();
 }
 
-class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
-  TextEditingController _scroller;
+class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayoutMixin<ChooseMaterialPage>{
+  TextEditingController _scroller = new TextEditingController(text: '');
   bool _loading = true;
   bool _request = false;
 
   GlobalKey<PopupMenuButtonState<_StatusSelect>> _key = new GlobalKey();
 
-  _StatusSelect _location;
-
-  String _getDefaultLocation(){
-    if(Cache.instance.site == 'JZT'){
-      return 'JZTCK';
-    } else if(Cache.instance.site == 'SC'){
-      return 'SCWXC';
-    } else if(Cache.instance.site == 'GM') {
-      return 'WXCK';
-    }
-    return '';
-  }
+  _StatusSelect _location = new _StatusSelect(key: '', value: '');
+  List<_StatusSelect> _statusList = new List();
 
   @override
   void initState() {
     super.initState();
 
-    _scroller = new TextEditingController(text: '');
-    _scroller.addListener(() {
-      setState(() {});
+    
+    _statusList.add(new _StatusSelect(key: '', value: '全部'));
+    locationSite.forEach((String key, String value){
+      print('$key - $value');
+      _statusList.add(new _StatusSelect(key: key, value: value));
     });
-
-    _location = new _StatusSelect(key: _getDefaultLocation(), value: '');
   }
 
+  @override
+  void afterFirstLayout(BuildContext context) {
+    getMemoryCache(cacheKey, callback:(){
+      _getMaterials();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final list = getMemoryCache(cacheKey, callback: () {
-      _getMaterials();
-    });
+    final list = getMemoryCache(cacheKey);
 
     if (list != null) _loading = false;
-
-    List<_StatusSelect> statusList = new List();
-
-    locationSite.forEach((String key, String value){
-      print('$key - $value');
-      statusList.add(new _StatusSelect(key: key, value: value));
-    });
-
-    statusList.add(new _StatusSelect(key: '', value: '全部'));
 
     return new Scaffold(
       appBar: new AppBar(
@@ -132,7 +118,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                           ),
                           itemBuilder: (BuildContext context) {
-                            return statusList.map((_StatusSelect status) {
+                            return _statusList.map((_StatusSelect status) {
                               return new PopupMenuItem<_StatusSelect>(
                                 value: status,
                                 child: new Text(status.value),
@@ -140,7 +126,6 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
                             }).toList();
                           },
                           onSelected: (_StatusSelect value) {
-//                                print('status = ${value.value}');
                             setState(() {
                               _location = value;
                             });
@@ -183,7 +168,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
     );
   }
 
-  List<MaterialData> _filters(List<MaterialData> data) {
+  List<MaterialData> _filters() {
+    List<MaterialData> data = getMemoryCache(cacheKey, expired: false);
     if (data == null) return null;
 
     return data.where((MaterialData f) {
@@ -213,9 +199,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
   }
 
   Widget _getContent() {
-    List<MaterialData> data = getMemoryCache(cacheKey, expired: false);
-
-    data = _filters(data);
+    List<MaterialData> data = _filters();
 
     if (data == null || data.length == 0) {
       return Center(
@@ -280,8 +264,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
     );
   }
 
-  String get cacheKey =>
-      '__${Cache.instance.site}_materials';
+  String get cacheKey =>'__${Cache.instance.site}_materials';
 
   void _getMaterials({String asset = '', int count = 50000, bool queryOne}) async {
     if (_request) return;
@@ -296,13 +279,16 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> {
       if (result.code != 0) {
         Func.showMessage(result.message);
       } else {
-        setMemoryCache<List<MaterialData>>(cacheKey, result.response);
+        setState(() {
+          setMemoryCache<List<MaterialData>>(cacheKey, result.response);
+        });
       }
 
     } catch (e) {
       print(e);
-      setMemoryCache<List<MaterialData>>(
-          cacheKey, getMemoryCache(cacheKey) ?? []);
+      setState(() {
+        setMemoryCache<List<MaterialData>>(cacheKey, getMemoryCache(cacheKey) ?? []);
+      });
 
       Func.showMessage('网络异常, 请求物料接口失败');
     }

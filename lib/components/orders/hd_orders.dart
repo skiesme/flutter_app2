@@ -254,7 +254,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       OrderListResult result = new OrderListResult.fromJson(response);
 
       _canLoadMore = true;
-      debugPrint('order List: ${result.toJson()}');
+      // debugPrint('order List: ${result.toJson()}');
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {

@@ -58,7 +58,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     _data = getMemoryCache(cacheKey, expired: false);
   }
 
-
   Future _getOrderDetail({bool force = false}) async{
     try{
       final response = await getApi(context).orderDetail(_info.wonum, force ? 0: _data?.changedate);
@@ -66,17 +65,29 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
+
         OrderDetailData data = result.response;
         if(data != null){
-
-          setMemoryCache<OrderDetailData>(cacheKey, data);
-          setState(() {
-            _data = data;
-          });
+          if (mounted) {
+            setMemoryCache<OrderDetailData>(cacheKey, data);
+            setState(() {
+              _data = data;
+            });
+          }
+        }
+        
+        if (_data != null) {
+          _getSteps(_data);
+        } else if (data != null) {
+          _getSteps(data);
         }
       }
+
+      _show = false;
     } catch(e){
       print(e);
+
+      _show = false;
       Func.showMessage('网络出现异常: 获取工单详情失败');
     }
   }
@@ -226,8 +237,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         widget = new StepList(
           key: _stepKey, 
           data: _data,
-          onImgChanged: (){
-            _getAttachments();
+          onImgChanged: (OrderDetailData data){
+            if (data != null) {
+              _getSteps(data);
+            }
           },
         );
         break;
@@ -338,61 +351,17 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return list;
   }
 
-  void _getAttachments() async {
-
-    if (_info == null) {
-      return;
-    }
-
-    try{
-
-      var images = new List();
-
-      debugPrint('查询工单步骤 wonum：${_info.wonum??''}, site：${Cache.instance.site}');
-      if(getOrderType(_info.worktype) != OrderType.XJ){
-        Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
-        StepsResult result2 = new StepsResult.fromJson(response);
-        
-        if(result2.code == 0){
-          images.addAll(result2.response.images);
-        }
-      } else  {
-        Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
-        StepsResult result = new StepsResult.fromJson(response);
-        if(result.code == 0){
-          List <OrderStep> setps =  result.response.steps;
-          for (OrderStep item in setps) {
-            images.addAll(item.images);
-          }
-          setMemoryCache<List<OrderStep>>(cacheStepsKey, setps);
-        }
-      }
-
-      if(mounted){
-        setState(() {
-          _attachments = images.length;
-        });
-      }
-
-      setMemoryCache(cacheKey2, images.length);
-      debugPrint('当前工单步骤：${_info.wonum??''}, 附件个数为：${images.length}');
-    } catch (e){
-      debugPrint('获取附件信息失败，$e');
-    }
-  }
-
   Widget _baseInfo() {
     Widget _attachmentBtn() {
-      bool has = _attachments > 0;
-      debugPrint('current has attachments? ${has ? 'Yes' : 'No'}， count:$_attachments');
-      if (has) {
+      debugPrint('current has attachments count:$_attachments');
+      if (_attachments > 0) {
         return BadgeIconButton(
           itemCount: _attachments,
           animation: false,
           icon: SimpleButton(
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (_) => new AttachmentPage(order: _info, data: [])));
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => AttachmentPage(order: _info, data: [])));
             },
             child: Row(
               children: <Widget>[
@@ -600,11 +569,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   @override
   Widget build(BuildContext context) {
-
-    _attachments = getMemoryCache(cacheKey2, callback: (){
-      _getAttachments();
-    })??0;
-
     List<Widget> getBarActions() {
       if (widget.info.actfinish == 0) {
         List<Widget> actions = new List<Widget>();
@@ -662,8 +626,36 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return 'stepsList_${widget.info.wonum}';
   }
 
-  String get cacheKey2 {
-    return 'task_detail_${widget.info.wonum}_attachments_2';
+
+  void _getSteps(OrderDetailData data) async {
+    try{
+      Map response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
+      StepsResult result = new StepsResult.fromJson(response);
+
+      var images = new List();
+      if(result.code == 0){
+        List<String> resImages = result.response.images;
+        List<OrderStep> resSteps = result.response.steps;
+        if (resImages.length > 0) {
+          images.addAll(resImages);
+        }
+        if (resSteps.length > 0) {
+          for (OrderStep item in resSteps) {
+            images.addAll(item.images);
+          }
+          setMemoryCache<List<OrderStep>>(cacheStepsKey, resSteps);
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _attachments = images.length;
+        });
+        debugPrint('当前工单步骤：${_info.wonum??''}, 附件个数为：${images.length}');
+      }
+    } catch (e){
+      print ('获取步骤列表失败: $e');
+    }    
   }
 
   @override
@@ -672,9 +664,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     setState(() {
       _info = widget.info;
       _type = getOrderType(_info.worktype);
-      _getOrderDetail();
     });
-
+    
+    _getOrderDetail();
   }
 
   @override

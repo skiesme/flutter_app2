@@ -80,19 +80,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
         actions: _appBarActions(),
       ),
       floatingActionButton: _scanBtn(),
-      body: new Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: _loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : _getContent(),
-          )
-        ],
-      ),
+      body: _body(),
     );
   }
 
@@ -100,7 +88,6 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   List<Widget> _appBarActions() {
     IconButton noActionBtn = IconButton(
       icon: Text('无'),
-      tooltip: '无数据',
       onPressed: (){
         if (!_loading) {
           String nullStr = '无';
@@ -195,7 +182,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.all(0.0),
           border: new OutlineInputBorder(),
-          suffixIcon: _scroller.text.isEmpty ? clearBtn : null
+          suffixIcon: _scroller.text.isNotEmpty ? clearBtn : null
         ),
       ),
     );
@@ -224,7 +211,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.all(0.0),
           border: new OutlineInputBorder(),
-          suffixIcon: _scroller2.text.isEmpty ? clearBtn : null
+          suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null
         ),
       ),
     );
@@ -232,7 +219,6 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
 
   /// Old
-
   List<DescriptionData> _filters(List<DescriptionData> data) {
     if (data == null) return null;
 
@@ -309,18 +295,18 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
           if(widget.needReturn){
             Navigator.pop(context, asset);
           } else {
-            Navigator.push(context, new MaterialPageRoute(builder: (_) => new AssetNumDetailPage(asset: asset.assetnum)));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => AssetNumDetailPage(asset: asset.assetnum)));
           }
         },
       );
     }
 
-    return new ListView.builder(
+    return ListView.builder(
       shrinkWrap: true,
       itemCount: data.length,
       itemBuilder: (_, int index) {
-        return new Container(
-          child: new Column(
+        return Container(
+          child: Column(
             children: <Widget>[
               _listItem(index),
               Divider(height: 1.0)

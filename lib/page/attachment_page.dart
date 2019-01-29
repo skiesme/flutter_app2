@@ -191,9 +191,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
               setMemoryCache(cacheKey, result.response.steps);
             });
           }
-
         }
-
       } catch (e){
         print (e);
         Func.showMessage('出现异常: 获取步骤列表失败');
