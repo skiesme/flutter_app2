@@ -18,9 +18,9 @@ Dio _dio = new Dio();
 
 class SaMexApi {
 
-  static const bool inProduction = true;
-  // static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
- static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
+  // static const bool inProduction = true;
+  static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
+  static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
   //  static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
 
   static String baseUrl = 'http://$ipAndPort/app/api';
