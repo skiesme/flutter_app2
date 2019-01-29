@@ -1,5 +1,4 @@
 import 'package:after_layout/after_layout.dart';
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:samex_app/components/load_more.dart';

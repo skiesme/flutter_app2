@@ -1,8 +1,6 @@
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:samex_app/components/orders/hd_orders.dart';
-import 'package:samex_app/components/orders/order_list.dart';
 import 'package:samex_app/helper/event_bus_helper.dart';
 
 import 'package:samex_app/utils/assets.dart';

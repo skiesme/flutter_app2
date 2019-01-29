@@ -1,9 +1,7 @@
 import 'dart:math';
 import 'dart:async';
-import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:samex_app/helper/event_bus_helper.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/model/steps.dart';
