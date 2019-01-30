@@ -95,6 +95,8 @@ class _SettingsPageState extends State<SettingsPage> with AfterLayoutMixin<Setti
             Divider(height: 1),
             _sitesSelectItem(),
             Divider(height: 1),
+            _buildVersion(),
+            Divider(height: 1),
           ],
         ),
       )
@@ -238,6 +240,20 @@ class _SettingsPageState extends State<SettingsPage> with AfterLayoutMixin<Setti
       onTap: () { 
         showChooseDialog(context);
       }
+    );
+  }
+
+  Widget _buildVersion(){
+    return ListTile(
+      trailing: Wrap(
+        alignment: WrapAlignment.center,
+        runAlignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: <Widget>[
+          Text('1.0.1901301625', style: TextStyle(fontSize: 12.0))
+        ]
+      ),
+      title: const Text('版本信息')
     );
   }
 }

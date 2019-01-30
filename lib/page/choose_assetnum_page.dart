@@ -266,11 +266,11 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       // TODO : Change to asset status change Colors
       String title = widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
       Color avatarColor = Colors.blue.shade600;
-      if (title.contains('001')) {
-        avatarColor = Colors.red.shade400;
-      } else if (title.contains('002')) {
-        avatarColor = Colors.grey.shade400;
-      }
+      // if (title.contains('001')) {
+      //   avatarColor = Colors.red.shade400;
+      // } else if (title.contains('002')) {
+      //   avatarColor = Colors.grey.shade400;
+      // }
       return avatarColor;
     }
 
