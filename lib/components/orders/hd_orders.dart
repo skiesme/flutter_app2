@@ -19,18 +19,13 @@ import 'package:samex_app/utils/style.dart';
 
 /** HDOrderOptions */
 class HDOrders extends StatefulWidget {
-
-  HDOrdersState state;
   final PageHelper<OrderShortInfo> helper;
   final OrderType type;
 
   HDOrders({Key key, @required this.helper, this.type = OrderType.ALL}) :super(key:key);
 
   @override
-  State<StatefulWidget> createState() {
-    state = new HDOrdersState();
-    return state;
-  }
+  HDOrdersState createState() => HDOrdersState();
 }
 
 class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {

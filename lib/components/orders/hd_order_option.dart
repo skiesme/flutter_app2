@@ -88,7 +88,6 @@ const option_cache_key = 'filter_option_key';
 
 class HDOrderOptions extends StatefulWidget {
   bool showView = false;
-  HDOrderOptionsState _state;
   OrderType type;
   int badgeCount = 0;
   HDOrderOptionsResult def;
@@ -99,10 +98,7 @@ class HDOrderOptions extends StatefulWidget {
   HDOrderOptions({Key key, @required this.showView, @required this.type, this.badgeCount, this.onSureBtnClicked, this.onTimeSortChanged}) :super(key:key);
 
   @override
-  State<StatefulWidget> createState() {
-    _state = new HDOrderOptionsState();
-    return _state;
-  }
+  HDOrderOptionsState createState() => HDOrderOptionsState();
 
   void cached(HDOrderOptionsResult res) {
     def = res;
