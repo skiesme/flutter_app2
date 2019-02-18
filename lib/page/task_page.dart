@@ -61,17 +61,17 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       if (event.type == HDTaskEventType.showFloatTopBtn) {
         bool show = event.value;
         if(show == _showFloatActionButton) return;
-        setState(() {
-          _showFloatActionButton = show;
-        });
+        if (mounted) {
+          setState(() {
+            _showFloatActionButton = show;
+          });
+        }
       }
     });
   }
 
   void _startSearch() {
-    ModalRoute
-        .of(context)
-        .addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
+    ModalRoute.of(context).addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
 
     setState(() {
       _isSearching = true;

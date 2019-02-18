@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
 
 import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/model/order_new.dart';
+import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
@@ -83,12 +86,19 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         }
       }
 
-      _show = false;
+      if (mounted) {
+        setState(() {
+          _show = false;
+        });
+      }
     } catch(e){
       print(e);
-
-      _show = false;
-      Func.showMessage('网络出现异常: 获取工单详情失败');
+      if (mounted) {
+        setState(() {
+          _show = false;
+        });
+        Func.showMessage('网络出现异常: 获取工单详情失败');
+      }
     }
   }
 
@@ -567,24 +577,128 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return list;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> getBarActions() {
-      if (widget.info.actfinish == 0) {
-        List<Widget> actions = new List<Widget>();
-        // refresh work_flow
-        actions.add(
-          new PopupMenuButton<String>(
-            onSelected: _selectMenu,
-            itemBuilder: (BuildContext context) => getPopupMenuButton(),
-          ),
-        );
-        return actions.toList();
+  void _updateTaskInfo(OrderDetailData newData) async {
+    // TODO: has some question
+    debugPrint('资产编号：${newData.assetnum}, 描述：${newData.assetDescription}');
+    try {
+      Map response = await getApi(context).postOrder(
+          worktype: newData.worktype,
+          assetnum: newData.assetnum,
+          location: newData.location,
+          description: newData.description,
+          phone: newData.phone,
+          woprof: newData.woprof,
+          faultlev: newData.faultlev,
+          reportedby: Cache.instance.userName,
+          images: null,
+          files: null,
+      );
+      OrderNewResult result = new OrderNewResult.fromJson(response);
+      if (result.code == 0 && mounted) {
+          setState(() {
+            _data = newData;
+          });
+      } else {
+        Func.showMessage('保存失败');
+        return;
       }
-      return null;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void showEditDialog(BuildContext context) {
+    
+    OrderDetailData _tmpData = OrderDetailData.fromJson(_data.toJson());
+    TextStyle infoStyle = TextStyle(fontSize: 14.0);
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (context, state) {
+                return SimpleDialog(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  title: Text('编辑', style: TextStyle(fontSize: 16.0, color: Colors.black), textAlign: TextAlign.center),
+                  children: <Widget>[
+                    ListTile (
+                      leading: Text('资产编号'),
+                      title: Text('${_tmpData?.assetnum??''}', style: infoStyle),
+                      trailing: Icon(
+                        Icons.navigate_next,
+                        color: Colors.black87,
+                      ),
+                      onTap: () async {
+                        final DescriptionData result = await Navigator.push(context, new MaterialPageRoute (
+                            builder: (_) => new ChooseAssetPage(location: _data.location,)
+                        ));
+                        if (result != null) {
+                          setState(() {
+                            if (_tmpData != null) {
+                              setState(() {
+                                _tmpData.assetnum = result.assetnum;
+                                _tmpData.assetDescription = result.description;
+                              });
+                            }
+                          });
+                        }
+                      },
+                    ),
+                    ListTile (
+                      leading: Text('资产描述'),
+                      title: Text('${_tmpData?.assetDescription??''}', style: infoStyle),
+                    ),
+                    ListTile (
+                      leading: SimpleButton(
+                        child: Text('取消'),
+                        onTap: () => Navigator.of(context).pop(true),
+                      ),
+                      // title: Text('xxxx'),
+                      trailing: SimpleButton(
+                        child: Text('保存', style: TextStyle(color: Colors.blue.shade600)),
+                        onTap: (){
+                          Navigator.pop(context, true);
+                          _updateTaskInfo(_tmpData);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+          );
+        }
+    );
+  }
+  
+  List<Widget> _buildBarActions(){
+    List<Widget> actions = new List<Widget>();
+    /** edit, 维修工单在工单验收前都可修改 */
+    String status = _data?.status??'';
+    bool isCanEdit = status != '已验收';
+    if (_type == OrderType.CM && isCanEdit) {
+      actions.add(IconButton(
+        icon: Icon(Icons.edit),
+        iconSize: 16.0,
+        onPressed: () {
+          showEditDialog(context);
+        }
+      ));
     }
 
+    // workflow
+    if (widget.info.actfinish == 0) {
+      // refresh work_flow
+      actions.add(
+        new PopupMenuButton<String>(
+          onSelected: _selectMenu,
+          itemBuilder: (BuildContext context) => getPopupMenuButton(),
+        ),
+      );
+    }
+    return actions.toList();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return
       LoadingView(
           show: _show,
@@ -592,7 +706,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           child: new Scaffold(
             appBar: new AppBar(
               title: Text(_info?.wonum ?? '',),
-              actions: getBarActions(),
+              actions: _buildBarActions(),
             ),
             body: _info== null? Text(''): _getBody(),
             floatingActionButton: _tabIndex == 1 && getOrderType(_info?.worktype) != OrderType.CM  && _info.actfinish == 0 ? new FloatingActionButton(
