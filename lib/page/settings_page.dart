@@ -89,19 +89,29 @@ class _SettingsPageState extends State<SettingsPage> with AfterLayoutMixin<Setti
       ),
       body: new Container(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            _fontSizeItem(),
-            Divider(height: 1),
-            _sitesSelectItem(),
-            Divider(height: 1),
-            _buildVersion(),
-            Divider(height: 1),
+            _buildBody(),
+            _buildVersion()
           ],
-        ),
+        )
       )
     );
   }
+
+  Widget _buildBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _fontSizeItem(),
+        Divider(height: 1),
+        _sitesSelectItem(),
+        Divider(height: 1),
+      ],
+    );
+  }
+
+
   void loadSiteDatas() async {
     try {
       final response = await getApi(context).getSites();
@@ -244,16 +254,12 @@ class _SettingsPageState extends State<SettingsPage> with AfterLayoutMixin<Setti
   }
 
   Widget _buildVersion(){
-    return ListTile(
-      trailing: Wrap(
-        alignment: WrapAlignment.center,
-        runAlignment: WrapAlignment.center,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: <Widget>[
-          Text('1.0.1901301625', style: TextStyle(fontSize: 12.0))
-        ]
-      ),
-      title: const Text('版本信息')
+    return Column(
+      children: <Widget>[
+        Text('移动工单', style: TextStyle(fontSize: 17.0),),
+        Text('Version 1.0.1901301625', style: TextStyle(fontSize: 11.0),),
+        Text('')
+      ],
     );
   }
 }
