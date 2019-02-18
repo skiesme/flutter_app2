@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:samex_app/model/cm_attachments.dart';
 import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
@@ -743,21 +744,38 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
 
   void _getSteps(OrderDetailData data) async {
     try{
-      Map response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
-      StepsResult result = new StepsResult.fromJson(response);
 
       var images = new List();
-      if(result.code == 0){
-        List<String> resImages = result.response.images;
-        List<OrderStep> resSteps = result.response.steps;
-        if (resImages.length > 0) {
-          images.addAll(resImages);
-        }
-        if (resSteps.length > 0) {
-          for (OrderStep item in resSteps) {
-            images.addAll(item.images);
+      
+      if(_type != OrderType.CM){
+
+        Map response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
+        StepsResult result = new StepsResult.fromJson(response);
+
+        if(result.code == 0){
+          List<String> resImages = result.response.images;
+          List<OrderStep> resSteps = result.response.steps;
+          if (resImages.length > 0) {
+            images.addAll(resImages);
           }
-          setMemoryCache<List<OrderStep>>(cacheStepsKey, resSteps);
+          if (resSteps.length > 0) {
+            for (OrderStep item in resSteps) {
+              images.addAll(item.images);
+            }
+            setMemoryCache<List<OrderStep>>(cacheStepsKey, resSteps);
+          }
+        }
+      } else {
+        Map response = await getApi(context).getCMAttachments(data.ownerid);
+        CMAttachmentsResult result = new CMAttachmentsResult.fromJson(response);
+
+        print(result.toJson().toString());
+
+        if(result.code == 0){
+          List<String> resImages = result.response;
+          if (resImages.length > 0) {
+            images.addAll(resImages);
+          }
         }
       }
 
