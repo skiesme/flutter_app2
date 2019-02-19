@@ -32,18 +32,21 @@ class DescriptionData {
   String description;
   String location;
   String locationDescription;
+  String status;
 
   DescriptionData(
       {this.assetnum,
         this.description,
         this.location,
-        this.locationDescription});
+        this.locationDescription,
+        this.status});
 
   DescriptionData.fromJson(Map<String, dynamic> json) {
     assetnum = json['assetnum'];
     description = json['description'];
     location = json['location'];
     locationDescription = json['locationDescription'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,6 +55,7 @@ class DescriptionData {
     data['description'] = this.description;
     data['location'] = this.location;
     data['locationDescription'] = this.locationDescription;
+    data['status'] = this.status;
     return data;
   }
 }
