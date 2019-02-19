@@ -257,7 +257,7 @@ class _SettingsPageState extends State<SettingsPage> with AfterLayoutMixin<Setti
     return Column(
       children: <Widget>[
         Text('移动工单', style: TextStyle(fontSize: 17.0),),
-        Text('Version 1.0.1901301625', style: TextStyle(fontSize: 11.0),),
+        Text('Version 1.1.1902191335', style: TextStyle(fontSize: 11.0),),
         Text('')
       ],
     );

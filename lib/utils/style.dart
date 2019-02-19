@@ -36,16 +36,14 @@ class Style {
 
 
   static Color assetStatusColor(String status) {
-      Color avatarColor = Colors.blue.shade600;
+      Color avatarColor = Colors.grey.shade600;
       status = status??'';
-      debugPrint('assets status: $status');
-      // TODO： assets status add
       if (status == '停用' || status == 'DECOMMISSIONED') {
         avatarColor = Colors.red.shade400;
-      } else if (status == '报废') {
-        avatarColor = Colors.grey.shade400;
+      } else if (status == 'OPERATING') {
+        // 正常
+        avatarColor = Colors.blue.shade400;
       }
-      // NOT READY
       return avatarColor;
     }
 }
