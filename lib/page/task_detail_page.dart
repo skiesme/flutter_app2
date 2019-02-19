@@ -349,12 +349,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         ]);
       }
 
-      if(_data.faultlev.isNotEmpty){
-        list.add(Text('故障等级: ${_data.faultlev}'));
-      }
-      if(_data.woprof.isNotEmpty){
-        list.add(Text('报修工单分类: ${_data.woprof}'));
-      }
+      // TODO: Need API response 故障等级 / 报修工单分类
+      // if(_data !=null && _data.faultlev != null){
+      //   list.add(Text('故障等级: ${_data.faultlev??''}'));
+      // }
+      // if(_data != null && _data.woprof != null){
+      //   list.add(Text('报修工单分类: ${_data.woprof??''}'));
+      // }
     }
 
     list.add(SizedBox(height: Style.separateHeight,));
@@ -579,32 +580,21 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
   }
 
   void _updateTaskInfo(OrderDetailData newData) async {
-    // TODO: has some question
     debugPrint('资产编号：${newData.assetnum}, 描述：${newData.assetDescription}');
     try {
-      Map response = await getApi(context).postOrder(
-          worktype: newData.worktype,
-          assetnum: newData.assetnum,
-          location: newData.location,
-          description: newData.description,
-          phone: newData.phone,
-          woprof: newData.woprof,
-          faultlev: newData.faultlev,
-          reportedby: Cache.instance.userName,
-          images: null,
-          files: null,
-      );
+      Map response = await getApi(context).postOrderUpdate(newData);
       OrderNewResult result = new OrderNewResult.fromJson(response);
       if (result.code == 0 && mounted) {
           setState(() {
             _data = newData;
           });
+          setMemoryCache<OrderDetailData>(cacheKey, newData);
       } else {
         Func.showMessage('保存失败');
         return;
       }
     } catch (e) {
-      print(e);
+      print(e.message);
     }
   }
 
