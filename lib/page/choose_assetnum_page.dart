@@ -262,24 +262,12 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       );
     }
 
-    Color _avatarColor(DescriptionData asset) {
-      // TODO : Change to asset status change Colors
-      String title = widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
-      Color avatarColor = Colors.blue.shade600;
-      // if (title.contains('001')) {
-      //   avatarColor = Colors.red.shade400;
-      // } else if (title.contains('002')) {
-      //   avatarColor = Colors.grey.shade400;
-      // }
-      return avatarColor;
-    }
-
     Widget _listItem(int index) {
       DescriptionData asset = data[index];
       String title = widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
       String desStr = '描述:${asset.description??''}';
       String locationStr = widget.chooseLocation ? '' : '位置:${asset.location??''}\n${asset.locationDescription??''}';
-      Color avatarColor = _avatarColor(asset);
+      Color avatarColor = Style.assetStatusColor(asset.status);
 
       return SimpleButton(
         child: ListTile(
@@ -317,8 +305,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     );
   }
 
-  String get cacheKey =>
-      '__${Cache.instance.site}_${widget.chooseLocation ? '_locations': '_assets'}';
+  String get cacheKey => '__${Cache.instance.site}_${widget.chooseLocation ? '_locations': '_assets'}';
 
   void _getAsset({String asset = '', int count = 50000, bool queryOne}) async {
     if (_request) return;
