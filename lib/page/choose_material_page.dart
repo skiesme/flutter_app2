@@ -26,6 +26,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
   bool _request = false;
 
   GlobalKey<PopupMenuButtonState<_StatusSelect>> _key = new GlobalKey();
+  String get cacheKey =>'__${Cache.instance.site}_materials';
 
   _StatusSelect _location = new _StatusSelect(key: '', value: '');
   List<_StatusSelect> _statusList = new List();
@@ -33,13 +34,44 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
   @override
   void initState() {
     super.initState();
-
     
-    _statusList.add(new _StatusSelect(key: '', value: '全部'));
+    _setupStorages();
+  }
+
+  // 初始化 仓库列表
+  void _setupStorages () {
+    _statusList.clear();
+    
     locationSite.forEach((String key, String value){
       print('$key - $value');
       _statusList.add(new _StatusSelect(key: key, value: value));
     });
+
+    _setupDefStorage();
+  }
+
+  // 初始化 默认仓库, 根据用户的站点，进行水厂匹配
+  void _setupDefStorage() {
+    _location = _StatusSelect(key: '', value: '');
+
+    _StatusSelect defSelect(String key) {
+      if (_statusList.length > 0 && key.length > 0) {
+        return _statusList.where((_StatusSelect f) {
+          return f.key ==key;
+        }).toList().first;
+      }
+      return _location;
+    }
+
+    String site = Cache.instance.site;
+    // TODO: 这部分代码不应该写死在这里，需要从服务器将用户的默认仓库对应至User信息中。
+    if (site == 'GM') { // 维修仓库
+      _location = defSelect('WXCK');
+    } else if (site == 'JZT') { // 甲子塘中心仓库
+      _location = defSelect('JZTCK');
+    } else if (site == 'SC') { // 上村维修仓库
+      _location = defSelect('SCWXC');
+    }
   }
 
   @override
@@ -55,23 +87,23 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
 
     if (list != null) _loading = false;
 
-    return new Scaffold(
-      appBar: new AppBar(
+    return Scaffold(
+      appBar: AppBar(
         title: Text('库存查询'),
         actions: <Widget>[
-          new IconButton(
-              icon: Icon(Icons.refresh),
-              tooltip: '数据刷新',
-              onPressed: () {
-                if (!_loading) {
-                  _getMaterials();
-                }
-              })
+          IconButton(
+          icon: Icon(Icons.refresh),
+          tooltip: '数据刷新',
+          onPressed: () {
+            if (!_loading) {
+              _getMaterials();
+            }
+          })
         ],
       ),
-      floatingActionButton: new FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
           child: Tooltip(
-            child: new Image.asset(
+            child: Image.asset(
               ImageAssets.scan,
               height: 20.0,
             ),
@@ -86,7 +118,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
               _scroller.text = result;
             }
           }),
-      body: new Column(
+      body: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -104,13 +136,13 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
                       children: <Widget>[
                         Container(
                           height:40,
-                          child: new MyPopupMenuButton<_StatusSelect>(
+                          child: MyPopupMenuButton<_StatusSelect>(
                           key:_key,
-                          child: new Row(
+                          child: Row(
                             children: <Widget>[
-                              new Text('当前仓库:  '),
-                              new Text(
-                                locationSite[_location.key]??'全部',
+                              Text('当前仓库:  '),
+                              Text(
+                                locationSite[_location.key]??'',
                                 style: TextStyle(color: Colors.blue),
                               ),
                               Align(child: const Icon(Icons.arrow_drop_down),)
@@ -119,9 +151,9 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
                           ),
                           itemBuilder: (BuildContext context) {
                             return _statusList.map((_StatusSelect status) {
-                              return new PopupMenuItem<_StatusSelect>(
+                              return PopupMenuItem<_StatusSelect>(
                                 value: status,
-                                child: new Text(status.value),
+                                child: Text(status.value),
                               );
                             }).toList();
                           },
@@ -146,12 +178,12 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
                       hintStyle: TextStyle(fontSize: 16.0),
                       border: new OutlineInputBorder(),
                       suffixIcon: _scroller.text.isNotEmpty
-                          ? new IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: () {
-                            _scroller.clear();
-                          })
-                          : null),
+                        ? new IconButton(
+                        icon: Icon(Icons.clear),
+                        onPressed: () {
+                          _scroller.clear();
+                        })
+                        : null),
                 ),
 
               ])),
@@ -248,7 +280,6 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
                             ],
                             spacing: 16.0,
                             runSpacing: 8.0,
-//                    alignment: WrapAlignment.start,
                             runAlignment: WrapAlignment.center
 
                         )
@@ -264,7 +295,6 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
     );
   }
 
-  String get cacheKey =>'__${Cache.instance.site}_materials';
 
   void _getMaterials({String asset = '', int count = 50000, bool queryOne}) async {
     if (_request) return;
@@ -280,6 +310,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage> with AfterLayou
         Func.showMessage(result.message);
       } else {
         setState(() {
+          _setupStorages();
+
           setMemoryCache<List<MaterialData>>(cacheKey, result.response);
         });
       }

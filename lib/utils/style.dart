@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:samex_app/model/description.dart';
 
 class Style {
   static get primaryColor => Colors.blue.shade600;
