@@ -156,14 +156,13 @@ class Func {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         Func.showMessage('相机权限被拒绝');
       } else {
-        Func.showMessage('未知错误:  $e');
+        Func.showMessage('${e.code}');
       }
     } on FormatException{
       ///取消
     } catch (e) {
-      Func.showMessage('未知错误:  $e');
+      debugPrint('未知错误:  $e');
     }
-
     return '';
   }
 
