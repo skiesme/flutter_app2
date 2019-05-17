@@ -94,16 +94,11 @@ class OrderList extends StatefulWidget {
 
   final PageHelper<OrderShortInfo> helper;
   final OrderType type;
-  _OrderListState _state;
 
   OrderList({Key key, @required this.helper, this.type = OrderType.ALL}) :super(key:key);
 
-
   @override
-    State<StatefulWidget> createState() {
-      _state = new _OrderListState();
-      return _state;
-    }
+  _OrderListState createState() => _OrderListState();
 }
 
 class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>{
@@ -175,8 +170,8 @@ class _OrderListState extends State<OrderList>  with AfterLayoutMixin<OrderList>
       if(query == force_refresh){
         widget.helper.clear();
 
+        _handleRefresh();
         setState(() {
-          _handleRefresh();
           _query = '';
           widget.helper.inital = true;
         });

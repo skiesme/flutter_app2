@@ -41,7 +41,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
               isTask: widget.data.actfinish == 0,
               isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,
               onImgChanged: (){
-                widget.onImgChanged();
+                widget.onImgChanged(widget.data);
               },
             ),
             settings: new RouteSettings(name: StepPage.path)
@@ -142,53 +142,63 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
           padding: const EdgeInsets.all(8.0),
           child: Center(child: CircularProgressIndicator()),
         );
-      } else {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(child: Text('没有发现步骤')),
-        );
       }
-
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(child: Text('没有发现步骤')),
+      );
     }
 
-    List<Widget> children = <Widget>[];
-    for(int i = 0, len = list.length; i < len; i++){
-      OrderStep f = list[i];
-      List<Widget> children2 = <Widget>[];
-
-      children2.add(Text('任务${i+1}: ${f.description??''}', style: TextStyle(color: _isModify(f) ?  Style.primaryColor : Colors.grey),));
-      children2.add(Text('资产: ${f.assetnum??''}-${f.assetDescription??''}'));
-      children2.add(Text('时间: ${Func.getFullTimeString(f.statusdate)}'));
-
-      if(getOrderType(widget.data?.worktype) != OrderType.CM){
-        children2.add(Text('状态: ${f.status??'未处理'}'));
-      }
-
-      children.add(
-          SimpleButton(
-            padding: Style.pagePadding,
-            onTap: () {
-              if(getOrderType(widget.data.worktype) == OrderType.CM){
-                gotoStep2(i);
-              }
-            },
-            onDoubleTap: (){
-              if(getOrderType(widget.data.worktype) != OrderType.CM) {
-                gotoStep(f.assetnum, i);
-              }
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: children2,
-            ),));
-      children.add(Divider(height: 1.0,));
-
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
+      children: _buildStepLists(list),
     );
+  }
 
+  List<Widget> _buildStepLists(List<OrderStep> list) {
+    int index = 0;
+    return list.map((OrderStep step) {
+      Widget cell = _buildItemCell(index, step);
+      index++;
+      return cell;
+    }).toList();
+  }
+
+  Widget _buildItemCell(int i, OrderStep step) {
+    debugPrint('资产: ${step.assetnum??' '}-${step.assetDescription??' '}');
+
+    Widget info(){
+      bool isCM = getOrderType(widget.data?.worktype) == OrderType.CM;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text('任务${i+1}: ${step.description??''}', style: TextStyle(color: _isModify(step) ?  Style.primaryColor : Colors.grey),),
+          Text('资产: ${step.assetnum??''}-${step.assetDescription??''}'),
+          Text('时间: ${Func.getFullTimeString(step.statusdate)}'),
+          isCM ? Container(height: 1.0,) : Text('状态: ${step.status??'未处理'}')
+        ],
+      );
+    }
+
+    return Column(
+      children: <Widget>[
+        SimpleButton(
+          padding: Style.pagePadding,
+          onTap: (){
+            if(getOrderType(widget.data.worktype) == OrderType.CM){
+              gotoStep2(i);
+            }
+          },
+          onDoubleTap: (){
+            if(getOrderType(widget.data.worktype) != OrderType.CM) {
+              gotoStep(step.assetnum, i);
+            }
+          },
+          child: info(),
+        ),
+        Divider(height: 1.0)
+      ],
+    );
   }
 
 

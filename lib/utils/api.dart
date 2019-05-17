@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as Io;
 
 import 'package:dio/dio.dart';
+import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/model/work_time.dart';
@@ -18,9 +19,9 @@ Dio _dio = new Dio();
 
 class SaMexApi {
 
-  // static const bool inProduction = true;
-  static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
- static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
+  static const bool inProduction = true;
+  // static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
+  static String ipAndPort = inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
   //  static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
 
   static String baseUrl = 'http://$ipAndPort/app/api';
@@ -294,7 +295,6 @@ class SaMexApi {
     });
 
     Response response = await _dio.get(uri.toString(), options: _options());
-
 //    print('${uri.toString()}: ${response.data}');
 
     return response.data;
@@ -403,6 +403,12 @@ class SaMexApi {
     return response.data;
   }
 
+  Future<Map> postOrderUpdate(OrderDetailData params) async {
+    Response response =  await _dio.post(baseUrl+'/orderupdate',
+        data: json.encode(params.toJson()), options: _options());
+    // print('postWorkTime: ${response.data}');
+    return response.data;
+  }
 
   Future<Map> postXJ(String woNum) async {
     Response response =  await _dio.post(baseUrl+'/order/xj/$woNum', options: _options());

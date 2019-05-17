@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:samex_app/components/orders/hd_orders.dart';
-import 'package:samex_app/components/orders/order_list.dart';
+import 'package:samex_app/helper/event_bus_helper.dart';
 
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
@@ -56,12 +56,22 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     _setupIndex();
 
     _creatOrderLists();
+
+    eventBus.on<HDTaskEvent>().listen((event) {
+      if (event.type == HDTaskEventType.showFloatTopBtn) {
+        bool show = event.value;
+        if(show == _showFloatActionButton) return;
+        if (mounted) {
+          setState(() {
+            _showFloatActionButton = show;
+          });
+        }
+      }
+    });
   }
 
   void _startSearch() {
-    ModalRoute
-        .of(context)
-        .addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
+    ModalRoute.of(context).addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
 
     setState(() {
       _isSearching = true;
@@ -218,7 +228,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         icon: const Icon(Icons.refresh),
         tooltip: '强制刷新',
         onPressed: (){
-          globalListeners.queryChanges(force_refresh);
+          eventBus.fire(new HDTaskEvent(type: HDTaskEventType.refresh));
         },
       ),
     ] : <Widget>[
@@ -226,14 +236,14 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         icon: const Icon(Icons.refresh),
         tooltip: '强制刷新',
         onPressed: (){
-          globalListeners.queryChanges(force_refresh);
+          eventBus.fire(new HDTaskEvent(type: HDTaskEventType.refresh));
         },
       ),
     ];
   }
 
   Widget _buildSearchField() {
-    return new TextField(
+    var textField = new TextField(
       controller: _searchQuery,
       autofocus: true,
       decoration: const InputDecoration(
@@ -242,13 +252,15 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
         hintStyle: const TextStyle(color: Colors.white30),
       ),
       style: const TextStyle(color: Colors.white, fontSize: 16.0),
-      onChanged: _updateSearchQuery,
+      onEditingComplete: (){
+        _updateSearchQuery(_searchQuery.text??'');
+      },
     );
+    return textField;
   }
 
   void _updateSearchQuery(String newQuery) {
-//    print('_updateSearchQuery $newQuery');
-    globalListeners.queryChanges(newQuery??'');
+    eventBus.fire(new HDTaskEvent(type: HDTaskEventType.query, value: newQuery));
   }
   
   BottomNavigationBar getBottomBar(Map<OrderType, int> badges){
@@ -257,11 +269,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       currentIndex: _tabIndex,
       onTap: (index) {
         setState((){
-          if(_isSearching){
-            _updateSearchQuery(_searchQuery.text);
-          }
           _tabIndex = index;
-          
           _pageController.jumpToPage(index);
         });
       },
@@ -291,7 +299,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       floatingActionButton: _showFloatActionButton ?new FloatingActionButton(
 
           onPressed: (){
-            globalListeners.queryChanges(force_scroller_head);
+            eventBus.fire(new HDTaskEvent(type: HDTaskEventType.scrollHeader));
           },
         child: Icon(Icons.navigation),
       ) : null,
@@ -308,18 +316,11 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     super.dispose();
     _controller?.dispose();
     _searchQuery?.dispose();
-
-    globalListeners.removeBoolListener(ChangeBool_Scroll);
   }
 
   @override
   void afterFirstLayout(BuildContext context) {
-    globalListeners.addBoolListener(ChangeBool_Scroll,hashCode, (bool show){
-      if(show == _showFloatActionButton) return;
-      setState(() {
-        _showFloatActionButton = show;
-      });
-    });
+
   }
 }
 

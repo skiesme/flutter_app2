@@ -77,110 +77,148 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     return new Scaffold(
       appBar: new AppBar(
         title: Text(_getTitle()),
-        actions: <Widget>[
-          new IconButton(
-              icon: Text('无'),
-              tooltip: '无数据',
-              onPressed: () {
-                if (!_loading) {
-                  String nullStr = '无';
-                  DescriptionData asset = new DescriptionData();
-                  if (widget.chooseLocation) {
-                    asset.location = nullStr;
-                    asset.locationDescription = nullStr;
-                  } else {
-                    asset.assetnum = nullStr;
-                    asset.description = nullStr;
-                    asset.location = nullStr;
-                    asset.locationDescription = nullStr;
-                  }
-                  Navigator.pop(context, asset);
-                }
-              }),
-          new IconButton(
-              icon: Icon(Icons.refresh),
-              tooltip: '数据刷新',
-              onPressed: () {
-                if (!_loading) {
-                  _getAsset();
-                }
-              }),
-        ],
+        actions: _appBarActions(),
       ),
-      floatingActionButton: new FloatingActionButton(
-          child: Tooltip(
-            child: new Image.asset(
-              ImageAssets.scan,
-              height: 20.0,
-            ),
-            message: '扫码',
-            preferBelow: false,
-          ),
-          backgroundColor: Colors.redAccent,
-          onPressed: () async {
-            String result = await Func.scan();
+      floatingActionButton: _scanBtn(),
+      body: _body(),
+    );
+  }
 
-            if (result != null && result.isNotEmpty && result.length > 0) {
-              _scroller.text = result;
-            }
-          }),
-      body: new Column(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            color: Style.backgroundColor,
-            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
-            child: new TextField(
-              controller: _scroller,
-              decoration: new InputDecoration(
-                  prefixIcon: Align(child: Text(widget.chooseLocation ? '位置: ':'资产: '), widthFactor: 1.1,),
-                  hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号/描述进行过滤",
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(0.0),
-                  border: new OutlineInputBorder(),
-                  suffixIcon: _scroller.text.isNotEmpty
-                      ? new IconButton(
-                          icon: Icon(Icons.clear),
-                          onPressed: () {
-                            _scroller.clear();
-                          })
-                      : null),
-            ),
-          ),
+  /// AppBarActions
+  List<Widget> _appBarActions() {
+    IconButton noActionBtn = IconButton(
+      icon: Text('无'),
+      onPressed: (){
+        if (!_loading) {
+          String nullStr = '无';
+          DescriptionData asset = new DescriptionData();
+          if (widget.chooseLocation) {
+            asset.location = nullStr;
+            asset.locationDescription = nullStr;
+          } else {
+            asset.assetnum = nullStr;
+            asset.description = nullStr;
+            asset.location = nullStr;
+            asset.locationDescription = nullStr;
+          }
+          Navigator.pop(context, asset);
+        }
+      },
+    );
 
-          widget.chooseLocation ? Container():           Container(
-            color: Style.backgroundColor,
-            padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
-            child: new TextField(
-              controller: _scroller2,
-              decoration: new InputDecoration(
-                  prefixIcon: Align(child: Text('位置: ',), widthFactor: 1.1,),
-                  hintText: "请输入位置编号/描述进行过滤",
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(0.0),
-                  border: new OutlineInputBorder(),
-                  suffixIcon: _scroller2.text.isNotEmpty
-                      ? new IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () {
-                        _scroller2.clear();
-                      })
-                      : null),
-            ),
+    IconButton refreshBtn = IconButton(
+      icon: Icon(Icons.refresh),
+      tooltip: '数据刷新',
+      onPressed: () {
+        if (!_loading) {
+          _getAsset();
+        }
+      }
+    );
+
+    List<Widget> btns = new List();
+    if (widget.needReturn) {
+      btns.add(noActionBtn);
+    }
+    btns.add(refreshBtn);
+
+    return btns;
+  }
+
+  /// Scan Btn
+  FloatingActionButton _scanBtn () {
+    return FloatingActionButton(
+      child: Image.asset(
+        ImageAssets.scan,
+        height: 20.0,
+      ),
+      backgroundColor: Colors.redAccent,
+      onPressed: () async {
+        String result = await Func.scan();
+
+        if (result != null && result.isNotEmpty && result.length > 0) {
+          _scroller.text = result;
+        }
+      },
+    ) ;
+  }
+
+  /// Body
+  Widget _body() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _assetsFilterWidget(),
+        _locationFilterWidget(),
+        Expanded(child: _loading
+          ? Center(child: CircularProgressIndicator(),)
+          : _getContent(),
+        )
+      ],
+    );
+  }
+
+  // FilterWidget
+  Widget _assetsFilterWidget() {
+    Widget clearBtn = IconButton(
+      icon: Icon(Icons.clear),
+      onPressed: (){
+        _scroller.clear();
+      },
+    );
+
+    return Container(
+      color: Style.backgroundColor,
+      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      child: TextField(
+        controller: _scroller,
+        decoration: InputDecoration(
+          prefixIcon: Align(
+            child: Text(widget.chooseLocation ? '位置' : '资产'),
+            widthFactor: 1.1,
           ),
-          Expanded(
-            child: _loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : _getContent(),
-          )
-        ],
+          hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号/描述进行过滤",
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.all(0.0),
+          border: new OutlineInputBorder(),
+          suffixIcon: _scroller.text.isNotEmpty ? clearBtn : null
+        ),
       ),
     );
   }
 
+  Widget _locationFilterWidget() {
+    Widget clearBtn = IconButton(
+      icon: Icon(Icons.clear),
+      onPressed: (){
+        _scroller2.clear();
+      },
+    );
+    return widget.chooseLocation 
+    ? Container() 
+    : Container(
+      color: Style.backgroundColor,
+      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      child: TextField(
+        controller: _scroller2,
+        decoration: InputDecoration(
+          prefixIcon: Align(
+            child: Text('位置'),
+            widthFactor: 1.1,
+          ),
+          hintText: "请输入位置编号/描述进行过滤",
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.all(0.0),
+          border: new OutlineInputBorder(),
+          suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null
+        ),
+      ),
+    );
+  }
+
+
+  /// Old
   List<DescriptionData> _filters(List<DescriptionData> data) {
     if (data == null) return null;
 
@@ -224,46 +262,50 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       );
     }
 
-    return new ListView.builder(
+    Widget _listItem(int index) {
+      DescriptionData asset = data[index];
+      String title = widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
+      String desStr = '描述:${asset.description??''}';
+      String locationStr = widget.chooseLocation ? '' : '位置:${asset.location??''}\n${asset.locationDescription??''}';
+      Color avatarColor = Style.assetStatusColor(asset.status);
+
+      return SimpleButton(
+        child: ListTile(
+          leading: CircleAvatar(
+            child: Text('${index+1}', style: TextStyle(fontSize: index > 10000 ? 12.0 : 14.0, color: Colors.white)),
+            backgroundColor: avatarColor,
+          ),
+          title: Text(title),
+          subtitle: Text(desStr),
+          trailing: Text(locationStr, textAlign: TextAlign.right,),
+        ),
+        onTap: (){
+          if(widget.needReturn){
+            Navigator.pop(context, asset);
+          } else {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => AssetNumDetailPage(asset: asset.assetnum)));
+          }
+        },
+      );
+    }
+
+    return ListView.builder(
       shrinkWrap: true,
       itemCount: data.length,
       itemBuilder: (_, int index) {
-        DescriptionData asset = data[index];
-        return new Container(
-            child: new Column(
-          children: <Widget>[
-            SimpleButton(
-              child: ListTile(
-                leading: CircleAvatar(
-                  child: Text('${index+1}', style: TextStyle(fontSize: index > 10000 ? 12.0 : 14.0),),
-                ),
-                title: Text(widget.chooseLocation
-                    ? '${asset.location}'
-                    : '${asset.assetnum}'),
-                subtitle: Text('描述:${asset.description??''}'),
-                trailing: Text(widget.chooseLocation
-                    ? ''
-                    : '位置:${asset.location??''}\n${asset.locationDescription??''}', textAlign: TextAlign.right,),
-              ),
-              onTap: () {
-                if(widget.needReturn){
-                  Navigator.pop(context, asset);
-                } else {
-                  Navigator.push(context, new MaterialPageRoute(builder: (_) => new AssetNumDetailPage(asset: asset.assetnum)));
-                }
-              },
-            ),
-            Divider(
-              height: 1.0,
-            )
-          ],
-        ));
+        return Container(
+          child: Column(
+            children: <Widget>[
+              _listItem(index),
+              Divider(height: 1.0)
+            ],
+          )
+        );
       },
     );
   }
 
-  String get cacheKey =>
-      '__${Cache.instance.site}_${widget.chooseLocation ? '_locations': '_assets'}';
+  String get cacheKey => '__${Cache.instance.site}_${widget.chooseLocation ? '_locations': '_assets'}';
 
   void _getAsset({String asset = '', int count = 50000, bool queryOne}) async {
     if (_request) return;

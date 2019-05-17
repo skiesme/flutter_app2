@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:samex_app/model/cm_attachments.dart';
+import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
 
 import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/model/order_new.dart';
+import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
@@ -58,7 +62,6 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     _data = getMemoryCache(cacheKey, expired: false);
   }
 
-
   Future _getOrderDetail({bool force = false}) async{
     try{
       final response = await getApi(context).orderDetail(_info.wonum, force ? 0: _data?.changedate);
@@ -66,18 +69,37 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
       if(result.code != 0){
         Func.showMessage(result.message);
       } else {
+
         OrderDetailData data = result.response;
         if(data != null){
-
-          setMemoryCache<OrderDetailData>(cacheKey, data);
-          setState(() {
-            _data = data;
-          });
+          if (mounted) {
+            setMemoryCache<OrderDetailData>(cacheKey, data);
+            setState(() {
+              _data = data;
+            });
+          }
         }
+        
+        if (_data != null) {
+          _getSteps(_data);
+        } else if (data != null) {
+          _getSteps(data);
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _show = false;
+        });
       }
     } catch(e){
       print(e);
-      Func.showMessage('网络出现异常: 获取工单详情失败');
+      if (mounted) {
+        setState(() {
+          _show = false;
+        });
+        Func.showMessage('网络出现异常: 获取工单详情失败');
+      }
     }
   }
 
@@ -226,8 +248,10 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         widget = new StepList(
           key: _stepKey, 
           data: _data,
-          onImgChanged: (){
-            _getAttachments();
+          onImgChanged: (OrderDetailData data){
+            if (data != null) {
+              _getSteps(data);
+            }
           },
         );
         break;
@@ -325,12 +349,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
         ]);
       }
 
-      if(_data.faultlev.isNotEmpty){
-        list.add(Text('故障等级: ${_data.faultlev}'));
-      }
-      if(_data.woprof.isNotEmpty){
-        list.add(Text('报修工单分类: ${_data.woprof}'));
-      }
+      // TODO: Need API response 故障等级 / 报修工单分类
+      // if(_data !=null && _data.faultlev != null){
+      //   list.add(Text('故障等级: ${_data.faultlev??''}'));
+      // }
+      // if(_data != null && _data.woprof != null){
+      //   list.add(Text('报修工单分类: ${_data.woprof??''}'));
+      // }
     }
 
     list.add(SizedBox(height: Style.separateHeight,));
@@ -338,61 +363,17 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return list;
   }
 
-  void _getAttachments() async {
-
-    if (_info == null) {
-      return;
-    }
-
-    try{
-
-      var images = new List();
-
-      debugPrint('查询工单步骤 wonum：${_info.wonum??''}, site：${Cache.instance.site}');
-      if(getOrderType(_info.worktype) != OrderType.XJ){
-        Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
-        StepsResult result2 = new StepsResult.fromJson(response);
-        
-        if(result2.code == 0){
-          images.addAll(result2.response.images);
-        }
-      } else  {
-        Map response = await getApi(context).steps(sopnum: '', wonum: _info.wonum, site: Cache.instance.site);
-        StepsResult result = new StepsResult.fromJson(response);
-        if(result.code == 0){
-          List <OrderStep> setps =  result.response.steps;
-          for (OrderStep item in setps) {
-            images.addAll(item.images);
-          }
-          setMemoryCache<List<OrderStep>>(cacheStepsKey, setps);
-        }
-      }
-
-      if(mounted){
-        setState(() {
-          _attachments = images.length;
-        });
-      }
-
-      setMemoryCache(cacheKey2, images.length);
-      debugPrint('当前工单步骤：${_info.wonum??''}, 附件个数为：${images.length}');
-    } catch (e){
-      debugPrint('获取附件信息失败，$e');
-    }
-  }
-
   Widget _baseInfo() {
     Widget _attachmentBtn() {
-      bool has = _attachments > 0;
-      debugPrint('current has attachments? ${has ? 'Yes' : 'No'}， count:$_attachments');
-      if (has) {
+      debugPrint('current has attachments count:$_attachments');
+      if (_attachments > 0) {
         return BadgeIconButton(
           itemCount: _attachments,
           animation: false,
           icon: SimpleButton(
             onTap: (){
-              Navigator.push(context, new MaterialPageRoute(
-                  builder: (_) => new AttachmentPage(order: _info, data: [])));
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (_) => AttachmentPage(order: _info, data: [])));
             },
             child: Row(
               children: <Widget>[
@@ -598,29 +579,117 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return list;
   }
 
-  @override
-  Widget build(BuildContext context) {
-
-    _attachments = getMemoryCache(cacheKey2, callback: (){
-      _getAttachments();
-    })??0;
-
-    List<Widget> getBarActions() {
-      if (widget.info.actfinish == 0) {
-        List<Widget> actions = new List<Widget>();
-        // refresh work_flow
-        actions.add(
-          new PopupMenuButton<String>(
-            onSelected: _selectMenu,
-            itemBuilder: (BuildContext context) => getPopupMenuButton(),
-          ),
-        );
-        return actions.toList();
+  void _updateTaskInfo(OrderDetailData newData) async {
+    debugPrint('资产编号：${newData.assetnum}, 描述：${newData.assetDescription}');
+    try {
+      Map response = await getApi(context).postOrderUpdate(newData);
+      OrderNewResult result = new OrderNewResult.fromJson(response);
+      if (result.code == 0 && mounted) {
+          setState(() {
+            _data = newData;
+          });
+          setMemoryCache<OrderDetailData>(cacheKey, newData);
+      } else {
+        Func.showMessage('保存失败');
+        return;
       }
-      return null;
+    } catch (e) {
+      print(e.message);
+    }
+  }
+
+  void showEditDialog(BuildContext context) {
+    
+    OrderDetailData _tmpData = OrderDetailData.fromJson(_data.toJson());
+    TextStyle infoStyle = TextStyle(fontSize: 14.0);
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+              builder: (context, state) {
+                return SimpleDialog(
+                  contentPadding: const EdgeInsets.all(10.0),
+                  title: Text('编辑', style: TextStyle(fontSize: 16.0, color: Colors.black), textAlign: TextAlign.center),
+                  children: <Widget>[
+                    ListTile (
+                      leading: Text('资产编号'),
+                      title: Text('${_tmpData?.assetnum??''}', style: infoStyle),
+                      trailing: Icon(
+                        Icons.navigate_next,
+                        color: Colors.black87,
+                      ),
+                      onTap: () async {
+                        final DescriptionData result = await Navigator.push(context, new MaterialPageRoute (
+                            builder: (_) => new ChooseAssetPage(location: _data.location,)
+                        ));
+                        if (result != null) {
+                          setState(() {
+                            if (_tmpData != null) {
+                              setState(() {
+                                _tmpData.assetnum = result.assetnum;
+                                _tmpData.assetDescription = result.description;
+                              });
+                            }
+                          });
+                        }
+                      },
+                    ),
+                    ListTile (
+                      leading: Text('资产描述'),
+                      title: Text('${_tmpData?.assetDescription??''}', style: infoStyle),
+                    ),
+                    ListTile (
+                      leading: SimpleButton(
+                        child: Text('取消'),
+                        onTap: () => Navigator.of(context).pop(true),
+                      ),
+                      // title: Text('xxxx'),
+                      trailing: SimpleButton(
+                        child: Text('保存', style: TextStyle(color: Colors.blue.shade600)),
+                        onTap: (){
+                          Navigator.pop(context, true);
+                          _updateTaskInfo(_tmpData);
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
+          );
+        }
+    );
+  }
+  
+  List<Widget> _buildBarActions(){
+    List<Widget> actions = new List<Widget>();
+    /** edit, 维修工单在工单验收前都可修改 */
+    String status = _data?.status??'';
+    bool isCanEdit = status != '已验收';
+    if (_type == OrderType.CM && isCanEdit) {
+      actions.add(IconButton(
+        icon: Icon(Icons.edit),
+        iconSize: 16.0,
+        onPressed: () {
+          showEditDialog(context);
+        }
+      ));
     }
 
+    // workflow
+    if (widget.info.actfinish == 0) {
+      // refresh work_flow
+      actions.add(
+        new PopupMenuButton<String>(
+          onSelected: _selectMenu,
+          itemBuilder: (BuildContext context) => getPopupMenuButton(),
+        ),
+      );
+    }
+    return actions.toList();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return
       LoadingView(
           show: _show,
@@ -628,7 +697,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
           child: new Scaffold(
             appBar: new AppBar(
               title: Text(_info?.wonum ?? '',),
-              actions: getBarActions(),
+              actions: _buildBarActions(),
             ),
             body: _info== null? Text(''): _getBody(),
             floatingActionButton: _tabIndex == 1 && getOrderType(_info?.worktype) != OrderType.CM  && _info.actfinish == 0 ? new FloatingActionButton(
@@ -662,8 +731,53 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     return 'stepsList_${widget.info.wonum}';
   }
 
-  String get cacheKey2 {
-    return 'task_detail_${widget.info.wonum}_attachments_2';
+
+  void _getSteps(OrderDetailData data) async {
+    try{
+
+      var images = new List();
+      
+      if(_type != OrderType.CM){
+
+        Map response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
+        StepsResult result = new StepsResult.fromJson(response);
+
+        if(result.code == 0){
+          List<String> resImages = result.response.images;
+          List<OrderStep> resSteps = result.response.steps;
+          if (resImages.length > 0) {
+            images.addAll(resImages);
+          }
+          if (resSteps.length > 0) {
+            for (OrderStep item in resSteps) {
+              images.addAll(item.images);
+            }
+            setMemoryCache<List<OrderStep>>(cacheStepsKey, resSteps);
+          }
+        }
+      } else {
+        Map response = await getApi(context).getCMAttachments(data.ownerid);
+        CMAttachmentsResult result = new CMAttachmentsResult.fromJson(response);
+
+        print(result.toJson().toString());
+
+        if(result.code == 0){
+          List<String> resImages = result.response;
+          if (resImages.length > 0) {
+            images.addAll(resImages);
+          }
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _attachments = images.length;
+        });
+        debugPrint('当前工单步骤：${_info.wonum??''}, 附件个数为：${images.length}');
+      }
+    } catch (e){
+      print ('获取步骤列表失败: $e');
+    }    
   }
 
   @override
@@ -672,9 +786,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> with AfterLayoutMixin<T
     setState(() {
       _info = widget.info;
       _type = getOrderType(_info.worktype);
-      _getOrderDetail();
     });
-
+    
+    _getOrderDetail();
   }
 
   @override

@@ -32,4 +32,17 @@ class Style {
 
     return TextStyle(color: Colors.redAccent);
   }
+
+
+  static Color assetStatusColor(String status) {
+      Color avatarColor = Colors.grey.shade600;
+      status = status??'';
+      if (status == '停用' || status == 'DECOMMISSIONED') {
+        avatarColor = Colors.red.shade400;
+      } else if (status == 'OPERATING') {
+        // 正常
+        avatarColor = Colors.blue.shade400;
+      }
+      return avatarColor;
+    }
 }
