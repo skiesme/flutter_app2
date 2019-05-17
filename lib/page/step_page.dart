@@ -111,7 +111,6 @@ class _StepPageState extends State<StepPage>{
             widget.data, lists,
             onProgress: (send, total){
               int percent = ((send / total) * 100).toInt();
-              print('${new DateTime.now()} received: percent= $percent');
               setMountState(() {
                 if(percent == 100) {
                   _progress = 0;

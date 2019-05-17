@@ -6,6 +6,7 @@ import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/page/login_page.dart';
 import 'package:samex_app/page/home_page.dart';
 import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/utils/localizations.dart';
 
 import 'package:samex_app/utils/style.dart';
 
@@ -18,38 +19,34 @@ void main() async {
 }
 
 class App extends StatelessWidget {
-
   final GlobalKey<_MyAppState> _key = new GlobalKey<_MyAppState>();
 
   @override
   Widget build(BuildContext context) {
-    return
-      BlocProvider<BadgeBloc>(
-          bloc: BadgeBloc(),
-          child: new RootModelWidget(
-              model: new RootModel(
-                  token: Cache.instance.token,
-                  onTextScaleChanged: (double textScale){
-                    _key.currentState.setTextScale(textScale);
-                  }),
-              child: MyApp(key: _key,)));
+    return BlocProvider<BadgeBloc>(
+        bloc: BadgeBloc(),
+        child: new RootModelWidget(
+            model: new RootModel(
+                token: Cache.instance.token,
+                onTextScaleChanged: (double textScale) {
+                  _key.currentState.setTextScale(textScale);
+                }),
+            child: MyApp(
+              key: _key,
+            )));
   }
 }
 
-
 class MyApp extends StatefulWidget {
-
-  MyApp({Key key}) : super(key:key);
+  MyApp({Key key}) : super(key: key);
 
   @override
   _MyAppState createState() => new _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
-  void setTextScale(double textScale){
-    setState(() {
-    });
+  void setTextScale(double textScale) {
+    setState(() {});
   }
 
   Widget _getHomePage() {
@@ -61,7 +58,6 @@ class _MyAppState extends State<MyApp> {
       return new LoginPage();
     }
   }
-
 
   Widget _applyTextScaleFactor(Widget child) {
     return new Builder(
@@ -83,7 +79,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
     final ThemeData theme = Theme.of(context);
 
     return new MaterialApp(
@@ -91,6 +86,7 @@ class _MyAppState extends State<MyApp> {
           // ... app-specific localization delegate[s] here
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
+          ChineseCupertinoLocalizations.delegate,
         ],
         supportedLocales: [
           const Locale('en', 'US'), // English
@@ -100,21 +96,12 @@ class _MyAppState extends State<MyApp> {
         theme: new ThemeData(
           primaryColor: Style.primaryColor,
           textTheme: theme.textTheme.copyWith(
-            body1: theme.textTheme.body1.copyWith(
-                fontSize: 14.0
-            ),
-            title: theme.textTheme.title.copyWith(
-                fontSize: 18.0
-            ),
+            body1: theme.textTheme.body1.copyWith(fontSize: 14.0),
+            title: theme.textTheme.title.copyWith(fontSize: 18.0),
           ),
-
           primaryTextTheme: theme.primaryTextTheme.copyWith(
-            body1: theme.primaryTextTheme.body1.copyWith(
-                fontSize: 14.0
-            ),
-            title: theme.primaryTextTheme.title.copyWith(
-                fontSize: 18.0
-            ),
+            body1: theme.primaryTextTheme.body1.copyWith(fontSize: 14.0),
+            title: theme.primaryTextTheme.title.copyWith(fontSize: 18.0),
           ),
           fontFamily: 'Miui',
         ),
@@ -124,11 +111,6 @@ class _MyAppState extends State<MyApp> {
             child: _applyTextScaleFactor(child),
           );
         },
-        home: _getHomePage()
-    )
-    ;
+        home: _getHomePage());
   }
 }
-
-
-

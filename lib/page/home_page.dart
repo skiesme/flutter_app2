@@ -222,8 +222,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage>  {
                         await getApi(context).download(
                             result.response.url, (int received, int total) {
                           int percent = ((received / total) * 100).toInt();
-                          print('${new DateTime
-                              .now()} received: percent= $percent');
 
                           setMountState(() {
                             if (percent == 100) {

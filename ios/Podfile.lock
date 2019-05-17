@@ -68,20 +68,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
 
 SPEC CHECKSUMS:
-  barcode_scan: 6b6c70091dd7262c5c4dd5f7c3567eac153990a4
-  connectivity: d5992e3758d68b1c4b12d6e012fe0813f1aa1645
-  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
-  fluttertoast: 0a20dcbbb8ecfd1a61b6285651ff2d5989d033fb
+  barcode_scan: d0aa6e3e9f82467e66f20117f4bd2ff2aafcc732
+  connectivity: c72716e202a1225ec4810740d5cb56b8ae3bf4cc
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  image_picker: ee00aab0487cedc80a304085219503cc6d0f2e22
-  open_file: 40d524de730775bb4edb021fa137cc1d2fa13f1c
-  package_info: d7c98b64f60add4c2908b9d94d82a45d3c8827ad
-  path_provider: 09407919825bfe3c2deae39453b7a5b44f467873
+  image_picker: a211f28b95a560433c00f5cd3773f4710a20404d
+  open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
+  package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055
+  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SGQRCode: 6cd7f03ea6b74d1267820d427b07d1451b387c79
-  shared_preferences: 5a1d487c427ee18fcd3ea1f2a131569481834b53
-  sqflite: d1612813fa7db7c667bed9f1d1b508deffc56999
+  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
+  sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
 
 PODFILE CHECKSUM: 1e5af4103afd21ca5ead147d7b81d06f494f51a2
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.1
