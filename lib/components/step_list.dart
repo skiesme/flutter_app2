@@ -165,7 +165,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   }
 
   Widget _buildItemCell(int i, OrderStep step) {
-    debugPrint('资产: ${step.assetnum??' '}-${step.assetDescription??' '}');
+    // debugPrint('资产: ${step.assetnum??' '}-${step.assetDescription??' '}');
 
     Widget info(){
       bool isCM = getOrderType(widget.data?.worktype) == OrderType.CM;

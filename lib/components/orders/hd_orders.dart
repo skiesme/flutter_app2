@@ -195,7 +195,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
   void optionTimeSortChangedHandle(bool isTimeUp) {
     String res = isTimeUp ? 'Yes' : 'No';
-    debugPrint("current is tiem up? ${res}!");
+    // debugPrint("current is tiem up? ${res}!");
     setState(() {
       _queryInfo.isUp = isTimeUp;
     });
@@ -246,7 +246,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
       _canLoadMore = false;
 
-      print('hd-> query:${_queryInfo.query}, worktype:${_queryInfo.workType}, older:${older}, time:${time}, startTime:${startTime}');
+      // debugPrint('hd-> query:${_queryInfo.query}, worktype:${_queryInfo.workType}, older:${older}, time:${time}, startTime:${startTime}');
 
       int isAll = _queryInfo.isAll ? 0 : 1;
       String status = _showOptionView ? _queryInfo.status : 'active';
@@ -294,7 +294,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
             );
           }
         } catch (e){
-          debugPrint('badgeChange   error: $e');
+          // debugPrint('badgeChange   error: $e');
         }
       }
       if (mounted) {
@@ -303,7 +303,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         });
       }
     } catch(e){
-      debugPrint('获取工单列表失败，$e');
+      // debugPrint('获取工单列表失败，$e');
       Func.showMessage('网络出现异常, 获取工单列表失败');
     }
     if(widget.helper.inital) widget.helper.inital = false;

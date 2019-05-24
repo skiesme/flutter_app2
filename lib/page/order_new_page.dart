@@ -254,7 +254,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
               files: list,
               onProgress: (send, total){
                 int percent = ((send / total) * 100).toInt();
-                debugPrint('order new progress: percent= $percent');
+                // debugPrint('order new progress: percent= $percent');
                 setMountState(() {
                   if(percent == 100) {
                     _progress = 0;
