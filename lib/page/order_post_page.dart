@@ -36,11 +36,10 @@ class _StatusSelect{
 
 class OrderPostPage extends StatefulWidget {
 
-  final int id;
   final Actions action;
-  final String wonum;
+  final OrderDetailData data;
 
-  const OrderPostPage({@required this.id, @required this.action, @required this.wonum});
+  const OrderPostPage({@required this.data, @required this.action});
   @override
   _OrderPostPageState createState() => _OrderPostPageState();
 }
@@ -61,6 +60,9 @@ class _OrderPostPageState extends State<OrderPostPage> {
   @override
   void initState() {
     super.initState();
+
+    _woprof = widget.data.woprof;
+    _faultlev = widget.data.faultlev;
 
     _controller = new TextEditingController();
 
@@ -98,10 +100,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
         assigncode: _data?.hrid?? Cache.instance.userName,
         actionid: widget.action.actionid,
         notes:  _controller.text,
-        ownerid: widget.id,
+        ownerid: widget.data.ownerid,
         action: widget.action.instruction,
         site: Cache.instance.site,
-        wonum: widget.wonum,
+        wonum: widget.data.wonum,
         woprof: _woprof,
         faultlev: _faultlev
       );
@@ -129,7 +131,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
         _show = false;
       });
     }
-
   }
 
   @override
@@ -183,7 +184,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                   ) : Container(),
                   ListTile(
                     title:Text('工单编号'),
-                    subtitle: Text(widget.wonum),
+                    subtitle: Text(widget.data.wonum),
                   ),
                   ListTile(
                     title: Text('操作人'),

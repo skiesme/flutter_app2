@@ -216,9 +216,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         if (_type == OrderType.CM && _data.actfinish == 0) {
           children.add(newButton('新增任务', () async {
             if (_stepKey.currentState == null) return;
-
             int _stepNo = (_stepKey.currentState.steps + 1) * 10;
-
             debugPrint('stepno:${_stepNo}');
 
             final result = await Navigator.push(context,
