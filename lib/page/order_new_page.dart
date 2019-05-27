@@ -19,7 +19,7 @@ import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/page/task_detail_page.dart';
 
 
-/** 报修工单分类 */
+/** 报修工单 - 故障 分类 */
 final List<_StatusSelect> _woprofList = <_StatusSelect>[
   _StatusSelect(0, '机械'),
   _StatusSelect(1, '电器'),
@@ -81,7 +81,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
   TextEditingController _controller;
   TextEditingController _controller2;
 
-  String _woprof = '';          //报修工单分类
+  String _woprof = '';          // 故障分类
   String _faultlev = '';        // 故障等级
 
   String _tips;
@@ -493,7 +493,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
   Widget woprofItem() {
     return _getMenus(
-        preText: '报修工单分类:',
+        preText: '故障分类:',
         padding: EdgeInsets.only(left: 8.0),
         content: SimpleButton(
             child: Row(
@@ -501,12 +501,12 @@ class _OrderNewPageState extends State<OrderNewPage> {
               MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Text(
-                  _woprof.length > 0 ? _woprof : '请选择工单分类',
+                  _woprof.length > 0 ? _woprof : '请选择故障分类',
                   style: TextStyle(color: _woprof.length > 0 ? Colors.black : Colors.grey),
                 ),
                 new Expanded(
                     child: new PopupMenuButton<_StatusSelect>(
-                      tooltip:'请选择工单分类',
+                      tooltip:'请选择故障分类',
                       child: Align(child: const Icon(Icons.arrow_drop_down), alignment: Alignment.centerRight, heightFactor: 1.5,),
                       itemBuilder: (BuildContext context) {
                         return _woprofList.map((_StatusSelect status) {
@@ -699,7 +699,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
               return;
             }
             if(_woprof.length == 0){
-              Func.showMessage('请设置报修工单分类');
+              Func.showMessage('请设置故障分类');
               return;
             }
             if(_faultlev.length == 0){
@@ -739,7 +739,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
     datas.add(_OrderNewFormItem('描述', _data.assetDescription));
     datas.add(_OrderNewFormItem('位置', _data.location));
     datas.add(_OrderNewFormItem('描述', _data.locationDescription));
-    datas.add(_OrderNewFormItem('报修工单分类', _woprof));
+    datas.add(_OrderNewFormItem('故障分类', _woprof));
     datas.add(_OrderNewFormItem('故障等级', _faultlev));
 //    datas.add(_OrderNewFormItem('照片', ''));
     datas.add(_OrderNewFormItem('上报人', Cache.instance.userDisplayName));

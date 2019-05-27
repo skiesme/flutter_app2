@@ -369,7 +369,7 @@ class SaMexApi {
       String reportedby,
       String images,
       String phone,
-      String woprof, // 报修工单分类
+      String woprof, // 故障分类
       String faultlev, // 故障等级
       List<UploadFileInfo> files,
       OnUploadProgress onProgress}) async {

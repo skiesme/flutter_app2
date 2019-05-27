@@ -53,7 +53,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
   bool otherConfig = false;
 
-  String _woprof = '';          //报修工单分类
+  String _woprof = '';          // 故障分类
   String _faultlev = '';        // 故障等级
 
 
@@ -83,7 +83,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
         return;
       }
       if(_woprof.length == 0){
-        Func.showMessage('请先设置报修工单分类');
+        Func.showMessage('请先设置故障分类');
         return;
       }
     }
@@ -199,7 +199,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('报修工单分类', style: TextStyle(fontSize: 16.0),),
+                            Text('故障分类', style: TextStyle(fontSize: 16.0),),
                             Text(_woprof, style: TextStyle(color: Colors.grey)),
                           ],
                         ),
