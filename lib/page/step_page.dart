@@ -99,7 +99,7 @@ class _StepPageState extends State<StepPage>{
 
       List<String> images = widget.data.getUploadImages();
 
-      print('found len=${images.length}  upload');
+      debugPrint('found len=${images.length}  upload');
       List<UploadFileInfo> lists = new List();
 
       var postStep = () async {
@@ -202,7 +202,7 @@ class _StepPageState extends State<StepPage>{
                       Padding(padding: Style.pagePadding4, child:Text('资产: ${data.assetnum ?? ''}')),
                       Padding(padding: Style.pagePadding4, child:Text('描述: ${data.assetDescription ?? ''}')),
                       Container(height: Style.separateHeight, color: Style.backgroundColor,),
-
+                      
                       Padding(padding: Style.pagePadding2, child:Text('操作信息')),
                       Divider(height: 1.0,),
 
