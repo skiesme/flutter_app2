@@ -22,7 +22,7 @@ import 'package:samex_app/page/task_detail_page.dart';
 /** 报修工单 - 故障 分类 */
 final List<_StatusSelect> _woprofList = <_StatusSelect>[
   _StatusSelect(0, '机械'),
-  _StatusSelect(1, '电器'),
+  _StatusSelect(1, '电气'),
   _StatusSelect(2, '仪表'),
   _StatusSelect(3, '自控'),
   _StatusSelect(4, '其他'),
