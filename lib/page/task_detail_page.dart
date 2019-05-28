@@ -393,8 +393,11 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       ]);
 
       // 故障等级 && 故障分类
-      list.add(Text('故障分类: ${_data?.woprof ?? ''}'));
-      list.add(Text('故障等级: ${_data?.faultlev ?? ''}'));
+
+      if (_type == OrderType.CM) {
+        list.add(Text('故障分类: ${_data?.woprof ?? ''}'));
+        list.add(Text('故障等级: ${_data?.faultlev ?? ''}'));
+      }
 
       if (_type != OrderType.XJ) {
         list.add(Text('汇报人员: ${_data?.reportedby ?? ''}'));
