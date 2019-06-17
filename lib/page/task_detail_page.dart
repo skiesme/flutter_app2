@@ -5,7 +5,7 @@ import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
 
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/order_new.dart';
 import 'package:samex_app/page/choose_assetnum_page.dart';
 import 'package:samex_app/utils/assets.dart';
@@ -545,14 +545,14 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
           try {
             Map response =
-                await getModel(context).api.postXJ(_data?.wonum ?? '');
+                await getApi(context).postXJ(_data?.wonum ?? '');
             OrderDetailResult result = new OrderDetailResult.fromJson(response);
             if (result.code != 0) {
               Func.showMessage(result.message);
             } else {
               Func.showMessage('提交成功');
 
-              getModel(context).user.orders =
+              getUserInfo(context).orders =
                   await getApi(context).orderCount();
 
               if (mounted) {
@@ -599,8 +599,8 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
         if (result != null) {
           clearMemoryCacheWithKeys(_data.wonum);
-          if (getModel(context).user.orders > 0) {
-            getModel(context).user.orders -= 1;
+          if (getUserInfo(context).orders > 0) {
+            getUserInfo(context).orders -= 1;
           }
           _popDone();
         }

@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:samex_app/components/simple_button.dart';
 
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
@@ -14,7 +14,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class PictureList extends StatefulWidget {
-
   final bool canAdd;
   final List<String> images;
   final int count;
@@ -22,33 +21,40 @@ class PictureList extends StatefulWidget {
 
   final String customStr;
 
-  PictureList({Key key, this.canAdd = true,  this.images, this.count = 3, this.customStr, this.onPictureListChanged}):super(key:key);
+  PictureList(
+      {Key key,
+      this.canAdd = true,
+      this.images,
+      this.count = 3,
+      this.customStr,
+      this.onPictureListChanged})
+      : super(key: key);
 
   @override
   PictureListState createState() => new PictureListState();
 }
 
 class PictureListState extends State<PictureList> {
-
   List<ImageData> _images = new List();
 
   List<ImageData> _resources = new List();
 
   Future _getImage(ImageSource value) async {
-    File image = await ImagePicker.pickImage(source: value, maxHeight: 1280.0, maxWidth: 1280.0);
+    File image = await ImagePicker.pickImage(
+        source: value, maxHeight: 1280.0, maxWidth: 1280.0);
 
 //    if(Platform.isIOS){
 //      image = await FlutterNativeImage.compressImage(image.path,
 //          quality: 98, percentage: 100);
 //    }
 
-    if(image != null){
+    if (image != null) {
       setState(() {
         ImageData data = new ImageData(
-          path: image.path, 
-          time: Func.getYYYYMMDDHHMMSSString(), 
-          userName: '${Cache.instance.userName}-${Cache.instance.userDisplayName}'
-        );
+            path: image.path,
+            time: Func.getYYYYMMDDHHMMSSString(),
+            userName:
+                '${Cache.instance.userName}-${Cache.instance.userDisplayName}');
         _images.add(data);
         widget.onPictureListChanged();
 //        getModel(context).step.images.add(data.toString());
@@ -57,63 +63,70 @@ class PictureListState extends State<PictureList> {
   }
 
   List<ImageData> getImages() {
-    return _images??[];
+    return _images ?? [];
   }
 
-  Widget _largeImage(Widget child,  int index){
-
+  Widget _largeImage(Widget child, int index) {
 //    print('largeimage : ${this._resources.toString()}');
 
     return new GestureDetector(
-      onTap: (){
-        Navigator.push(context, new MaterialPageRoute<void>(
-            builder: (BuildContext context) {
-              return new Scaffold(
-                appBar: new AppBar(
-                    title: new Text('图片预览')
-                ),
-
-                body: new DefaultTabController(
-                  length: _resources.length,
-                  initialIndex: index,
-                  child: Container(child:_PageSelector(icons: this._resources), color: Colors.black,),
-                ),
-              );
-            }
-        ));
+      onTap: () {
+        Navigator.push(context,
+            new MaterialPageRoute<void>(builder: (BuildContext context) {
+          return new Scaffold(
+            appBar: new AppBar(title: new Text('图片预览')),
+            body: new DefaultTabController(
+              length: _resources.length,
+              initialIndex: index,
+              child: Container(
+                child: _PageSelector(icons: this._resources),
+                color: Colors.black,
+              ),
+            ),
+          );
+        }));
       },
-      child: widget.canAdd ? Stack(
-        children: <Widget>[
-          child,
-          Positioned( right: 0.0,child:SimpleButton(
-            elevation: 8.0,
-            color: Colors.redAccent,
-            shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(10.0)),
-            onTap: (){
+      child: widget.canAdd
+          ? Stack(
+              children: <Widget>[
+                child,
+                Positioned(
+                    right: 0.0,
+                    child: SimpleButton(
+                      elevation: 8.0,
+                      color: Colors.redAccent,
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0)),
+                      onTap: () {
+                        setState(() {
+                          if (widget.images != null &&
+                              widget.images != null &&
+                              widget.images.length > index) {
+                            widget.images.removeAt(index);
+                          } else if (_images.length > 0) {
+                            int preIndex = 0;
+                            if (widget.images != null) {
+                              preIndex = widget.images.length;
+                            }
+                            _images.removeAt(index - preIndex);
+                          }
 
-              setState(() {
-                if(widget.images != null && widget.images != null && widget.images.length > index){
-                  widget.images.removeAt(index);
-                } else if(_images.length > 0){
-                  int preIndex = 0;
-                  if(widget.images != null ){
-                    preIndex = widget.images.length;
-                  }
-                  _images.removeAt(index - preIndex);
-                }
-
-                widget.onPictureListChanged();
-              });
-            },
-            child:Icon(Icons.delete, size: 20.0, color: Colors.white,) ,
-          ))
-        ],
-      ) : child,
+                          widget.onPictureListChanged();
+                        });
+                      },
+                      child: Icon(
+                        Icons.delete,
+                        size: 20.0,
+                        color: Colors.white,
+                      ),
+                    ))
+              ],
+            )
+          : child,
     );
   }
 
-  Widget _getImageList(){
-
+  Widget _getImageList() {
     double width = min(120.0, MediaQuery.of(context).size.width / 4);
 
     List<Widget> children = <Widget>[];
@@ -124,76 +137,87 @@ class PictureListState extends State<PictureList> {
 
 //    print('show picture list: ${widget.step.toString()}');
 
-    if(widget.images != null){
-      for(int i = 0, len = widget.images.length; i < len; i++){
+    if (widget.images != null) {
+      for (int i = 0, len = widget.images.length; i < len; i++) {
         String id = widget.images[i];
         try {
-          if(id.startsWith('/')) continue;
+          if (id.startsWith('/')) continue;
 
-          ImageData data = new ImageData.fromString(id);
-
+          ImageData data = ImageData.fromString(id);
+          var cachedNetworkImage = CachedNetworkImage(
+              imageUrl: getApi(context).getImageUrl(data.path),
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ));
           children.add(_largeImage(
-
-              Container(
-                  height: width,
-                  width: width,
-                  child:new CachedNetworkImage(
-                      imageUrl: getModel(context).api.getImageUrl(data.path),
-                      placeholder: Center( child:new CircularProgressIndicator()),
-                      errorWidget: new Icon(Icons.error, color: Colors.red,)))
-
-              , count));
+              Container(height: width, width: width, child: cachedNetworkImage),
+              count));
 
           data.path = getApi(context).getImageUrl(data.path);
 
           _resources.add(data);
-          children.add(SizedBox(width: Style.separateHeight / 2,));
+          children.add(SizedBox(
+            width: Style.separateHeight / 2,
+          ));
           count++;
-        } catch (e){
-
+        } catch (e) {
           print(e);
         }
       }
     }
 
+    for (int i = 0, len = _images.length; i < len; i++) {
+      children.add(_largeImage(
+          new Image.file(
+            File(_images[i].path),
+            width: width,
+          ),
+          count));
 
-    for(int i = 0, len = _images.length; i < len; i++){
-      children.add(_largeImage(new Image.file(File(_images[i].path), width: width,), count));
-
-      children.add(SizedBox(width: Style.separateHeight/2,));
+      children.add(SizedBox(
+        width: Style.separateHeight / 2,
+      ));
       _resources.add(_images[i]);
       count++;
     }
 
     bool canAdd = widget.canAdd ?? true;
 
-
-    if(count < widget.count && canAdd){
-      children.add(SizedBox(width: Style.separateHeight/2,));
+    if (count < widget.count && canAdd) {
+      children.add(SizedBox(
+        width: Style.separateHeight / 2,
+      ));
       children.add(SimpleButton(
-        onTap: (){
-
+        onTap: () {
           showDialog<ImageSource>(
             context: context,
-            builder: (BuildContext context) => new SimpleDialog(
-                children: <Widget>[
+            builder: (BuildContext context) =>
+                new SimpleDialog(children: <Widget>[
                   new SimpleDialogOption(
                       child: Text('拍摄'),
-                      onPressed: () { Navigator.pop(context, ImageSource.camera); }
-                  ),
+                      onPressed: () {
+                        Navigator.pop(context, ImageSource.camera);
+                      }),
                   new SimpleDialogOption(
                       child: Text('从相册中选择'),
-                      onPressed: () { Navigator.pop(context, ImageSource.gallery); }
-                  ),
-                ]
-            ),
-          ).then<void>((ImageSource value) { // The value passed to Navigator.pop() or null.
-              _getImage(value);
+                      onPressed: () {
+                        Navigator.pop(context, ImageSource.gallery);
+                      }),
+                ]),
+          ).then<void>((ImageSource value) {
+            // The value passed to Navigator.pop() or null.
+            _getImage(value);
           });
-
         },
         padding: EdgeInsets.all(10.0),
-        child: Icon(Icons.add, size: width/2, color: Colors.grey,),
+        child: Icon(
+          Icons.add,
+          size: width / 2,
+          color: Colors.grey,
+        ),
         shape: new Border.all(color: Colors.grey),
       ));
     }
@@ -207,19 +231,15 @@ class PictureListState extends State<PictureList> {
 
   @override
   Widget build(BuildContext context) {
-
-    if(widget.images != null && widget.images.length > 0){
+    if (widget.images != null && widget.images.length > 0) {
       return _getImageList();
     } else {
-
-      if(widget.canAdd){
-        return  _getImageList();
+      if (widget.canAdd) {
+        return _getImageList();
       } else {
         return new Center(child: Text('未发现上传照片'));
       }
-
     }
-
   }
 }
 
@@ -229,7 +249,11 @@ class ImageData {
   String userName;
   String customStr;
 
-  ImageData({@required this.path, @required this.time, @required this.userName, this.customStr});
+  ImageData(
+      {@required this.path,
+      @required this.time,
+      @required this.userName,
+      this.customStr});
 
   @override
   String toString() {
@@ -237,14 +261,14 @@ class ImageData {
   }
 
   ImageData.fromString([String data = '']) {
-    if(data.contains(',')){
+    if (data.contains(',')) {
       List<String> list = data.split(',');
       path = list[0];
       time = list[1];
-      if(list.length > 2) {
+      if (list.length > 2) {
         userName = list[2];
       }
-      if(list.length > 3) {
+      if (list.length > 3) {
         customStr = list[3];
       }
     } else {
@@ -254,13 +278,16 @@ class ImageData {
 }
 
 class _PageSelector extends StatelessWidget {
-  const _PageSelector({ this.icons });
+  const _PageSelector({this.icons});
 
   final List<ImageData> icons;
 
   Align getCustomText(String str) {
     return Align(
-      child: Text(str??'', style: TextStyle(color: Colors.red, fontSize: 18.0),),
+      child: Text(
+        str ?? '',
+        style: TextStyle(color: Colors.red, fontSize: 18.0),
+      ),
       alignment: Alignment.topCenter,
     );
   }
@@ -281,26 +308,31 @@ class _PageSelector extends StatelessWidget {
             ),
             child: new TabBarView(
                 children: icons.map((ImageData icon) {
-                  return new Stack(
+              return new Stack(
+                children: <Widget>[
+                  SizedBox.expand(child: new GridPhotoViewer(path: icon.path)),
+                  Column(
                     children: <Widget>[
-                      SizedBox.expand(child: new GridPhotoViewer(path: icon.path)),
-                      Column(
-                        children: <Widget>[
-                          Align(
-                            child: Text(icon.userName??"", style: TextStyle(color: Colors.red, fontSize: 18.0),),
-                            alignment: Alignment.topCenter,
-                          ),
-                          Align(
-                            child: Text(icon.time??"", style: TextStyle(color: Colors.red, fontSize: 18.0),),
-                            alignment: Alignment.topCenter,
-                          ),
-                          getCustomText(icon.customStr)
-                        ],
-                      )
+                      Align(
+                        child: Text(
+                          icon.userName ?? "",
+                          style: TextStyle(color: Colors.red, fontSize: 18.0),
+                        ),
+                        alignment: Alignment.topCenter,
+                      ),
+                      Align(
+                        child: Text(
+                          icon.time ?? "",
+                          style: TextStyle(color: Colors.red, fontSize: 18.0),
+                        ),
+                        alignment: Alignment.topCenter,
+                      ),
+                      getCustomText(icon.customStr)
                     ],
-                  );
-                }).toList()
-            ),
+                  )
+                ],
+              );
+            }).toList()),
           ),
           Positioned(
               bottom: 20.0,
@@ -309,14 +341,15 @@ class _PageSelector extends StatelessWidget {
               child: new Container(
                   margin: const EdgeInsets.only(top: 16.0),
                   child: new Row(
-
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        new TabPageSelector(controller: controller, color: Colors.black, selectedColor: Colors.white,),
+                        new TabPageSelector(
+                          controller: controller,
+                          color: Colors.black,
+                          selectedColor: Colors.white,
+                        ),
                       ],
-                      mainAxisAlignment: MainAxisAlignment.center
-                  )
-              )),
+                      mainAxisAlignment: MainAxisAlignment.center))),
         ],
       ),
     );
@@ -326,7 +359,7 @@ class _PageSelector extends StatelessWidget {
 const double _kMinFlingVelocity = 800.0;
 
 class GridPhotoViewer extends StatefulWidget {
-  const GridPhotoViewer({ Key key, @required this.path }) : super(key: key);
+  const GridPhotoViewer({Key key, @required this.path}) : super(key: key);
 
   final String path;
 
@@ -334,7 +367,8 @@ class GridPhotoViewer extends StatefulWidget {
   _GridPhotoViewerState createState() => new _GridPhotoViewerState();
 }
 
-class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProviderStateMixin {
+class _GridPhotoViewerState extends State<GridPhotoViewer>
+    with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation<Offset> _flingAnimation;
   Offset _offset = Offset.zero;
@@ -359,8 +393,10 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
   // then the minimum offset value is w - _scale * w, h - _scale * h.
   Offset _clampOffset(Offset offset) {
     final Size size = context.size;
-    final Offset minOffset = new Offset(size.width, size.height) * (1.0 - _scale);
-    return new Offset(offset.dx.clamp(minOffset.dx, 0.0), offset.dy.clamp(minOffset.dy, 0.0));
+    final Offset minOffset =
+        new Offset(size.width, size.height) * (1.0 - _scale);
+    return new Offset(
+        offset.dx.clamp(minOffset.dx, 0.0), offset.dy.clamp(minOffset.dy, 0.0));
   }
 
   void _handleFlingAnimation() {
@@ -388,14 +424,12 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
 
   void _handleOnScaleEnd(ScaleEndDetails details) {
     final double magnitude = details.velocity.pixelsPerSecond.distance;
-    if (magnitude < _kMinFlingVelocity)
-      return;
+    if (magnitude < _kMinFlingVelocity) return;
     final Offset direction = details.velocity.pixelsPerSecond / magnitude;
     final double distance = (Offset.zero & context.size).shortestSide;
     _flingAnimation = new Tween<Offset>(
-        begin: _offset,
-        end: _clampOffset(_offset + direction * distance)
-    ).animate(_controller);
+            begin: _offset, end: _clampOffset(_offset + direction * distance))
+        .animate(_controller);
     _controller
       ..value = 0.0
       ..fling(velocity: magnitude / 1000.0);
@@ -407,7 +441,7 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
       onScaleStart: _handleOnScaleStart,
       onScaleUpdate: _handleOnScaleUpdate,
       onScaleEnd: _handleOnScaleEnd,
-      onDoubleTap: (){
+      onDoubleTap: () {
         Navigator.pop(context);
       },
       child: new ClipRect(
@@ -415,12 +449,17 @@ class _GridPhotoViewerState extends State<GridPhotoViewer> with SingleTickerProv
           transform: new Matrix4.identity()
             ..translate(_offset.dx, _offset.dy)
             ..scale(_scale),
-          child: widget.path.startsWith('http') ? new CachedNetworkImage(
-            imageUrl: widget.path,
-            placeholder: Center( child: new CircularProgressIndicator()),
-            errorWidget: new Icon(Icons.error),
-          )
-              : new Image.file(new File(widget.path), fit: BoxFit.cover,) ,
+          child: widget.path.startsWith('http')
+              ? new CachedNetworkImage(
+                  imageUrl: widget.path,
+                  placeholder: (context, url) =>
+                      Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                )
+              : new Image.file(
+                  new File(widget.path),
+                  fit: BoxFit.cover,
+                ),
         ),
       ),
     );

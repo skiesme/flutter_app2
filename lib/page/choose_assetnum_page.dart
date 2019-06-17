@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/model/description.dart';
@@ -15,7 +15,8 @@ class ChooseAssetPage extends StatefulWidget {
 
   final bool needReturn;
 
-  ChooseAssetPage({this.location, this.chooseLocation = false, this.needReturn = true});
+  ChooseAssetPage(
+      {this.location, this.chooseLocation = false, this.needReturn = true});
 
   @override
   _ChooseAssetPageState createState() => _ChooseAssetPageState();
@@ -32,7 +33,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   void initState() {
     super.initState();
 
-    _scroller = new TextEditingController(text:'');
+    _scroller = new TextEditingController(text: '');
     _scroller.addListener(() {
       setState(() {});
     });
@@ -42,16 +43,15 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       setState(() {});
     });
 
-    if(widget.chooseLocation) {
-      _scroller.text = widget.location??'';
+    if (widget.chooseLocation) {
+      _scroller.text = widget.location ?? '';
     } else {
-      _scroller2.text = widget.location??'';
+      _scroller2.text = widget.location ?? '';
     }
   }
 
-
-  String _getTitle(){
-    if(!widget.needReturn){
+  String _getTitle() {
+    if (!widget.needReturn) {
       return '资产扫描';
     } else {
       return widget.chooseLocation ? '位置选择' : '资产选择';
@@ -88,7 +88,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   List<Widget> _appBarActions() {
     IconButton noActionBtn = IconButton(
       icon: Text('无'),
-      onPressed: (){
+      onPressed: () {
         if (!_loading) {
           String nullStr = '无';
           DescriptionData asset = new DescriptionData();
@@ -107,14 +107,13 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     );
 
     IconButton refreshBtn = IconButton(
-      icon: Icon(Icons.refresh),
-      tooltip: '数据刷新',
-      onPressed: () {
-        if (!_loading) {
-          _getAsset();
-        }
-      }
-    );
+        icon: Icon(Icons.refresh),
+        tooltip: '数据刷新',
+        onPressed: () {
+          if (!_loading) {
+            _getAsset();
+          }
+        });
 
     List<Widget> btns = new List();
     if (widget.needReturn) {
@@ -126,7 +125,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   }
 
   /// Scan Btn
-  FloatingActionButton _scanBtn () {
+  FloatingActionButton _scanBtn() {
     return FloatingActionButton(
       child: Image.asset(
         ImageAssets.scan,
@@ -140,7 +139,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
           _scroller.text = result;
         }
       },
-    ) ;
+    );
   }
 
   /// Body
@@ -151,9 +150,12 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       children: <Widget>[
         _assetsFilterWidget(),
         _locationFilterWidget(),
-        Expanded(child: _loading
-          ? Center(child: CircularProgressIndicator(),)
-          : _getContent(),
+        Expanded(
+          child: _loading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : _getContent(),
         )
       ],
     );
@@ -163,7 +165,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   Widget _assetsFilterWidget() {
     Widget clearBtn = IconButton(
       icon: Icon(Icons.clear),
-      onPressed: (){
+      onPressed: () {
         _scroller.clear();
       },
     );
@@ -174,16 +176,15 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       child: TextField(
         controller: _scroller,
         decoration: InputDecoration(
-          prefixIcon: Align(
-            child: Text(widget.chooseLocation ? '位置' : '资产'),
-            widthFactor: 1.1,
-          ),
-          hintText: "请输入${widget.chooseLocation ? '位置':'资产'}编号/描述进行过滤",
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.all(0.0),
-          border: new OutlineInputBorder(),
-          suffixIcon: _scroller.text.isNotEmpty ? clearBtn : null
-        ),
+            prefixIcon: Align(
+              child: Text(widget.chooseLocation ? '位置' : '资产'),
+              widthFactor: 1.1,
+            ),
+            hintText: "请输入${widget.chooseLocation ? '位置' : '资产'}编号/描述进行过滤",
+            fillColor: Colors.white,
+            contentPadding: const EdgeInsets.all(0.0),
+            border: new OutlineInputBorder(),
+            suffixIcon: _scroller.text.isNotEmpty ? clearBtn : null),
       ),
     );
   }
@@ -191,56 +192,58 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   Widget _locationFilterWidget() {
     Widget clearBtn = IconButton(
       icon: Icon(Icons.clear),
-      onPressed: (){
+      onPressed: () {
         _scroller2.clear();
       },
     );
-    return widget.chooseLocation 
-    ? Container() 
-    : Container(
-      color: Style.backgroundColor,
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
-      child: TextField(
-        controller: _scroller2,
-        decoration: InputDecoration(
-          prefixIcon: Align(
-            child: Text('位置'),
-            widthFactor: 1.1,
-          ),
-          hintText: "请输入位置编号/描述进行过滤",
-          fillColor: Colors.white,
-          contentPadding: const EdgeInsets.all(0.0),
-          border: new OutlineInputBorder(),
-          suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null
-        ),
-      ),
-    );
+    return widget.chooseLocation
+        ? Container()
+        : Container(
+            color: Style.backgroundColor,
+            padding:
+                const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+            child: TextField(
+              controller: _scroller2,
+              decoration: InputDecoration(
+                  prefixIcon: Align(
+                    child: Text('位置'),
+                    widthFactor: 1.1,
+                  ),
+                  hintText: "请输入位置编号/描述进行过滤",
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.all(0.0),
+                  border: new OutlineInputBorder(),
+                  suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null),
+            ),
+          );
   }
-
 
   /// Old
   List<DescriptionData> _filters(List<DescriptionData> data) {
     if (data == null) return null;
 
     return data.where((DescriptionData f) {
-
       if (_scroller.text.length > 0 || _scroller2.text.length > 0) {
         if (!widget.chooseLocation) {
           bool assetFilter = f.assetnum.contains(_scroller.text.toUpperCase());
-          assetFilter = assetFilter || (f.description??'').contains(_scroller.text.toUpperCase());
+          assetFilter = assetFilter ||
+              (f.description ?? '').contains(_scroller.text.toUpperCase());
 
-          bool locationFilter = (f.location??'').contains(_scroller2.text.toUpperCase());
-          locationFilter = locationFilter || (f.locationDescription ??'').contains(_scroller2.text.toUpperCase());
+          bool locationFilter =
+              (f.location ?? '').contains(_scroller2.text.toUpperCase());
+          locationFilter = locationFilter ||
+              (f.locationDescription ?? '')
+                  .contains(_scroller2.text.toUpperCase());
 
-          if ( assetFilter && locationFilter) {
+          if (assetFilter && locationFilter) {
             return true;
           } else {
             return false;
           }
         }
 
-        if ((f.location??'').contains(_scroller.text.toUpperCase()) 
-        || (f.description ??'').contains(_scroller.text.toUpperCase())) {
+        if ((f.location ?? '').contains(_scroller.text.toUpperCase()) ||
+            (f.description ?? '').contains(_scroller.text.toUpperCase())) {
           return true;
         }
 
@@ -264,26 +267,38 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
     Widget _listItem(int index) {
       DescriptionData asset = data[index];
-      String title = widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
-      String desStr = '描述:${asset.description??''}';
-      String locationStr = widget.chooseLocation ? '' : '位置:${asset.location??''}\n${asset.locationDescription??''}';
+      String title =
+          widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
+      String desStr = '描述:${asset.description ?? ''}';
+      String locationStr = widget.chooseLocation
+          ? ''
+          : '位置:${asset.location ?? ''}\n${asset.locationDescription ?? ''}';
       Color avatarColor = Style.assetStatusColor(asset.status);
 
       return SimpleButton(
         child: ListTile(
           leading: CircleAvatar(
-            child: Text('${index+1}', style: TextStyle(fontSize: index > 10000 ? 12.0 : 14.0, color: Colors.white)),
+            child: Text('${index + 1}',
+                style: TextStyle(
+                    fontSize: index > 10000 ? 12.0 : 14.0,
+                    color: Colors.white)),
             backgroundColor: avatarColor,
           ),
           title: Text(title),
           subtitle: Text(desStr),
-          trailing: Text(locationStr, textAlign: TextAlign.right,),
+          trailing: Text(
+            locationStr,
+            textAlign: TextAlign.right,
+          ),
         ),
-        onTap: (){
-          if(widget.needReturn){
+        onTap: () {
+          if (widget.needReturn) {
             Navigator.pop(context, asset);
           } else {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => AssetNumDetailPage(asset: asset.assetnum)));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (_) => AssetNumDetailPage(asset: asset.assetnum)));
           }
         },
       );
@@ -294,18 +309,15 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       itemCount: data.length,
       itemBuilder: (_, int index) {
         return Container(
-          child: Column(
-            children: <Widget>[
-              _listItem(index),
-              Divider(height: 1.0)
-            ],
-          )
-        );
+            child: Column(
+          children: <Widget>[_listItem(index), Divider(height: 1.0)],
+        ));
       },
     );
   }
 
-  String get cacheKey => '__${Cache.instance.site}_${widget.chooseLocation ? '_locations': '_assets'}';
+  String get cacheKey =>
+      '__${Cache.instance.site}_${widget.chooseLocation ? '_locations' : '_assets'}';
 
   void _getAsset({String asset = '', int count = 50000, bool queryOne}) async {
     if (_request) return;
@@ -316,7 +328,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       _request = true;
 
       if (!widget.chooseLocation) {
-        Map response = await getModel(context).api.getAssets(
+        Map response = await getApi(context).getAssets(
               location: widget.location,
               count: count,
               queryOne: queryOne,
@@ -329,7 +341,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
           setMemoryCache<List<DescriptionData>>(cacheKey, result.response);
         }
       } else {
-        Map response = await getModel(context).api.getLocations(
+        Map response = await getApi(context).getLocations(
               location: widget.location,
               count: count,
               queryOne: queryOne,

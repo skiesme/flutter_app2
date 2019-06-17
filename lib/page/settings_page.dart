@@ -4,7 +4,7 @@ import 'package:samex_app/model/site.dart';
 import 'package:samex_app/model/user.dart';
 
 import 'package:samex_app/utils/cache.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
 
 class GalleryTextScaleValue {
@@ -98,8 +98,6 @@ class _SettingsPageState extends State<SettingsPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _fontSizeItem(),
-        Divider(height: 1),
         _sitesSelectItem(),
         Divider(height: 1),
       ],
@@ -143,53 +141,6 @@ class _SettingsPageState extends State<SettingsPage>
     } catch (e) {
       print(e);
     }
-  }
-
-  Widget _fontSizeItem() {
-    return new ListTile(
-        trailing: Wrap(
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[
-              Text('${_textScaleFactor.label}',
-                  style: TextStyle(fontSize: 12.0)),
-              Icon(Icons.arrow_drop_down)
-            ]),
-        title: const Text('字体大小'),
-        enabled: true,
-        onTap: () {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return StatefulBuilder(
-                  builder: (context, state) {
-                    return SimpleDialog(
-                      contentPadding: const EdgeInsets.all(10.0),
-                      title: new Text('选择字体',
-                          style: new TextStyle(
-                              fontSize: 18.0, color: Colors.black),
-                          textAlign: TextAlign.center),
-                      children: kAllGalleryTextScaleValues
-                          .map((GalleryTextScaleValue font) {
-                        return new ListTile(
-                          trailing: font.scale == _textScaleFactor.scale
-                              ? const Icon(Icons.check)
-                              : null,
-                          title: new Text(font.label),
-                          onTap: () {
-                            _textScaleFactor = font;
-                            Cache.instance
-                                .setDoubleValue(KEY_FONT_SIZE, font.scale);
-                            getModel(context).onTextScaleChanged(font.scale);
-                          },
-                        );
-                      }).toList(),
-                    );
-                  },
-                );
-              });
-        });
   }
 
   Widget _sitesSelectItem() {

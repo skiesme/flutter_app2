@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/assetnum_detail.dart';
 
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/components/picture_list.dart';

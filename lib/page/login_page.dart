@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/utils/func.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/login.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/page/home_page.dart';
@@ -46,9 +46,9 @@ class _LoginPageState extends State<LoginPage> {
         _controller2.clear();
         Func.showMessage(result.message);
       } else {
-        getModel(context).user = null;
+        SamexInstance.singleton.user = null;
         Cache.instance.setStringValue(KEY_USER_NAME, _controller.text);
-        Cache.instance.setStringValue(KEY_TOKEN, result.response.accessToken);
+        setToken(context, result.response.accessToken);
 
         Navigator.pushReplacement(context, new MaterialPageRoute(builder: (_) => new MainPage() ));
 

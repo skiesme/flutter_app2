@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:samex_app/data/bloc_provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 
 class BadgeInEvent {
   int badge;

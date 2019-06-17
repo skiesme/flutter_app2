@@ -5,13 +5,14 @@ import 'package:samex_app/utils/cache.dart';
 
 import 'package:samex_app/page/login_page.dart';
 import 'package:samex_app/page/home_page.dart';
-import 'package:samex_app/data/root_model.dart';
 import 'package:samex_app/utils/localizations.dart';
 
 import 'package:samex_app/utils/style.dart';
 
 import 'package:samex_app/data/bloc_provider.dart';
 import 'package:samex_app/data/badge_bloc.dart';
+
+import 'data/samex_instance.dart';
 
 void main() async {
   await Cache.getInstance();
@@ -25,15 +26,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<BadgeBloc>(
         bloc: BadgeBloc(),
-        child: new RootModelWidget(
-            model: new RootModel(
-                token: Cache.instance.token,
-                onTextScaleChanged: (double textScale) {
-                  _key.currentState.setTextScale(textScale);
-                }),
-            child: MyApp(
-              key: _key,
-            )));
+        child: MyApp(
+          key: _key,
+        ));
   }
 }
 
@@ -50,9 +45,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _getHomePage() {
-    String token = Cache.instance.token ?? '';
 
-    if (token.length > 0) {
+    if (SamexInstance.singleton.token.length > 0) {
       return new MainPage();
     } else {
       return new LoginPage();

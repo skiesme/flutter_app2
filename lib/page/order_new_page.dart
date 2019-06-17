@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
@@ -17,7 +17,6 @@ import 'package:samex_app/components/picture_list.dart';
 import 'package:samex_app/model/cm_history.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/page/task_detail_page.dart';
-
 
 /** 报修工单 - 故障 分类 */
 final List<_StatusSelect> _woprofList = <_StatusSelect>[
@@ -36,8 +35,7 @@ final List<_StatusSelect> _faultlevList = <_StatusSelect>[
   _StatusSelect(3, 'C'),
 ];
 
-
-class _StatusSelect{
+class _StatusSelect {
   int key;
   String value;
   _StatusSelect(this.key, this.value);
@@ -68,7 +66,13 @@ class OrderPostData {
   String locationDescription;
   List<String> images;
 
-  OrderPostData({this.images, this.description, this.assetnum, this.assetDescription, this.location, this.locationDescription});
+  OrderPostData(
+      {this.images,
+      this.description,
+      this.assetnum,
+      this.assetDescription,
+      this.location,
+      this.locationDescription});
 }
 
 class _OrderNewPageState extends State<OrderNewPage> {
@@ -81,8 +85,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
   TextEditingController _controller;
   TextEditingController _controller2;
 
-  String _woprof = '';          // 故障分类
-  String _faultlev = '';        // 故障等级
+  String _woprof = ''; // 故障分类
+  String _faultlev = ''; // 故障等级
 
   String _tips;
 
@@ -94,7 +98,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
     _data = widget.data ?? new OrderPostData();
     _controller = new TextEditingController(text: _data.description);
-    _controller2 = new TextEditingController(text: Cache.instance.userPhone ?? '');
+    _controller2 =
+        new TextEditingController(text: Cache.instance.userPhone ?? '');
 
     _manager?.stop();
   }
@@ -144,75 +149,84 @@ class _OrderNewPageState extends State<OrderNewPage> {
     });
 
     try {
-      Map response = await getApi(context).historyCM(_data.assetnum, location:_data.location);
+      Map response = await getApi(context)
+          .historyCM(_data.assetnum, location: _data.location);
       CMHistoryResult result = new CMHistoryResult.fromJson(response);
 
       if (result.code != 0) {
         Func.showMessage(result.message);
       } else {
         List<CMHistoryData> data = result.response;
-        if(data.length > 0){
+        if (data.length > 0) {
           showDialog(
               context: context,
-              builder: (BuildContext context) =>
-              new AlertDialog(
-                title: Text('最近的报修记录', style: TextStyle(fontSize: 16.0),),
-                content: SingleChildScrollView(child: new Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: data.map(
-                          (CMHistoryData f) =>
-                          SimpleButton(
-                            padding: EdgeInsets.all(0.0),
-                            child: ListTile(
-                              dense: true,
-                              contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 0.0),
-                              title: Text(f.assetDescription??'', style: TextStyle(fontSize: 16.0)),
-                              subtitle: Text('${f.description}'),
-                              trailing: Text('${f.status}\n${Func.getYearMonthDay(f.actfinish*1000)}', textAlign: TextAlign.right,),
-                            ),
-                            onTap: (){
-                              OrderShortInfo info = new OrderShortInfo(wonum: f.wonum, worktype: "CM");
-                              Navigator.push(context, new MaterialPageRoute(
-                                  builder: (_) => new TaskDetailPage(info: info)));
-
-                            },
-                          )).toList(),
-                )),
-                actions: <Widget>[
-                  new FlatButton(
-                    child: new Text('取消'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-
-                  ),
-                  new FlatButton(
-                    child: new Text('继续'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      _post();
-                    },)
-                ],
-              )
-          );
+              builder: (BuildContext context) => new AlertDialog(
+                    title: Text(
+                      '最近的报修记录',
+                      style: TextStyle(fontSize: 16.0),
+                    ),
+                    content: SingleChildScrollView(
+                        child: new Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: data
+                          .map((CMHistoryData f) => SimpleButton(
+                                padding: EdgeInsets.all(0.0),
+                                child: ListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 0.0),
+                                  title: Text(f.assetDescription ?? '',
+                                      style: TextStyle(fontSize: 16.0)),
+                                  subtitle: Text('${f.description}'),
+                                  trailing: Text(
+                                    '${f.status}\n${Func.getYearMonthDay(f.actfinish * 1000)}',
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                                onTap: () {
+                                  OrderShortInfo info = new OrderShortInfo(
+                                      wonum: f.wonum, worktype: "CM");
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (_) =>
+                                              new TaskDetailPage(info: info)));
+                                },
+                              ))
+                          .toList(),
+                    )),
+                    actions: <Widget>[
+                      new FlatButton(
+                        child: new Text('取消'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      new FlatButton(
+                        child: new Text('继续'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _post();
+                        },
+                      )
+                    ],
+                  ));
         } else {
           _post();
           return;
         }
       }
-    } catch (e){
-      print (e);
+    } catch (e) {
+      print(e);
       Func.showMessage('网络出现异常: 获取最近报修工单失败');
     }
 
-    if(mounted){
+    if (mounted) {
       setState(() {
         _show = false;
       });
     }
-
   }
-
 
   void _post() async {
     Func.closeKeyboard(context);
@@ -226,7 +240,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
       String images = '';
       for (int i = 0, len = _data.images?.length ?? 0; i < len; i++) {
         String image = _data.images[i];
-        if(image.contains('_')){
+        if (image.contains('_')) {
           images += image.split('_')[0];
         } else {
           images += _data.images[i];
@@ -237,7 +251,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
       }
 
       List<UploadFileInfo> list = new List();
-      List<String> uploadImages = getUploadImages(_key.currentState.getImages());
+      List<String> uploadImages =
+          getUploadImages(_key.currentState.getImages());
       var post = () async {
         try {
           _manager?.stop();
@@ -252,11 +267,11 @@ class _OrderNewPageState extends State<OrderNewPage> {
               reportedby: Cache.instance.userName,
               images: images,
               files: list,
-              onProgress: (send, total){
+              onProgress: (send, total) {
                 int percent = ((send / total) * 100).toInt();
                 // debugPrint('order new progress: percent= $percent');
                 setMountState(() {
-                  if(percent == 100) {
+                  if (percent == 100) {
                     _progress = 0;
                     _tips = '后台处理中...';
                   } else {
@@ -264,8 +279,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                     _tips = '上传中...($percent\%)';
                   }
                 });
-              }
-          );
+              });
           OrderNewResult result = new OrderNewResult.fromJson(response);
           if (result.code != 0) {
             Func.showMessage(result.message);
@@ -344,21 +358,18 @@ class _OrderNewPageState extends State<OrderNewPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: new AppBar(
-        title: Text('新增维修工单'),
-      ),
-      body: new GestureDetector(
-          onTap: () {
-            Func.closeKeyboard(context);
-          },
-          child: _loadingView()
-      )
-    );
+        resizeToAvoidBottomPadding: false,
+        appBar: new AppBar(
+          title: Text('新增维修工单'),
+        ),
+        body: new GestureDetector(
+            onTap: () {
+              Func.closeKeyboard(context);
+            },
+            child: _loadingView()));
   }
 
-
-  Widget _loadingView(){
+  Widget _loadingView() {
     return LoadingView(
       show: _show,
       tips: _tips,
@@ -367,12 +378,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
           color: Style.backgroundColor,
           height: MediaQuery.of(context).size.height,
           child: Stack(
-            children: <Widget>[
-              _formView(),
-              _actionView()
-            ],
-          )
-      ),
+            children: <Widget>[_formView(), _actionView()],
+          )),
     );
   }
 
@@ -382,65 +389,63 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
   Widget typeDesItem() {
     return _getMenus(
-      preText: '描述:',
-      content: TextField(
-        controller: _controller,
-        maxLines: 3,
-        decoration: new InputDecoration.collapsed(
-          hintText: '请输入工单描述',
+        preText: '描述:',
+        content: TextField(
+          controller: _controller,
+          maxLines: 3,
+          decoration: new InputDecoration.collapsed(
+            hintText: '请输入工单描述',
+          ),
         ),
-      ),
-      crossAxisAlignment: CrossAxisAlignment.start
-    );
+        crossAxisAlignment: CrossAxisAlignment.start);
   }
 
-  Widget assetsItem(){
+  Widget assetsItem() {
     return _getMenus(
-      preText: '资产:',
-      padding: EdgeInsets.only(left: 8.0),
-      content: SimpleButton(
-        padding:
-        EdgeInsets.symmetric(vertical: 8.0),
-        onTap: () async {
-          final DescriptionData result = await Navigator.push(context, new MaterialPageRoute (
-              builder: (_) => new ChooseAssetPage(location: _data.location,)
-          ));
+        preText: '资产:',
+        padding: EdgeInsets.only(left: 8.0),
+        content: SimpleButton(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            onTap: () async {
+              final DescriptionData result = await Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (_) => new ChooseAssetPage(
+                            location: _data.location,
+                          )));
 
-          if (result != null) {
-            setState(() {
-              _data.assetnum = result.assetnum;
-              _data.assetDescription = result.description;
-              _data.location = result.location;
-              _data.locationDescription = result.locationDescription;
-            });
-          }
-        },
-        child: Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              _data.assetnum ?? '请选择资产',
-              style: TextStyle(
-                  color: _data.assetnum == null ? Colors.grey : Colors.black),
-            ),
-            Icon(
-              Icons.navigate_next,
-              color: Colors.black87,
-            ),
-          ],
-        )
-      )
-    );
+              if (result != null) {
+                setState(() {
+                  _data.assetnum = result.assetnum;
+                  _data.assetDescription = result.description;
+                  _data.location = result.location;
+                  _data.locationDescription = result.locationDescription;
+                });
+              }
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  _data.assetnum ?? '请选择资产',
+                  style: TextStyle(
+                      color:
+                          _data.assetnum == null ? Colors.grey : Colors.black),
+                ),
+                Icon(
+                  Icons.navigate_next,
+                  color: Colors.black87,
+                ),
+              ],
+            )));
   }
 
   Widget assetsDesItem() {
     return _getMenus(
         preText: '描述:',
-        content: Text( _data.assetDescription ?? '资产描述',
-            style: TextStyle( color: _data.assetnum == null ? Colors.grey : Colors.black)
-        )
-    );
+        content: Text(_data.assetDescription ?? '资产描述',
+            style: TextStyle(
+                color: _data.assetnum == null ? Colors.grey : Colors.black)));
   }
 
   Widget locationItem() {
@@ -448,13 +453,14 @@ class _OrderNewPageState extends State<OrderNewPage> {
         preText: '位置:',
         padding: EdgeInsets.only(left: 8.0),
         content: SimpleButton(
-            padding:
-            EdgeInsets.symmetric(vertical: 8.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0),
             onTap: () async {
               final DescriptionData result = await Navigator.push(
                   context,
-                  new MaterialPageRoute(builder: (_) => new ChooseAssetPage(chooseLocation: true, ))
-              );
+                  new MaterialPageRoute(
+                      builder: (_) => new ChooseAssetPage(
+                            chooseLocation: true,
+                          )));
 
               if (result != null) {
                 setState(() {
@@ -464,31 +470,28 @@ class _OrderNewPageState extends State<OrderNewPage> {
               }
             },
             child: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
                   _data.location ?? '请选择位置',
-                  style: TextStyle( color: _data.location == null ? Colors.grey : Colors.black),
+                  style: TextStyle(
+                      color:
+                          _data.location == null ? Colors.grey : Colors.black),
                 ),
                 Icon(
                   Icons.navigate_next,
                   color: Colors.black87,
                 ),
               ],
-            )
-        )
-    );
+            )));
   }
 
   Widget locationDesItem() {
     return _getMenus(
         preText: '描述:',
-        content: Text(
-            _data.locationDescription ?? '位置描述',
-            style: TextStyle(color: _data.location == null ? Colors.grey : Colors.black)
-        )
-    );
+        content: Text(_data.locationDescription ?? '位置描述',
+            style: TextStyle(
+                color: _data.location == null ? Colors.grey : Colors.black)));
   }
 
   Widget woprofItem() {
@@ -497,75 +500,76 @@ class _OrderNewPageState extends State<OrderNewPage> {
         padding: EdgeInsets.only(left: 8.0),
         content: SimpleButton(
             child: Row(
-              mainAxisAlignment:
-              MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                new Text(
-                  _woprof.length > 0 ? _woprof : '请选择故障分类',
-                  style: TextStyle(color: _woprof.length > 0 ? Colors.black : Colors.grey),
-                ),
-                new Expanded(
-                    child: new PopupMenuButton<_StatusSelect>(
-                      tooltip:'请选择故障分类',
-                      child: Align(child: const Icon(Icons.arrow_drop_down), alignment: Alignment.centerRight, heightFactor: 1.5,),
-                      itemBuilder: (BuildContext context) {
-                        return _woprofList.map((_StatusSelect status) {
-                          return new PopupMenuItem<_StatusSelect>(
-                            value: status,
-                            child: new Text(status.value),
-                          );
-                        }).toList();
-                      },
-                      onSelected: (_StatusSelect value) {
-                        setState(() {
-                          _woprof = value.value;
-                        });
-                      },
-                    ))
-              ],
-            )
-        )
-    );
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Text(
+              _woprof.length > 0 ? _woprof : '请选择故障分类',
+              style: TextStyle(
+                  color: _woprof.length > 0 ? Colors.black : Colors.grey),
+            ),
+            new Expanded(
+                child: new PopupMenuButton<_StatusSelect>(
+              tooltip: '请选择故障分类',
+              child: Align(
+                child: const Icon(Icons.arrow_drop_down),
+                alignment: Alignment.centerRight,
+                heightFactor: 1.5,
+              ),
+              itemBuilder: (BuildContext context) {
+                return _woprofList.map((_StatusSelect status) {
+                  return new PopupMenuItem<_StatusSelect>(
+                    value: status,
+                    child: new Text(status.value),
+                  );
+                }).toList();
+              },
+              onSelected: (_StatusSelect value) {
+                setState(() {
+                  _woprof = value.value;
+                });
+              },
+            ))
+          ],
+        )));
   }
 
   Widget faultlevItem() {
     return _getMenus(
-      preText: '故障等级:',
-      padding: EdgeInsets.only(left: 8.0),
-      content: SimpleButton(
-          child: Row(
-            mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              new Text(
-                _faultlev.length > 0 ? _faultlev : '请选择故障等级',
-                style: TextStyle(
-                    color: _faultlev.length > 0 ? Colors.black : Colors.grey
-                ),
-              ),
-              new Expanded(
+        preText: '故障等级:',
+        padding: EdgeInsets.only(left: 8.0),
+        content: SimpleButton(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Text(
+              _faultlev.length > 0 ? _faultlev : '请选择故障等级',
+              style: TextStyle(
+                  color: _faultlev.length > 0 ? Colors.black : Colors.grey),
+            ),
+            new Expanded(
                 child: new PopupMenuButton<_StatusSelect>(
-                  tooltip:'请选择故障等级',
-                  child: Align(child: const Icon(Icons.arrow_drop_down), alignment: Alignment.centerRight, heightFactor: 1.5,),
-                  itemBuilder: (BuildContext context) {
-                    return _faultlevList.map((_StatusSelect status) {
-                      return new PopupMenuItem<_StatusSelect>(
-                        value: status,
-                        child: new Text(status.value),
-                      );
-                    }).toList();
-                  },
-                  onSelected: (_StatusSelect value) {
-                    setState(() {
-                      _faultlev = value.value;
-                    });
-                  },
-                )
-              )
-            ],
-          )
-      )
-    );
+              tooltip: '请选择故障等级',
+              child: Align(
+                child: const Icon(Icons.arrow_drop_down),
+                alignment: Alignment.centerRight,
+                heightFactor: 1.5,
+              ),
+              itemBuilder: (BuildContext context) {
+                return _faultlevList.map((_StatusSelect status) {
+                  return new PopupMenuItem<_StatusSelect>(
+                    value: status,
+                    child: new Text(status.value),
+                  );
+                }).toList();
+              },
+              onSelected: (_StatusSelect value) {
+                setState(() {
+                  _faultlev = value.value;
+                });
+              },
+            ))
+          ],
+        )));
   }
 
   Widget photoItem() {
@@ -575,67 +579,63 @@ class _OrderNewPageState extends State<OrderNewPage> {
           canAdd: true,
           images: _data.images,
           key: _key,
-        )
-    );
+        ));
   }
 
   Widget editUserItem() {
     return _getMenus(
-      preText: '上报人:',
-      content: Text(Cache.instance.userDisplayName)
-    );
+        preText: '上报人:', content: Text(Cache.instance.userDisplayName));
   }
 
   Widget userPhoneItem() {
     return _getMenus(
-      preText: '联系电话:',
-      content: TextField(
-        controller: _controller2,
-        decoration: new InputDecoration.collapsed(
-          hintText: '请输入电话号码',
+        preText: '联系电话:',
+        content: TextField(
+          controller: _controller2,
+          decoration: new InputDecoration.collapsed(
+            hintText: '请输入电话号码',
+          ),
         ),
-      ),
-      crossAxisAlignment: CrossAxisAlignment.start
-    );
+        crossAxisAlignment: CrossAxisAlignment.start);
   }
 
   Widget _formView() {
     return Positioned(
-      left: 0.0,
-      top: 0.0,
-      bottom: max(80.0, MediaQuery.of(context).viewInsets.bottom),
-      right: 0.0,
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            typeItem(),
-            typeDesItem(),
-            assetsItem(),
-            assetsDesItem(),
-            locationItem(),
-            locationDesItem(),
-            woprofItem(),
-            faultlevItem(),
-            photoItem(),
-            editUserItem(),
-            userPhoneItem(),
-          ],
-        ),
-      )
-    );
+        left: 0.0,
+        top: 0.0,
+        bottom: max(80.0, MediaQuery.of(context).viewInsets.bottom),
+        right: 0.0,
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              typeItem(),
+              typeDesItem(),
+              assetsItem(),
+              assetsDesItem(),
+              locationItem(),
+              locationDesItem(),
+              woprofItem(),
+              faultlevItem(),
+              photoItem(),
+              editUserItem(),
+              userPhoneItem(),
+            ],
+          ),
+        ));
   }
 
   Widget _actionView() {
     void showConfirmDialog(BuildContext ctx) {
-
       double btnFontSize = 16.0;
       Widget diaSure() {
         return FlatButton(
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(ctx);
             _post();
           },
-          child: Text('确定', style: TextStyle(color: Colors.blueAccent, fontSize: btnFontSize)),
+          child: Text('确定',
+              style:
+                  TextStyle(color: Colors.blueAccent, fontSize: btnFontSize)),
         );
       }
 
@@ -644,50 +644,45 @@ class _OrderNewPageState extends State<OrderNewPage> {
           onPressed: () {
             Navigator.pop(ctx);
           },
-          child: Text('取消', style: TextStyle(color: Colors.redAccent, fontSize: btnFontSize)),
+          child: Text('取消',
+              style: TextStyle(color: Colors.redAccent, fontSize: btnFontSize)),
         );
       }
 
       TextSpan itemcell(_OrderNewFormItem item) {
         bool isFirst = item.title == '类型';
         String wrap = isFirst ? '' : '\n';
-        return TextSpan(
-            text: '${wrap}${item.title}： ',
-            children: <TextSpan>[
-              TextSpan(text: item.value, style: TextStyle(color: Colors.black45))
-            ]
-        );
+        return TextSpan(text: '${wrap}${item.title}： ', children: <TextSpan>[
+          TextSpan(text: item.value, style: TextStyle(color: Colors.black45))
+        ]);
       }
 
       showDialog(
-        context: ctx,
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, state) {
-              return AlertDialog(
-                title: Text('确认提交？', textAlign: TextAlign.center),
-                content: RichText(text: TextSpan(
-                  style: TextStyle(fontSize: 14, color: Colors.black87),
-                  children: _confirmDatas().map((_OrderNewFormItem item) {
-                    return itemcell(item);
-                  }).toList(),
-                )),
-                actions: <Widget>[
-                  diaCancle(),
-                  diaSure()
-                ],
-              );
-            },
-          );
-        }
-      );
+          context: ctx,
+          builder: (context) {
+            return StatefulBuilder(
+              builder: (context, state) {
+                return AlertDialog(
+                  title: Text('确认提交？', textAlign: TextAlign.center),
+                  content: RichText(
+                      text: TextSpan(
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                    children: _confirmDatas().map((_OrderNewFormItem item) {
+                      return itemcell(item);
+                    }).toList(),
+                  )),
+                  actions: <Widget>[diaCancle(), diaSure()],
+                );
+              },
+            );
+          });
     }
 
     Widget commitBtn() {
       return RaisedButton(
         padding: EdgeInsets.symmetric(horizontal: 40.0),
         onPressed: () {
-          if(_data.assetnum != null && _data.assetnum.isNotEmpty){
+          if (_data.assetnum != null && _data.assetnum.isNotEmpty) {
             _getHistory();
           } else {
             if (_controller.text.isEmpty) {
@@ -698,11 +693,11 @@ class _OrderNewPageState extends State<OrderNewPage> {
               Func.showMessage('请填写联系电话');
               return;
             }
-            if(_woprof.length == 0){
+            if (_woprof.length == 0) {
               Func.showMessage('请设置故障分类');
               return;
             }
-            if(_faultlev.length == 0){
+            if (_faultlev.length == 0) {
               Func.showMessage('请设置故障等级');
               return;
             }
@@ -710,7 +705,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
             showConfirmDialog(context);
           }
         },
-        child: Text('提交', style: TextStyle(color: Colors.white, fontSize: 18.0)),
+        child:
+            Text('提交', style: TextStyle(color: Colors.white, fontSize: 18.0)),
         color: Style.primaryColor,
       );
     }
@@ -727,8 +723,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
               child: commitBtn(),
             ),
           ),
-        )
-    );
+        ));
   }
 
   List<_OrderNewFormItem> _confirmDatas() {
@@ -746,5 +741,4 @@ class _OrderNewPageState extends State<OrderNewPage> {
     datas.add(_OrderNewFormItem('联系电话', _controller2.text));
     return datas;
   }
-
 }

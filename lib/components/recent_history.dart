@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/components/vertical_marquee.dart';
 
 import 'package:samex_app/utils/func.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/history.dart';
 import 'package:samex_app/components/simple_button.dart';

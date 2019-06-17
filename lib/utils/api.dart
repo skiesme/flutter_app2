@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as Io;
 
 import 'package:dio/dio.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/model/user.dart';
@@ -18,8 +19,12 @@ import 'package:package_info/package_info.dart';
 Dio _dio = new Dio();
 
 class SaMexApi {
+  static final SaMexApi _instance = SaMexApi();
+  static SaMexApi get singleton => _instance;
+
   // static const bool inProduction = false;
-  static const bool inProduction = const bool.fromEnvironment("dart.vm.product");
+  static const bool inProduction =
+      const bool.fromEnvironment("dart.vm.product");
   static String ipAndPort =
       inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
   //  static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
@@ -52,7 +57,7 @@ class SaMexApi {
     }
 
     if (headers == null) {
-      _option.headers = {'Authorization': Cache.instance.token};
+      _option.headers = {'Authorization': SamexInstance.singleton.token};
     } else {
       _option.headers = headers;
     }
@@ -300,29 +305,6 @@ class SaMexApi {
 
     return response.data;
   }
-
-//  /// use http library
-//  Future<Map> postStep(OrderStep step, List<UploadFileInfo> files, {OnUploadProgress onProgress}) async {
-//    Uri uri =  Uri.parse(baseUrl+ '/orderstep/upload');
-//
-//    var request = new http.MultipartRequest("POST", uri);
-//
-//    Map<String, dynamic> formData = step.toJson();
-//    print('${uri.toString()}: ${formData.toString()}, length=${files?.length}');
-//    formData.forEach((key, value){
-//      request.fields[key] = value.toString();
-//    });
-//    request.headers .addAll( {
-//      'Authorization': Cache.instance.token
-//    });
-//    for(int i =0, len = files.length; i< len; i++){
-//      request.files.add( http.MultipartFile.fromBytes('files', await files[i].file.readAsBytes(), filename: files[i].fileName));
-//    }
-//    http.StreamedResponse response = await request.send();
-//    String result = await response.stream.bytesToString();
-//    print('${uri.toString()}: $result');
-//    return json.decode(result);
-//  }
 
   Future<Map> postStep(OrderStep step, List<UploadFileInfo> files,
       {OnUploadProgress onProgress}) async {

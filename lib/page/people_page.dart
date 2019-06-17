@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/model/people.dart';
@@ -197,7 +197,7 @@ class _PeoplePageState extends State<PeoplePage> {
       _loading = true;
     });
     try{
-      Map response = await getModel(context).api.userAll();
+      Map response = await getApi(context).userAll();
       PeopleResult result = new PeopleResult.fromJson(response);
       if(result.code != 0) {
         Func.showMessage(result.message);

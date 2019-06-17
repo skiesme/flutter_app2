@@ -7,7 +7,7 @@ import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/components/badge_icon_button.dart';

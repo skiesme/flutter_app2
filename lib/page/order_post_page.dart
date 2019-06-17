@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/components/loading_view.dart';
-import 'package:samex_app/data/root_model.dart';
+import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -89,7 +89,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
     });
 
     try {
-      Map response = await getModel(context).api.submit(
+      Map response = await getApi(context).submit(
           assigncode: _data?.hrid ?? Cache.instance.userName,
           actionid: widget.action.actionid,
           notes: _controller.text,
