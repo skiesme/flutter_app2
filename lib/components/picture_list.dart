@@ -146,12 +146,11 @@ class PictureListState extends State<PictureList> {
           ImageData data = ImageData.fromString(id);
           var cachedNetworkImage = CachedNetworkImage(
               imageUrl: getApi(context).getImageUrl(data.path),
-              placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ));
+              placeholder: Center(child: CircularProgressIndicator()),
+              errorWidget: Icon(
+                Icons.error,
+                color: Colors.red,
+              ));
           children.add(_largeImage(
               Container(height: width, width: width, child: cachedNetworkImage),
               count));
@@ -452,9 +451,8 @@ class _GridPhotoViewerState extends State<GridPhotoViewer>
           child: widget.path.startsWith('http')
               ? new CachedNetworkImage(
                   imageUrl: widget.path,
-                  placeholder: (context, url) =>
-                      Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  placeholder: Center(child: CircularProgressIndicator()),
+                  errorWidget: Icon(Icons.error),
                 )
               : new Image.file(
                   new File(widget.path),

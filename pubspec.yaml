@@ -10,24 +10,25 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   shared_preferences: 0.4.2
-  sqflite: ^0.11.1
-  path_provider: ^0.4.1
-  intl: ^0.15.5
-  fluttertoast: ^2.0.7
+  sqflite: 0.11.2+4
+  path_provider: 0.4.1
+  intl: 0.15.8
+  fluttertoast: 2.1.1
   after_layout: 1.0.4
   connectivity: 0.3.1
-  open_file: ^1.0.7
-  package_info: ^0.3.2
-  rxdart: ^0.18.1
-  event_bus: ^1.0.1
-
-  barcode_scan:
-    path: ../flutter_barcode_reader
+  open_file: 1.1.1
+  package_info: 0.3.2
+  rxdart: 0.18.1
+  event_bus: 1.0.1
   image_picker: 0.4.10
-  cached_network_image: ^0.5.0
+  cached_network_image: 0.5.0+1
+  image: 2.0.4
+  # flutter_boost: 0.0.415
+  barcode_scan:
+    path: ../Plugins/flutter_barcode_reader
   dio:
-    path: ../dio
-  image: ^2.0.4
+    path: ../Plugins/dio
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

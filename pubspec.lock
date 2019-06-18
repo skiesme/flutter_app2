@@ -32,10 +32,10 @@ packages:
   barcode_scan:
     dependency: "direct main"
     description:
-      path: "../flutter_barcode_reader"
+      path: "../Plugins/flutter_barcode_reader"
       relative: true
     source: path
-    version: "0.0.4"
+    version: "0.0.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -102,7 +102,7 @@ packages:
   dio:
     dependency: "direct main"
     description:
-      path: "../dio"
+      path: "../Plugins/dio"
       relative: true
     source: path
     version: "0.1.8"
