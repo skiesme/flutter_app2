@@ -9,6 +9,8 @@ class SamexInstance {
   static final SamexInstance _instance = SamexInstance();
   static SamexInstance get singleton => _instance;
 
+  static final bool isModule = false;
+
   String token = '';
   UserInfo user;
 }

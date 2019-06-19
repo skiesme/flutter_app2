@@ -13,6 +13,7 @@ import 'package:samex_app/data/bloc_provider.dart';
 import 'package:samex_app/data/badge_bloc.dart';
 
 import 'data/samex_instance.dart';
+import 'page/task_page.dart';
 
 void main() async {
   await Cache.getInstance();
@@ -45,10 +46,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _getHomePage() {
-
-    if (SamexInstance.singleton.token.length > 0) {
-      return new MainPage();
+    if (SamexInstance.isModule) {
+      return Container();
     } else {
+      if (SamexInstance.singleton.token.length > 0) {
+        return new MainPage();
+      }
       return new LoginPage();
     }
   }
@@ -66,9 +69,43 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  /** 对外Native 开放的 页面 */
+  Widget renderHome(String pageName, Map<dynamic, dynamic> params, String _) {
+    print("task params:$params");
+    setToken(context, params['token']);
+    return MainPage();
+  }
+
+  Widget renderTaksList(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    print("task params:$params");
+    setToken(context, params['token']);
+    return TaskPage();
+  }
+
+  Widget renderWorkOrderList(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    print("task params:$params");
+    setToken(context, params['token']);
+    return TaskPage(isTask: false);
+  }
+
   @override
   void initState() {
     super.initState();
+
+    // FlutterBoost.singleton.registerPageBuilders({
+    //   'samex/home': (pageName, params, _) => renderHome(pageName, params, _),
+    //   // 任务
+    //   'samex/task/list': (pageName, params, _) =>
+    //       renderTaksList(pageName, params, _),
+    //   'samex/task/detail': (pageName, params, _) =>
+    //       renderTaksList(pageName, params, _),
+    //   // 工单
+    //   'samex/workOrder/list': (pageName, params, _) =>
+    //       renderWorkOrderList(pageName, params, _)
+    // });
+    // FlutterBoost.handleOnStartPage();
   }
 
   @override

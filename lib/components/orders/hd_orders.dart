@@ -189,8 +189,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
 
   void optionTimeSortChangedHandle(bool isTimeUp) {
-    String res = isTimeUp ? 'Yes' : 'No';
-    // debugPrint("current is tiem up? ${res}!");
     setState(() {
       _queryInfo.isUp = isTimeUp;
     });

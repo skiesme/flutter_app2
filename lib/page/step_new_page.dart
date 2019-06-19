@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/components/loading_view.dart';
-import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/style.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/components/simple_button.dart';
