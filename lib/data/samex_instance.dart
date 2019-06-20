@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
+import 'package:samex_app/utils/func.dart';
 
 class SamexInstance {
   static final SamexInstance _instance = SamexInstance();
   static SamexInstance get singleton => _instance;
 
-  static final bool isModule = false;
+  static final bool isModule = true;
 
   String token = '';
   UserInfo user;

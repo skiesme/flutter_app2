@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_boost/flutter_boost.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:samex_app/utils/cache.dart';
@@ -13,7 +14,12 @@ import 'package:samex_app/data/bloc_provider.dart';
 import 'package:samex_app/data/badge_bloc.dart';
 
 import 'data/samex_instance.dart';
+import 'page/choose_assetnum_page.dart';
+import 'page/choose_material_page.dart';
+import 'page/order_new_page.dart';
+import 'page/settings_page.dart';
 import 'page/task_page.dart';
+import 'utils/func.dart';
 
 void main() async {
   await Cache.getInstance();
@@ -69,43 +75,11 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  /** 对外Native 开放的 页面 */
-  Widget renderHome(String pageName, Map<dynamic, dynamic> params, String _) {
-    print("task params:$params");
-    setToken(context, params['token']);
-    return MainPage();
-  }
-
-  Widget renderTaksList(
-      String pageName, Map<dynamic, dynamic> params, String _) {
-    print("task params:$params");
-    setToken(context, params['token']);
-    return TaskPage();
-  }
-
-  Widget renderWorkOrderList(
-      String pageName, Map<dynamic, dynamic> params, String _) {
-    print("task params:$params");
-    setToken(context, params['token']);
-    return TaskPage(isTask: false);
-  }
-
   @override
   void initState() {
     super.initState();
 
-    // FlutterBoost.singleton.registerPageBuilders({
-    //   'samex/home': (pageName, params, _) => renderHome(pageName, params, _),
-    //   // 任务
-    //   'samex/task/list': (pageName, params, _) =>
-    //       renderTaksList(pageName, params, _),
-    //   'samex/task/detail': (pageName, params, _) =>
-    //       renderTaksList(pageName, params, _),
-    //   // 工单
-    //   'samex/workOrder/list': (pageName, params, _) =>
-    //       renderWorkOrderList(pageName, params, _)
-    // });
-    // FlutterBoost.handleOnStartPage();
+    _initFlutterBoost();
   }
 
   @override
@@ -136,12 +110,100 @@ class _MyAppState extends State<MyApp> {
           ),
           fontFamily: 'Miui',
         ),
-        builder: (BuildContext context, Widget child) {
-          return new Directionality(
-            textDirection: TextDirection.ltr,
-            child: _applyTextScaleFactor(child),
-          );
-        },
+        builder: _builder(),
+        //
         home: _getHomePage());
+  }
+
+  TransitionBuilder _builder() {
+    if (SamexInstance.isModule) {
+      return FlutterBoost.init();
+    }
+    return (BuildContext context, Widget child) {
+      return new Directionality(
+        textDirection: TextDirection.ltr,
+        child: _applyTextScaleFactor(child),
+      );
+    };
+  }
+
+  void _initFlutterBoost() {
+    if (!SamexInstance.isModule) {
+      return;
+    }
+
+    FlutterBoost.singleton.registerPageBuilders({
+      'samex/home': (pageName, params, _) => renderHome(pageName, params, _),
+      'samex/setting': (pageName, params, _) =>
+          renderSetting(pageName, params, _),
+      // 任务
+      'samex/task/list': (pageName, params, _) =>
+          renderTaksList(pageName, params, _),
+      'samex/task/detail': (pageName, params, _) =>
+          renderTaksDetail(pageName, params, _),
+      // 工单
+      'samex/workOrder/list': (pageName, params, _) =>
+          renderWorkOrderList(pageName, params, _),
+      'samex/workOrder/add': (pageName, params, _) =>
+          renderWorkOrderAdd(pageName, params, _),
+      // 资产
+      'samex/choose/asset': (pageName, params, _) =>
+          renderChooseAsset(pageName, params, _),
+      'samex/choose/material': (pageName, params, _) =>
+          renderChooseMaterial(pageName, params, _),
+    });
+    FlutterBoost.handleOnStartPage();
+  }
+
+  /** 对外Native 开放的 页面 */
+  /// 其他
+  Widget renderHome(String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return MainPage();
+  }
+
+  Widget renderSetting(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return SettingsPage();
+  }
+
+  /// 任务箱
+  Widget renderTaksList(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return TaskPage();
+  }
+  Widget renderTaksDetail(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return TaskPage();
+  }
+
+  // 工单
+  Widget renderWorkOrderList(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return TaskPage(isTask: false);
+  }
+
+  // 新增工单
+  Widget renderWorkOrderAdd(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return OrderNewPage();
+  }
+
+  // 资产
+  Widget renderChooseAsset(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return ChooseAssetPage();
+  }
+
+  Widget renderChooseMaterial(
+      String pageName, Map<dynamic, dynamic> params, String _) {
+    setToken(context, params['token']);
+    return ChooseMaterialPage();
   }
 }

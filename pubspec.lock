@@ -32,10 +32,10 @@ packages:
   barcode_scan:
     dependency: "direct main"
     description:
-      path: "../Plugins/flutter_barcode_reader"
-      relative: true
-    source: path
-    version: "0.0.5"
+      name: barcode_scan
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.8"
   boolean_selector:
     dependency: transitive
     description:
@@ -118,6 +118,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_boost:
+    dependency: "direct main"
+    description:
+      name: flutter_boost
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.415"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -343,6 +350,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.2.3"
+  xservice_kit:
+    dependency: transitive
+    description:
+      name: xservice_kit
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.0.29"
 sdks:
   dart: ">=2.2.0 <3.0.0"
   flutter: ">=0.1.4 <2.0.0"
