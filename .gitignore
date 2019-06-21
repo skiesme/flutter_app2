@@ -10,4 +10,5 @@ build/
 
 .flutter-plugins
 
-samex_module/
+.android
+.ios
