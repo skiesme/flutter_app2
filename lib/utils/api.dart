@@ -22,7 +22,7 @@ class SaMexApi {
   static final SaMexApi _instance = SaMexApi();
   static SaMexApi get singleton => _instance;
 
-  // static const bool inProduction = false;
+  // static const bool inProduction = true;
   static const bool inProduction =
       const bool.fromEnvironment("dart.vm.product");
   static String ipAndPort =
