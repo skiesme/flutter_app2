@@ -155,55 +155,63 @@ class _MyAppState extends State<MyApp> {
     FlutterBoost.handleOnStartPage();
   }
 
+  String _string(Map<dynamic, dynamic> params, String key) {
+    if (params != null) {
+      return params["key"];
+    }
+    return null;
+  }
+
   /** 对外Native 开放的 页面 */
   /// 其他
   Widget renderHome(String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return MainPage();
   }
 
   Widget renderSetting(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return SettingsPage();
   }
 
   /// 任务箱
   Widget renderTaksList(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return TaskPage();
   }
+
   Widget renderTaksDetail(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return TaskPage();
   }
 
   // 工单
   Widget renderWorkOrderList(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return TaskPage(isTask: false);
   }
 
   // 新增工单
   Widget renderWorkOrderAdd(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return OrderNewPage();
   }
 
   // 资产
   Widget renderChooseAsset(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return ChooseAssetPage();
   }
 
   Widget renderChooseMaterial(
       String pageName, Map<dynamic, dynamic> params, String _) {
-    setToken(context, params['token']);
+    setToken(context, _string(params, 'token'));
     return ChooseMaterialPage();
   }
 }
