@@ -1,3 +1,5 @@
+def isLib = true
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -11,7 +13,13 @@ if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
-apply plugin: 'com.android.application'
+if(isLib) {
+    apply plugin: 'com.android.library'
+    apply plugin: 'com.kezong.fat-aar'
+} else  {
+    apply plugin: 'com.android.application'
+}
+
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 rootProject.allprojects {
@@ -31,7 +39,14 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.hdkj.samexapp"
+        if(!isLib) {
+            applicationId "com.hdkj.samexapp"
+        } else {
+            ndk {
+                //设置支持的SO库架构
+                abiFilters 'armeabi', 'armeabi-v7a', 'x86'
+            }
+        }
         minSdkVersion 19
 //        targetSdkVersion 27
         versionCode 12
@@ -73,4 +88,19 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.41'
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
+
+
+    ///为库的方式才添加本地仓库依赖，这个本地仓库目前是从 include 那里读取的。
+    if(isLib) {
+        def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
+        def plugins = new Properties()
+        def pluginsFile = new File(flutterProjectRoot.toFile(), '.flutter-plugins')
+        if (pluginsFile.exists()) {
+            pluginsFile.withReader('UTF-8') { reader -> plugins.load(reader) }
+        }
+        plugins.each { name, _ ->
+            println name
+            embed project(path: ":$name", configuration: 'default')
+        }
+    }
 }
