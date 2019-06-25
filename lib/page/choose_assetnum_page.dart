@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
 import 'package:samex_app/utils/style.dart';
@@ -76,6 +77,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
     return new Scaffold(
       appBar: new AppBar(
+        leading: const SamexBackButton(),
         title: Text(_getTitle()),
         actions: _appBarActions(),
       ),

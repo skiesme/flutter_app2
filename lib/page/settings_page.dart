@@ -1,5 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/model/site.dart';
 import 'package:samex_app/model/user.dart';
 
@@ -85,6 +86,7 @@ class _SettingsPageState extends State<SettingsPage>
 
     return new Scaffold(
         appBar: new AppBar(
+          leading: SamexBackButton(),
           title: Text('设置'),
         ),
         body: new Container(

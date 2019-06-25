@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:samex_app/components/orders/hd_orders.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/helper/event_bus_helper.dart';
 
 import 'package:samex_app/utils/assets.dart';
@@ -276,13 +277,20 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
     );
   }
 
+  Widget _buildAppBarLeading() {
+    if (SamexInstance.isModule || _isSearching) {
+      return const SamexBackButton();
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
 
     return new Scaffold(
       appBar: new AppBar(
-        leading: _isSearching ? const BackButton() : null,
+        leading: _buildAppBarLeading(),
         title: _isSearching ? _buildSearchField() : (widget.isTask ? Text('任务箱') : Text('工单箱')),
         actions: _buildActions(),
       ),

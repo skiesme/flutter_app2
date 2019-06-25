@@ -3,6 +3,8 @@ import 'dart:isolate';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_boost/flutter_boost.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/page/login_page.dart';
 import 'package:samex_app/page/settings_page.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -283,6 +285,14 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
     }
   }
 
+  Widget _buildHeaderLeft() {
+    if (SamexInstance.isModule) {
+      return SamexBackButton();
+    } else {
+      return Image.asset(ImageAssets.logo, width: 37, height: 37);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -302,11 +312,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
                       physics: new AlwaysScrollableScrollPhysics(),
                       slivers: <Widget>[
                         SliverAppBar(
-                          title: Image.asset(
-                            ImageAssets.logo,
-                            width: 37,
-                            height: 37,
-                          ), //const Text('深水光明SAMEX系统',),
+                          leading: _buildHeaderLeft(),
                           pinned: true,
                           actions: <Widget>[
                             IconButton(

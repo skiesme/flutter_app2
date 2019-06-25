@@ -1,5 +1,6 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 
 import 'package:samex_app/model/material.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -95,6 +96,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
 
     return Scaffold(
       appBar: AppBar(
+        leading: const SamexBackButton(),
         title: Text('库存查询'),
         actions: <Widget>[
           IconButton(

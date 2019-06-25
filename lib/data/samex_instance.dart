@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/utils/api.dart';
 import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
+import 'package:samex_app/utils/func.dart';
 
 class SamexInstance {
   static final SamexInstance _instance = SamexInstance();

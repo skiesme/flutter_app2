@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/model/cm_attachments.dart';
 import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_list.dart';
@@ -768,6 +769,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         confirm: true,
         child: new Scaffold(
           appBar: new AppBar(
+            leading: const SamexBackButton(),
             title: Text(
               _info?.wonum ?? '',
             ),

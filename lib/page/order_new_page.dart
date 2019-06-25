@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/samex_back_button.dart';
 
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/components/loading_view.dart';
@@ -360,6 +361,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
     return new Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
+          leading: const SamexBackButton(),
           title: Text('新增维修工单'),
         ),
         body: new GestureDetector(
