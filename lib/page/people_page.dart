@@ -83,6 +83,7 @@ class _PeoplePageState extends State<PeoplePage> {
     return new Scaffold(
       appBar: new AppBar(
         title: Text('人员选择'),
+        centerTitle: true,
         actions: actions
       ),
       body: new Column(

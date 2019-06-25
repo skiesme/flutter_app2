@@ -276,6 +276,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
         resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: Text(_controller.text.isEmpty ? '新增人员工时':'工时填写'),
+          centerTitle: true,
           actions: widget.read || widget.data.hrtransid == 0 ? null : <Widget>[
             new  IconButton(
               icon: Icon(Icons.delete),

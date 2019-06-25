@@ -79,6 +79,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       appBar: new AppBar(
         leading: const SamexBackButton(),
         title: Text(_getTitle()),
+        centerTitle: true,
         actions: _appBarActions(),
       ),
       floatingActionButton: _scanBtn(),

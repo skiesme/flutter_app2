@@ -363,6 +363,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
         appBar: new AppBar(
           leading: const SamexBackButton(),
           title: Text('新增维修工单'),
+          centerTitle: true,
         ),
         body: new GestureDetector(
             onTap: () {

@@ -159,7 +159,7 @@ class _AttachmentPageState extends State<AttachmentPage> with AfterLayoutMixin<A
     return new Scaffold(
         appBar: new AppBar(
           title: Text('附件'),
-
+          centerTitle: true,
           actions: <Widget>[
             new IconButton(icon: Icon(Icons.refresh), onPressed: (){
               if( getOrderType(widget.order.worktype) == OrderType.CM){

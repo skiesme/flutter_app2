@@ -98,6 +98,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
       appBar: AppBar(
         leading: const SamexBackButton(),
         title: Text('库存查询'),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.refresh),

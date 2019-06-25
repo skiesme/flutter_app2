@@ -180,6 +180,7 @@ class _StepNewPageState extends State<StepNewPage> {
         resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: Text(_controller.text.isEmpty ? '新增任务':'任务填写'),
+          centerTitle: true,
         ),
 
         body: new GestureDetector(

@@ -391,6 +391,7 @@ class _StepPageState extends State<StepPage>{
           resizeToAvoidBottomPadding: false,
           appBar: new AppBar(
             title: Text('填写结果'),
+            centerTitle: true,
           ),
           body: _getBody()),
     );

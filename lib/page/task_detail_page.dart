@@ -773,6 +773,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
             title: Text(
               _info?.wonum ?? '',
             ),
+            centerTitle: true,
             actions: _buildBarActions(),
           ),
           body: _info == null ? Text('') : _getBody(),

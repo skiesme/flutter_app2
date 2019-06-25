@@ -135,6 +135,7 @@ class _UploadAssetPageState extends State<UploadAssetPage> {
         child: new Scaffold(
           appBar: new AppBar(
             title: new Text('资产 ${widget.asset.assetnum} 图片管理'),
+            centerTitle: true,
           ),
 
           body: Container(

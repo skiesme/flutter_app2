@@ -292,6 +292,7 @@ class _TaskPageState extends State<TaskPage> with SingleTickerProviderStateMixin
       appBar: new AppBar(
         leading: _buildAppBarLeading(),
         title: _isSearching ? _buildSearchField() : (widget.isTask ? Text('任务箱') : Text('工单箱')),
+        centerTitle: true,
         actions: _buildActions(),
       ),
       body: _getBody(),

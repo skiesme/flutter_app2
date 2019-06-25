@@ -174,6 +174,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     return new Scaffold(
       appBar: AppBar(
         title: Text('${widget.asset} 详情'),
+        centerTitle: true,
         actions: <Widget>[
           new IconButton(
               icon: Icon(Icons.refresh),

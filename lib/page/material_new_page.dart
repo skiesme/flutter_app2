@@ -168,6 +168,7 @@ class _MaterialPageState extends State<MaterialPage> {
         resizeToAvoidBottomPadding: false,
         appBar: new AppBar(
           title: Text('新增物料计划'),
+          centerTitle: true,
           actions: widget.read || widget.data.woitemid == 0
               ? null
               : <Widget>[

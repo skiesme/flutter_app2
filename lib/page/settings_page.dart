@@ -88,6 +88,7 @@ class _SettingsPageState extends State<SettingsPage>
         appBar: new AppBar(
           leading: SamexBackButton(),
           title: Text('设置'),
+          centerTitle: true,
         ),
         body: new Container(
             child: Column(
