@@ -128,7 +128,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
     _assignCode = _data?.displayname;
     return new Scaffold(
         appBar: new AppBar(
-          title: Text(widget.action.instruction ?? '提交工作流'),,
+          title: Text(widget.action.instruction ?? '提交工作流'),
           centerTitle: true,
           actions: <Widget>[
             IconButton(

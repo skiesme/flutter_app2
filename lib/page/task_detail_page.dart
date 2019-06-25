@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/model/cm_attachments.dart';
 import 'package:samex_app/model/description.dart';
-import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/order_detail.dart';
 
 import 'package:samex_app/data/samex_instance.dart';
@@ -32,8 +31,8 @@ import 'package:samex_app/components/badge_icon_button.dart';
 class TaskDetailPage extends StatefulWidget {
   static const String path = '/TaskDetailPage';
 
-  final OrderShortInfo info;
-  TaskDetailPage({this.info});
+  final String wonum;
+  TaskDetailPage({this.wonum});
 
   @override
   _TaskDetailPageState createState() => new _TaskDetailPageState();
@@ -41,7 +40,7 @@ class TaskDetailPage extends StatefulWidget {
 
 class _TaskDetailPageState extends State<TaskDetailPage>
     with AfterLayoutMixin<TaskDetailPage> {
-  OrderShortInfo _info;
+  String _wonum;
   OrderType _type;
   OrderDetailData _data;
 
@@ -60,13 +59,15 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   @override
   void initState() {
     super.initState();
+    _wonum = widget.wonum??'';
+
     _data = getMemoryCache(cacheKey, expired: false);
   }
 
   Future _getOrderDetail({bool force = false}) async {
     try {
       final response = await getApi(context)
-          .orderDetail(_info.wonum, force ? 0 : _data?.changedate);
+          .orderDetail(_wonum, force ? 0 : _data?.changedate);
       OrderDetailResult result = new OrderDetailResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);
@@ -77,6 +78,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
             setMemoryCache<OrderDetailData>(cacheKey, data);
             setState(() {
               _data = data;
+              _type = getOrderType(_data.worktype);
             });
           }
         }
@@ -214,7 +216,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         break;
       case 1:
         children.add(Text('任务列表'));
-        if (_type == OrderType.CM && _data.actfinish == 0) {
+        if (_type == OrderType.CM && _data?.actfinish == 0) {
           children.add(newButton('新增任务', () async {
             if (_stepKey.currentState == null) return;
             int _stepNo = (_stepKey.currentState.steps + 1) * 10;
@@ -225,11 +227,11 @@ class _TaskDetailPageState extends State<TaskDetailPage>
               return new StepNewPage(
                 step: new OrderStep(
                     stepno: _stepNo,
-                    assetnum: _data.assetnum,
-                    assetDescription: _data.assetDescription,
+                    assetnum: _data?.assetnum,
+                    assetDescription: _data?.assetDescription,
                     executor: Cache.instance.userDisplayName,
-                    wonum: _data.wonum),
-                read: _data.actfinish != 0,
+                    wonum: _wonum),
+                read: _data?.actfinish != 0,
               );
             }));
 
@@ -241,13 +243,13 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         break;
       case 2:
         children.add(Text('人员工时列表'));
-        if (_data.actfinish == 0) {
+        if (_data?.actfinish == 0) {
           children.add(newButton('新增人员工时', () async {
             final result = await Navigator.push(context,
                 new MaterialPageRoute(builder: (_) {
               return new WorkTimePage(
-                data: new WorkTimeData(refwo: _data.wonum),
-                read: _data.actfinish != 0,
+                data: new WorkTimeData(refwo: _wonum),
+                read: _data?.actfinish != 0,
                 isNew: true,
               );
             }));
@@ -261,13 +263,13 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         break;
       case 3:
         children.add(Text('物料计划'));
-        if (_data.actfinish == 0) {
+        if (_data?.actfinish == 0) {
           children.add(newButton('物料登记', () async {
             final result = await Navigator.push(context,
                 new MaterialPageRoute(builder: (_) {
               return new MaterialPage(
-                data: new OrderMaterialData(wonum: _data.wonum),
-                read: _data.actfinish != 0,
+                data: new OrderMaterialData(wonum: _wonum),
+                read: _data?.actfinish != 0,
               );
             }));
 
@@ -308,7 +310,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       case 2:
       case 3:
         widget = new PeopleAndMaterialList(
-          read: _data.actfinish > 0,
+          read: _data?.actfinish > 0,
           isPeople: _tabIndex == 2,
           data: _data,
           key: _peopleAndMaterialKey,
@@ -373,7 +375,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     List<Widget> list = <Widget>[];
     String status = _data?.status ?? '';
     list.addAll(<Widget>[
-      Text('工单编号: ${_info.wonum}'),
+      Text('工单编号: ${_wonum}'),
       Text('工单类型: ${getWorkTypeString()}'),
       Text('标题名称: ${_data?.description ?? ''}'),
       Row(children: <Widget>[
@@ -405,7 +407,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       }
       list.add(Text('上报时间: ${Func.getFullTimeString(_data?.reportdate)}'));
 
-      if (_data != null && _data.actfinish > 0) {
+      if (_data != null && _data?.actfinish > 0) {
         list.add(Text('完成时间: ${Func.getFullTimeString(_data?.actfinish)}'));
       }
       if (_type != OrderType.XJ) {
@@ -436,7 +438,8 @@ class _TaskDetailPageState extends State<TaskDetailPage>
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => AttachmentPage(order: _info, data: [])));
+                      builder: (_) =>
+                          AttachmentPage(detailData: _data, steps: [])));
             },
             child: Row(
               children: <Widget>[
@@ -545,16 +548,14 @@ class _TaskDetailPageState extends State<TaskDetailPage>
           });
 
           try {
-            Map response =
-                await getApi(context).postXJ(_data?.wonum ?? '');
+            Map response = await getApi(context).postXJ(_wonum);
             OrderDetailResult result = new OrderDetailResult.fromJson(response);
             if (result.code != 0) {
               Func.showMessage(result.message);
             } else {
               Func.showMessage('提交成功');
 
-              getUserInfo(context).orders =
-                  await getApi(context).orderCount();
+              getUserInfo(context).orders = await getApi(context).orderCount();
 
               if (mounted) {
                 Navigator.popUntil(
@@ -582,7 +583,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         Func.showMessage('该功能还未支持');
         return;
       case OrderPostStyle.Refresh:
-        clearMemoryCacheWithKeys(_info.wonum);
+        clearMemoryCacheWithKeys(_wonum);
         setState(() {
           _show = true;
         });
@@ -591,7 +592,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         return;
     }
 
-    _data.actions?.forEach((Actions f) async {
+    _data?.actions?.forEach((Actions f) async {
       if (f.actionid == style) {
         final result = await Navigator.push(
             context,
@@ -599,7 +600,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
                 builder: (_) => new OrderPostPage(data: _data, action: f)));
 
         if (result != null) {
-          clearMemoryCacheWithKeys(_data.wonum);
+          clearMemoryCacheWithKeys(_wonum);
           if (getUserInfo(context).orders > 0) {
             getUserInfo(context).orders -= 1;
           }
@@ -611,7 +612,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   List<PopupMenuItem<String>> getPopupMenuButton() {
     List<PopupMenuItem<String>> list = new List();
-    switch (getOrderType(widget.info.worktype)) {
+    switch (getOrderType(_data?.worktype)) {
       case OrderType.XJ:
         list.addAll(<PopupMenuItem<String>>[
           const PopupMenuItem<String>(
@@ -627,7 +628,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       case OrderType.CM:
       case OrderType.PM:
         _data?.actions?.forEach((Actions f) {
-          if (_data.status.contains('待验收') &&
+          if (_data?.status.contains('待验收') &&
               f.instruction.contains('指派工单责任人')) {
             return;
           }
@@ -668,7 +669,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   void showEditDialog(BuildContext context) {
-    OrderDetailData _tmpData = OrderDetailData.fromJson(_data.toJson());
+    OrderDetailData _tmpData = OrderDetailData.fromJson(_data?.toJson());
     TextStyle infoStyle = TextStyle(fontSize: 14.0);
     showDialog(
         context: context,
@@ -694,7 +695,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
                           context,
                           new MaterialPageRoute(
                               builder: (_) => new ChooseAssetPage(
-                                    location: _data.location,
+                                    location: _data?.location,
                                   )));
                       if (result != null) {
                         setState(() {
@@ -750,7 +751,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     }
 
     // workflow
-    if (widget.info.actfinish == 0) {
+    if (_data?.actfinish == 0) {
       // refresh work_flow
       actions.add(
         new PopupMenuButton<String>(
@@ -770,16 +771,14 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         child: new Scaffold(
           appBar: new AppBar(
             leading: const SamexBackButton(),
-            title: Text(
-              _info?.wonum ?? '',
-            ),
+            title: Text(_wonum),
             centerTitle: true,
             actions: _buildBarActions(),
           ),
-          body: _info == null ? Text('') : _getBody(),
+          body: _data == null ? Text('') : _getBody(),
           floatingActionButton: _tabIndex == 1 &&
-                  getOrderType(_info?.worktype) != OrderType.CM &&
-                  _info.actfinish == 0
+                  getOrderType(_data?.worktype) != OrderType.CM &&
+                  _data?.actfinish == 0
               ? new FloatingActionButton(
                   child: Tooltip(
                     child: new Image.asset(
@@ -813,11 +812,11 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   String get cacheKey {
-    return 'task_detail_${widget.info.wonum}';
+    return 'task_detail_${_wonum}';
   }
 
   String get cacheStepsKey {
-    return 'stepsList_${widget.info.wonum}';
+    return 'stepsList_${_wonum}';
   }
 
   void _getSteps(OrderDetailData data) async {
@@ -826,7 +825,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
       if (_type != OrderType.CM) {
         Map response = await getApi(context)
-            .steps(sopnum: '', wonum: data.wonum, site: data.site);
+            .steps(sopnum: '', wonum: _wonum, site: data.site);
         StepsResult result = new StepsResult.fromJson(response);
 
         if (result.code == 0) {
@@ -860,7 +859,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         setState(() {
           _attachments = images.length;
         });
-        // debugPrint('当前工单步骤：${_info.wonum ?? ''}, 附件个数为：${images.length}');
       }
     } catch (e) {
       print('获取步骤列表失败: $e');
@@ -869,11 +867,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    setState(() {
-      _info = widget.info;
-      _type = getOrderType(_info.worktype);
-    });
-
     _getOrderDetail();
   }
 

@@ -18,8 +18,8 @@ import 'page/choose_assetnum_page.dart';
 import 'page/choose_material_page.dart';
 import 'page/order_new_page.dart';
 import 'page/settings_page.dart';
+import 'page/task_detail_page.dart';
 import 'page/task_page.dart';
-import 'utils/func.dart';
 
 void main() async {
   await Cache.getInstance();
@@ -155,7 +155,7 @@ class _MyAppState extends State<MyApp> {
     FlutterBoost.handleOnStartPage();
   }
 
-  String _string(Map params, String key) {
+  dynamic _value(Map params, String key) {
     if (params.keys.contains(key)) {
       return params[key];
     }
@@ -165,46 +165,47 @@ class _MyAppState extends State<MyApp> {
   /** 对外Native 开放的 页面 */
   /// 其他
   Widget renderHome(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return MainPage();
   }
 
   Widget renderSetting(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return SettingsPage();
   }
 
   /// 任务箱
   Widget renderTaksList(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return TaskPage();
   }
 
   Widget renderTaksDetail(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
-    return TaskPage();
+    setToken(context, _value(params, 'token'));
+    String wonum = _value(params, 'wonum');
+    return TaskDetailPage(wonum: wonum);
   }
 
   // 工单
   Widget renderWorkOrderList(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return TaskPage(isTask: false);
   }
 
   // 新增工单
   Widget renderWorkOrderAdd(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return OrderNewPage();
   }
 
   // 资产
   Widget renderChooseAsset(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return ChooseAssetPage();
   }
 
   Widget renderChooseMaterial(String pageName, Map params, String _) {
-    setToken(context, _string(params, 'token'));
+    setToken(context, _value(params, 'token'));
     return ChooseMaterialPage();
   }
 }

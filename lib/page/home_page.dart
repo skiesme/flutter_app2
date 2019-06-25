@@ -3,7 +3,6 @@ import 'dart:isolate';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_boost/flutter_boost.dart';
 import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/page/login_page.dart';
 import 'package:samex_app/page/settings_page.dart';

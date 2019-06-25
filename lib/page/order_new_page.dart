@@ -190,8 +190,8 @@ class _OrderNewPageState extends State<OrderNewPage> {
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
-                                          builder: (_) =>
-                                              new TaskDetailPage(info: info)));
+                                          builder: (_) => new TaskDetailPage(
+                                              wonum: info.wonum)));
                                 },
                               ))
                           .toList(),
