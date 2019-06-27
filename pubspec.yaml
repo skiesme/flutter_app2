@@ -80,6 +80,6 @@ flutter:
         - asset: assets/fonts/miui.ttf
   #  - images/a_dot_ham.jpeg
 
-  module:
-    androidPackage: com.hddz.samex_module
-    iosBundleIdentifier: com.hddz.samex_module
+  # module:
+  #   androidPackage: com.hddz.samex_module
+  #   iosBundleIdentifier: com.hddz.samex_module

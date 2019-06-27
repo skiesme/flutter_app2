@@ -57,12 +57,12 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
 
     _StatusSelect defSelect(String key) {
       if (_statusList.length > 0 && key.length > 0) {
-        return _statusList
-            .where((_StatusSelect f) {
+        List<_StatusSelect> kList = _statusList.where((_StatusSelect f) {
               return f.key == key;
-            })
-            .toList()
-            .first;
+            }).toList();
+        if (kList.length > 0) {
+          return kList.first;
+        }
       }
       return _location;
     }

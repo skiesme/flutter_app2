@@ -27,7 +27,7 @@ class SaMexApi {
       const bool.fromEnvironment("dart.vm.product");
   static String ipAndPort =
       inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
-  //  static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
+  // static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
 
   static String baseUrl = 'http://$ipAndPort/app/api';
   static Options _option;
@@ -412,11 +412,11 @@ class SaMexApi {
       'count': '$count'
     });
 
-//    print(uri.toString());
+    print(uri.toString());
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-//    print('${uri.toString()}: ${response.data}');
+    print('${uri.toString()}: ${response.data}');
 
     return response.data;
   }

@@ -7,6 +7,9 @@ import 'package:samex_app/model/user.dart';
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
+import 'package:samex_app/utils/style.dart';
+
+import 'login_page.dart';
 
 class GalleryTextScaleValue {
   const GalleryTextScaleValue(this.scale, this.label);
@@ -48,6 +51,7 @@ class _SettingsPageState extends State<SettingsPage>
     with AfterLayoutMixin<SettingsPage> {
   List<Site> _siteList = new List();
   String _defSite = Cache.instance.site;
+  Site _selectedSite;
   GalleryTextScaleValue _textScaleFactor = GalleryTextScaleValue(null, '系统默认');
 
   String get cacheKey => '__Cache.instance.site_list';
@@ -129,28 +133,10 @@ class _SettingsPageState extends State<SettingsPage>
     }
   }
 
-  void updateUserSite(String siteID) async {
-    try {
-      final response = await getApi(context).changeSite(siteID);
-      UserResult res = new UserResult.fromJson(response);
-      if (res.code != 0) {
-        Func.showMessage(res.message);
-      } else {
-        Func.showMessage('水厂修改成功！');
-        setState(() {
-          Cache.instance.setStringValue(KEY_SITE, res.response.defsite);
-        });
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   Widget _sitesSelectItem() {
     if (_siteList == null) {
       return ListTile();
     }
-
     String title = '';
     String siteID = Cache.instance.site;
     if (siteID != null) {
@@ -180,8 +166,12 @@ class _SettingsPageState extends State<SettingsPage>
                           : null,
                       title: new Text(site.description),
                       onTap: () {
-                        updateUserSite(site.siteid);
+                        setState(() {
+                          _selectedSite = site;
+                        });
+
                         Navigator.pop(context);
+                        showLogOutDialog(context);
                       },
                     );
                   }).toList(),
@@ -203,6 +193,8 @@ class _SettingsPageState extends State<SettingsPage>
         title: const Text('用户水厂'),
         enabled: true,
         onTap: () {
+          _selectedSite;
+
           showChooseDialog(context);
         });
   }
@@ -221,5 +213,62 @@ class _SettingsPageState extends State<SettingsPage>
         Text('')
       ],
     );
+  }
+
+  void showLogOutDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, state) {
+              return AlertDialog(
+                title: Text('提示'),
+                content: SingleChildScrollView(
+                  child: ListBody(
+                    children: <Widget>[
+                      Text('确定切换水厂后，您需要进行重新登录。'),
+                      Text('是否将水厂切换至 "${_selectedSite.description}"？'),
+                    ],
+                  ),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('取消', style: TextStyle(color: Colors.red)),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text('确定'),
+                    onPressed: () {
+                      // 切换水厂 重新登录
+                      updateUserSite(_selectedSite.siteid);
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        });
+  }
+
+  void updateUserSite(String site) async {
+    try {
+      final response = await getApi(context).changeSite(site);
+      UserResult res = new UserResult.fromJson(response);
+      if (res.code != 0) {
+        Func.showMessage(res.message);
+      } else {
+        Navigator.pop(context);
+        
+        setToken(context, null);
+        clearMemoryCache();
+
+        Navigator.pushReplacement(
+            context, new MaterialPageRoute(builder: (_) => new LoginPage()));
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

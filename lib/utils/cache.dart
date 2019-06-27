@@ -46,6 +46,7 @@ class Cache {
     return path;
   }
 
+  String get toke => _getString(KEY_TOKEN);
   String get site => _getString(KEY_SITE);
   String get userName => _getString(KEY_USER_NAME);
   String get userTitle => _getString(KEY_USER_TITLE);
