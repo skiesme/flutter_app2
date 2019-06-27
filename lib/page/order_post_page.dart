@@ -68,10 +68,12 @@ class _OrderPostPageState extends State<OrderPostPage> {
     }
   }
 
+  bool get showFaultlev => (otherConfig && widget.data.worktype != "PM");
+
   void _submit() async {
     Func.closeKeyboard(context);
 
-    if (otherConfig) {
+    if (otherConfig && widget.data.worktype != "PM") {
       if (_faultlev.length == 0) {
         Func.showMessage('请先设置故障等级');
         return;
@@ -140,13 +142,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
             )
           ],
         ),
-//        floatingActionButton: new FloatingActionButton(
-//            child: Icon(Icons.done),
-//            backgroundColor: Colors.redAccent,
-//            tooltip: '提交',
-//            onPressed: (){
-//              _submit();
-//            }),
         body: new GestureDetector(
           onTap: () {
             Func.closeKeyboard(context);
@@ -157,27 +152,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  widget.action.instruction.contains(new RegExp(r'[责任人|指派]'))
-                      ? ListTile(
-                          title: Text('指派工单负责人'),
-                          subtitle: Text(_assignCode ?? '请选择人员'),
-                          trailing: Icon(Icons.edit),
-                          onTap: () async {
-                            final result = await Navigator.push(
-                                context,
-                                new MaterialPageRoute(
-                                    builder: (_) => PeoplePage(
-                                          req: new RegExp(r'维修|设备'),
-                                        )));
-
-                            if (result != null) {
-                              setState(() {
-                                _data = result;
-                              });
-                            }
-                          },
-                        )
-                      : Container(),
+                  _buildUser(),
                   ListTile(
                     title: Text('工单编号'),
                     subtitle: Text(widget.data.wonum),
@@ -186,93 +161,8 @@ class _OrderPostPageState extends State<OrderPostPage> {
                     title: Text('操作人'),
                     subtitle: Text(Cache.instance.userDisplayName),
                   ),
-                  otherConfig
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          child: new Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                new Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '故障分类',
-                                      style: TextStyle(fontSize: 16.0),
-                                    ),
-                                    Text(_woprof,
-                                        style: TextStyle(color: Colors.grey)),
-                                  ],
-                                ),
-                                new Expanded(
-                                    child: new PopupMenuButton<_StatusSelect>(
-                                  tooltip: '请选择巡检状态',
-                                  child: Align(
-                                    child: const Icon(Icons.arrow_drop_down),
-                                    alignment: Alignment.centerRight,
-                                    heightFactor: 1.5,
-                                  ),
-                                  itemBuilder: (BuildContext context) {
-                                    return _statusList
-                                        .map((_StatusSelect status) {
-                                      return new PopupMenuItem<_StatusSelect>(
-                                        value: status,
-                                        child: new Text(status.value),
-                                      );
-                                    }).toList();
-                                  },
-                                  onSelected: (_StatusSelect value) {
-//                                print('status = ${value.value}');
-                                    setState(() {
-                                      _woprof = value.value;
-                                    });
-                                  },
-                                )),
-                              ]))
-                      : new Container(),
-                  otherConfig
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          child: new Row(children: <Widget>[
-                            new Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  '故障等级',
-                                  style: TextStyle(fontSize: 16.0),
-                                ),
-                                Text(_faultlev,
-                                    style: TextStyle(color: Colors.grey)),
-                              ],
-                            ),
-                            new Expanded(
-                                child: new PopupMenuButton<_StatusSelect>(
-                              tooltip: '请选择巡检状态',
-                              child: Align(
-                                child: const Icon(Icons.arrow_drop_down),
-                                alignment: Alignment.centerRight,
-                                heightFactor: 1.5,
-                              ),
-                              itemBuilder: (BuildContext context) {
-                                return _statusList2.map((_StatusSelect status) {
-                                  return new PopupMenuItem<_StatusSelect>(
-                                    value: status,
-                                    child: new Text(status.value),
-                                  );
-                                }).toList();
-                              },
-                              onSelected: (_StatusSelect value) {
-//                                print('status = ${value.value}');
-                                setState(() {
-                                  _faultlev = value.value;
-                                });
-                              },
-                            )),
-                          ]))
-                      : new Container(),
+                  _buildWoprof(),
+                  _buildFaultlev(),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16.0, vertical: 8.0),
@@ -298,5 +188,116 @@ class _OrderPostPageState extends State<OrderPostPage> {
             ),
           ),
         ));
+  }
+
+  Widget _buildUser() {
+    if (showFaultlev == false) {
+      return Container();
+    }
+    return ListTile(
+      title: Text('指派工单负责人'),
+      subtitle: Text(_assignCode ?? '请选择人员'),
+      trailing: Icon(Icons.edit),
+      onTap: () async {
+        final result = await Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (_) => PeoplePage(
+                      req: new RegExp(r'维修|设备'),
+                    )));
+
+        if (result != null) {
+          setState(() {
+            _data = result;
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildWoprof() {
+    if (showFaultlev == false) {
+      return Container();
+    }
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    '故障分类',
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  Text(_woprof, style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+              new Expanded(
+                  child: new PopupMenuButton<_StatusSelect>(
+                child: Align(
+                  child: const Icon(Icons.arrow_drop_down),
+                  alignment: Alignment.centerRight,
+                  heightFactor: 1.5,
+                ),
+                itemBuilder: (BuildContext context) {
+                  return _statusList.map((_StatusSelect status) {
+                    return new PopupMenuItem<_StatusSelect>(
+                      value: status,
+                      child: new Text(status.value),
+                    );
+                  }).toList();
+                },
+                onSelected: (_StatusSelect value) {
+                  setState(() {
+                    _woprof = value.value;
+                  });
+                },
+              )),
+            ]));
+  }
+
+  Widget _buildFaultlev() {
+    if (showFaultlev == false) {
+      return Container();
+    }
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: new Row(children: <Widget>[
+          new Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '故障等级',
+                style: TextStyle(fontSize: 16.0),
+              ),
+              Text(_faultlev, style: TextStyle(color: Colors.grey)),
+            ],
+          ),
+          new Expanded(
+              child: new PopupMenuButton<_StatusSelect>(
+            child: Align(
+              child: const Icon(Icons.arrow_drop_down),
+              alignment: Alignment.centerRight,
+              heightFactor: 1.5,
+            ),
+            itemBuilder: (BuildContext context) {
+              return _statusList2.map((_StatusSelect status) {
+                return new PopupMenuItem<_StatusSelect>(
+                  value: status,
+                  child: new Text(status.value),
+                );
+              }).toList();
+            },
+            onSelected: (_StatusSelect value) {
+              setState(() {
+                _faultlev = value.value;
+              });
+            },
+          )),
+        ]));
   }
 }
