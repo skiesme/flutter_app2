@@ -288,7 +288,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
     if (SamexInstance.isModule) {
       return SamexBackButton();
     } else {
-      return Image.asset(ImageAssets.logo, width: 37, height: 37);
+      return Image.asset(ImageAssets.logo, width: 24, height: 24);
     }
   }
 
