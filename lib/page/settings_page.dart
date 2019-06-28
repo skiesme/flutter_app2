@@ -207,7 +207,7 @@ class _SettingsPageState extends State<SettingsPage>
           style: TextStyle(fontSize: 17.0),
         ),
         Text(
-          'Version 1.1.1905270915',
+          'Version 1.1.1906281123',
           style: TextStyle(fontSize: 11.0),
         ),
         Text('')
@@ -260,7 +260,7 @@ class _SettingsPageState extends State<SettingsPage>
         Func.showMessage(res.message);
       } else {
         Navigator.pop(context);
-        
+
         setToken(context, null);
         clearMemoryCache();
 
