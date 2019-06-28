@@ -127,7 +127,6 @@ class _StepNewPageState extends State<StepNewPage> {
           Map response = await getApi(context).postStep(
               _step, lists,
               onProgress: (send, total){
-
               });
           StepsResult result = new StepsResult.fromJson(response);
           if (result.code != 0) {

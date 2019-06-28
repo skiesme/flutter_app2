@@ -8,14 +8,14 @@ import 'package:image/image.dart';
 
 import 'package:path/path.dart';
 
-
 typedef void OnResultListener(List<UploadFileInfo> result);
 typedef void OnProgressListener(int step);
 
 class Calculator {
-  Calculator({
-    @required this.onResultListener, @required this.onProgressListener,
-    @required this.data })
+  Calculator(
+      {@required this.onResultListener,
+      @required this.onProgressListener,
+      @required this.data})
       : assert(onResultListener != null);
 
   final OnResultListener onResultListener;
@@ -23,18 +23,17 @@ class Calculator {
   final List<String> data;
 
   void run() {
-
     List<UploadFileInfo> list = [];
 
-    for(int i= 0, len = data.length; i < len; i++) {
+    for (int i = 0, len = data.length; i < len; i++) {
       String f = data[i];
       try {
         String path = f;
         if (f.contains(',')) {
           path = f.split(',')[0];
         }
-        if(path.startsWith('/')){
-          if(!Io.Platform.isIOS) {
+        if (path.startsWith('/')) {
+          if (!Io.Platform.isIOS) {
             onProgressListener(i + 1);
             List<int> bytes = new Io.File(path).readAsBytesSync();
 
@@ -48,28 +47,22 @@ class Calculator {
             }
 
             // Save the thumbnail as a PNG.
-            new Io.File(cachePath).writeAsBytesSync(
-                encodeJpg(image, quality: 80));
-
+            new Io.File(cachePath)
+                .writeAsBytesSync(encodeJpg(image, quality: 80));
 
             list.add(new UploadFileInfo(
                 new Io.File(cachePath), basename(cachePath)));
           } else {
-            list.add(new UploadFileInfo(
-                new Io.File(path), basename(path)));
+            list.add(new UploadFileInfo(new Io.File(path), basename(path)));
           }
         }
-      } catch(e){
+      } catch (e) {
         print(e);
       }
     }
 
-
     onResultListener(list);
-
   }
-
-
 }
 
 class DecodeMessage {
@@ -78,16 +71,13 @@ class DecodeMessage {
   SendPort sendPort;
 }
 
-enum CalculationState {
-  idle,
-  loading,
-  calculating
-}
+enum CalculationState { idle, loading, calculating }
 
 class CalculationManager {
-  CalculationManager({
-    @required this.onResultListener, @required this.onProgressListener,
-    @required this.images})
+  CalculationManager(
+      {@required this.onResultListener,
+      @required this.onProgressListener,
+      @required this.images})
       : assert(onResultListener != null),
         _receivePort = new ReceivePort() {
     _receivePort.listen(_handleMessage);
@@ -135,46 +125,41 @@ class CalculationManager {
     // However, the loading process is asynchronous, so the UI will not block
     // while the file is loaded.
 
-      if (isRunning) {
-
-        final DecodeMessage message = new DecodeMessage(this.images, _receivePort.sendPort);
-        // Spawn an isolate to JSON-parse the file contents. The JSON parsing
-        // is synchronous, so if done in the main isolate, the UI would block.
-        Isolate.spawn(_calculate, message).then<Null>((Isolate isolate) {
-          if (!isRunning) {
-            isolate.kill(priority: Isolate.immediate);
-          } else {
-            _state = CalculationState.calculating;
-            _isolate = isolate;
-          }
-        });
-      }
+    if (isRunning) {
+      final DecodeMessage message =
+          new DecodeMessage(this.images, _receivePort.sendPort);
+      // Spawn an isolate to JSON-parse the file contents. The JSON parsing
+      // is synchronous, so if done in the main isolate, the UI would block.
+      Isolate.spawn(_calculate, message).then<Null>((Isolate isolate) {
+        if (!isRunning) {
+          isolate.kill(priority: Isolate.immediate);
+        } else {
+          _state = CalculationState.calculating;
+          _isolate = isolate;
+        }
+      });
+    }
   }
 
   void _handleMessage(dynamic message) {
-
-    if(message is List<UploadFileInfo>){
+    if (message is List<UploadFileInfo>) {
       onResultListener(message);
-    } else if(message is int) {
+    } else if (message is int) {
       onProgressListener(message);
     }
-
   }
 
   static void _calculate(DecodeMessage message) {
-
     final SendPort sender = message.sendPort;
     final Calculator calculator = new Calculator(
         onResultListener: sender.send,
         onProgressListener: (int step) {
           sender.send(step);
         },
-        data: message.data
-    );
+        data: message.data);
     calculator.run();
   }
 }
-
 
 class StepsResult {
   int code;
@@ -244,22 +229,26 @@ class OrderStep {
 
   OrderStep(
       {this.stepno,
-        this.description,
-        this.wonum,
-        this.assetnum,
-        this.assetDescription,
-        this.status='',
-        this.statusdate=0,
-        this.remark='',
-        this.executor='',
-        this.images});
+      this.description,
+      this.wonum,
+      this.assetnum,
+      this.assetDescription,
+      this.status = '',
+      this.statusdate = 0,
+      this.remark = '',
+      this.executor = '',
+      this.images});
 
   OrderStep.fromJson(Map<String, dynamic> json) {
     stepno = json['stepno'];
     description = json['description'];
     wonum = json['wonum'];
     assetnum = json['assetnum'];
+    assetnum = assetnum == "null" ? "" : assetnum;
+
     assetDescription = json['asset_description'];
+    assetDescription = assetDescription == "null" ? "" : assetDescription;
+
     status = json['status'];
     statusdate = json['statusdate'];
     remark = json['remark'];
@@ -267,12 +256,12 @@ class OrderStep {
     images = json['images']?.cast<String>() ?? [];
   }
 
-  String _getImages(){
+  String _getImages() {
     String list = '';
 
-    if(images == null) return list;
+    if (images == null) return list;
 
-    for(int i =0, len = images.length; i < len; i++){
+    for (int i = 0, len = images.length; i < len; i++) {
       String f = images[i];
       try {
         String path = f;
@@ -281,16 +270,14 @@ class OrderStep {
         } else {
           continue;
         }
-        if(path.startsWith('/')){
+        if (path.startsWith('/')) {
         } else {
-          if(list.length > 0){
+          if (list.length > 0) {
             list += '##';
           }
           list += f;
         }
-      }
-      catch(e){
-      }
+      } catch (e) {}
     }
 
     return list;
@@ -298,19 +285,18 @@ class OrderStep {
 
   List<String> getUploadImages() {
     List<String> list = [];
-    if(images == null) return  list;
+    if (images == null) return list;
 
-    images.forEach( (String f)  {
+    images.forEach((String f) {
       try {
         String path = f;
         if (f.contains(',')) {
           path = f.split(',')[0];
         }
-        if(path.startsWith('/')){
+        if (path.startsWith('/')) {
           list.add(f);
         }
-      } catch(e){
-      }
+      } catch (e) {}
     });
 
     return list;
@@ -328,7 +314,7 @@ class OrderStep {
     data['remark'] = this.remark;
     data['executor'] = this.executor;
     String images = _getImages();
-    if(images.contains(',')){
+    if (images.contains(',')) {
       data['images'] = _getImages();
     }
 //    data['file'] = _getImages(true);

@@ -310,6 +310,12 @@ class SaMexApi {
       {OnUploadProgress onProgress}) async {
     Uri uri = Uri.parse(baseUrl + '/orderstep/upload');
 
+    int stepno = step.stepno;
+    if (stepno < 10) {
+      stepno = (stepno < 1) ? 1 : stepno;
+      stepno = stepno * 10;
+    }
+
     Map<String, dynamic> jsonData = step.toJson();
     jsonData["files"] = files;
 
