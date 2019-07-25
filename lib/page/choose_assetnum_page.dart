@@ -270,12 +270,14 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
     Widget _listItem(int index) {
       DescriptionData asset = data[index];
-      String title =
+      String title = '${asset.description ?? ''}';
+      String desStr =
           widget.chooseLocation ? '${asset.location}' : '${asset.assetnum}';
-      String desStr = '描述:${asset.description ?? ''}';
+
       String locationStr = widget.chooseLocation
           ? ''
           : '位置:${asset.location ?? ''}\n${asset.locationDescription ?? ''}';
+
       Color avatarColor = Style.assetStatusColor(asset.status);
 
       return SimpleButton(
@@ -332,11 +334,11 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
       if (!widget.chooseLocation) {
         Map response = await getApi(context).getAssets(
-              location: widget.location,
-              count: count,
-              queryOne: queryOne,
-              asset: asset,
-            );
+          location: widget.location,
+          count: count,
+          queryOne: queryOne,
+          asset: asset,
+        );
         DescriptionResult result = new DescriptionResult.fromJson(response);
         if (result.code != 0) {
           Func.showMessage(result.message);
@@ -345,10 +347,10 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
         }
       } else {
         Map response = await getApi(context).getLocations(
-              location: widget.location,
-              count: count,
-              queryOne: queryOne,
-            );
+          location: widget.location,
+          count: count,
+          queryOne: queryOne,
+        );
         DescriptionResult result = new DescriptionResult.fromJson(response);
         if (result.code != 0) {
           Func.showMessage(result.message);
