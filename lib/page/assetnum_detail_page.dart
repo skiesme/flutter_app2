@@ -81,30 +81,12 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('所在位置: ${data.location}'),
+      child: Text('位置编号: ${data.location}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
       child: Text('位置描述: ${data.locationDescription}'),
     ));
-    children.add(Padding(
-      padding: Style.pagePadding4,
-      child: Text('修改人员: ${data.changeby}'),
-    ));
-    children.add(Padding(
-      padding: Style.pagePadding4,
-      child: Text('资产类型: ${data.assettype}'),
-    ));
-    children.add(Padding(
-      padding: Style.pagePadding4,
-      child: Text('功能类别: ${data.funclass}'),
-    ));
-    if (data.specific.isNotEmpty) {
-      children.add(Padding(
-        padding: Style.pagePadding4,
-        child: Text('规格型号: ${data.specific}'),
-      ));
-    }
 
     children.add(Padding(
         padding: Style.pagePadding4,
@@ -113,17 +95,32 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
               text: ' ${data.status ?? ''}',
               style: TextStyle(color: Style.assetStatusColor(data.status)))
         ]))));
+
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('运行状况: ${data.serialnum}'),
+      child: Text('设备分类: ${data.serialnum}'),
+    ));
+    children.add(Padding(
+      padding: Style.pagePadding4,
+      child: Text('运行状况: ${data.assetlev}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
       child: Text('重要等级: ${data.assetlev}'),
     ));
+    if (data.specific.isNotEmpty) {
+      children.add(Padding(
+        padding: Style.pagePadding4,
+        child: Text('规格型号: ${data.specific}'),
+      ));
+    }
     children.add(Padding(
       padding: Style.pagePadding4,
       child: Text('上级资产编号: ${data.parent}'),
+    ));
+    children.add(Padding(
+      padding: Style.pagePadding4,
+      child: Text('最后修改人员: ${data.changeby}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
