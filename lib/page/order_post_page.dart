@@ -32,7 +32,7 @@ class _StatusSelect {
 }
 
 class OrderPostPage extends StatefulWidget {
-  final Actions action;
+  final HDActions action;
   final OrderDetailData data;
 
   const OrderPostPage({@required this.data, @required this.action});

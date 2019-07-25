@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+
 import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/model/cm_attachments.dart';
 import 'package:samex_app/model/description.dart';
@@ -592,7 +593,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         return;
     }
 
-    _data?.actions?.forEach((Actions f) async {
+    _data?.actions?.forEach((HDActions f) async {
       if (f.actionid == style) {
         final result = await Navigator.push(
             context,
@@ -627,7 +628,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         break;
       case OrderType.CM:
       case OrderType.PM:
-        _data?.actions?.forEach((Actions f) {
+        _data?.actions?.forEach((HDActions f) {
           if (_data?.status.contains('待验收') &&
               f.instruction.contains('指派工单责任人')) {
             return;

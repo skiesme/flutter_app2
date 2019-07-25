@@ -74,7 +74,10 @@ class PictureListState extends State<PictureList> {
         Navigator.push(context,
             new MaterialPageRoute<void>(builder: (BuildContext context) {
           return new Scaffold(
-            appBar: new AppBar(title: new Text('图片预览') ,centerTitle: true,),
+            appBar: new AppBar(
+              title: new Text('图片预览'),
+              centerTitle: true,
+            ),
             body: new DefaultTabController(
               length: _resources.length,
               initialIndex: index,
@@ -146,11 +149,13 @@ class PictureListState extends State<PictureList> {
           ImageData data = ImageData.fromString(id);
           var cachedNetworkImage = CachedNetworkImage(
               imageUrl: getApi(context).getImageUrl(data.path),
-              placeholder: Center(child: CircularProgressIndicator()),
-              errorWidget: Icon(
-                Icons.error,
-                color: Colors.red,
-              ));
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => Icon(
+                    Icons.error,
+                    color: Colors.red,
+                  ));
+
           children.add(_largeImage(
               Container(height: width, width: width, child: cachedNetworkImage),
               count));
@@ -195,17 +200,17 @@ class PictureListState extends State<PictureList> {
             context: context,
             builder: (BuildContext context) =>
                 new SimpleDialog(children: <Widget>[
-                  new SimpleDialogOption(
-                      child: Text('拍摄'),
-                      onPressed: () {
-                        Navigator.pop(context, ImageSource.camera);
-                      }),
-                  new SimpleDialogOption(
-                      child: Text('从相册中选择'),
-                      onPressed: () {
-                        Navigator.pop(context, ImageSource.gallery);
-                      }),
-                ]),
+              new SimpleDialogOption(
+                  child: Text('拍摄'),
+                  onPressed: () {
+                    Navigator.pop(context, ImageSource.camera);
+                  }),
+              new SimpleDialogOption(
+                  child: Text('从相册中选择'),
+                  onPressed: () {
+                    Navigator.pop(context, ImageSource.gallery);
+                  }),
+            ]),
           ).then<void>((ImageSource value) {
             // The value passed to Navigator.pop() or null.
             _getImage(value);
@@ -451,8 +456,9 @@ class _GridPhotoViewerState extends State<GridPhotoViewer>
           child: widget.path.startsWith('http')
               ? new CachedNetworkImage(
                   imageUrl: widget.path,
-                  placeholder: Center(child: CircularProgressIndicator()),
-                  errorWidget: Icon(Icons.error),
+                  placeholder: (context, url) =>
+                      Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 )
               : new Image.file(
                   new File(widget.path),

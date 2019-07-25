@@ -161,4 +161,8 @@ class ChineseCupertinoLocalizations implements CupertinoLocalizations {
   /// to create an instance of this class.
   static const LocalizationsDelegate<CupertinoLocalizations> delegate =
       _CupertinoLocalizationsDelegate();
+
+  @override
+  // TODO: implement todayLabel
+  String get todayLabel => null;
 }

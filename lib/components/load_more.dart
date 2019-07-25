@@ -6,7 +6,14 @@ import 'package:flutter/material.dart';
 const kRefreshOffset = 40.0;
 const kLoadMoreOffset = 0.0;
 
-enum _PullIndicatorMode { idle, dragReleaseRefresh, dragReleaseLoadMore, dragReleaseCancel, refreshing, loading }
+enum _PullIndicatorMode {
+  idle,
+  dragReleaseRefresh,
+  dragReleaseLoadMore,
+  dragReleaseCancel,
+  refreshing,
+  loading
+}
 
 typedef Future LoadMoreCallback();
 
@@ -47,7 +54,8 @@ class _LoadMoreState extends State<LoadMore> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    _positionController = new AnimationController(vsync: this, duration: new Duration(milliseconds: 300));
+    _positionController = new AnimationController(
+        vsync: this, duration: new Duration(milliseconds: 300));
     _value = new Tween<double>(
       // The "value" of the circular progress indicator during a drag.
       begin: 0.0,
@@ -115,7 +123,8 @@ class _LoadMoreState extends State<LoadMore> with TickerProviderStateMixin {
       if (_mode == _PullIndicatorMode.dragReleaseCancel ||
           _mode == _PullIndicatorMode.dragReleaseRefresh ||
           _mode == _PullIndicatorMode.dragReleaseLoadMore) {
-        if (notification.metrics.extentAfter == 0.0 && _dragOffset < -widget.loadMoreOffset) {
+        if (notification.metrics.extentAfter == 0.0 &&
+            _dragOffset < -widget.loadMoreOffset) {
 //          changeMode(_PullIndicatorMode.dragReleaseLoadMore);
           _handleLoadMore();
         } else if (notification.metrics.extentAfter == 0.0) {
@@ -153,13 +162,13 @@ class _LoadMoreState extends State<LoadMore> with TickerProviderStateMixin {
   Future handleResult(Future result) async {
 //    print("handleResult");
     assert(() {
-      if (result == null)
-        FlutterError.reportError(new FlutterErrorDetails(
-          exception: new FlutterError('The onRefresh/onLoadMore callback returned null.\n'
-              'The ScrollIndicator onRefresh/onLoadMore callback must return a Future.'),
-          context: 'when calling onRefresh/onLoadMore',
-          library: 'loadmore',
-        ));
+      var flutterErrorDetails = new FlutterErrorDetails(
+        exception: new FlutterError(
+            'The onRefresh/onLoadMore callback returned null.\n'
+            'The ScrollIndicator onRefresh/onLoadMore callback must return a Future.'),
+        library: 'loadmore',
+      );
+      if (result == null) FlutterError.reportError(flutterErrorDetails);
       return true;
     }());
     if (result == null) return;

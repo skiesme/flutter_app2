@@ -8,23 +8,23 @@ dependencies:
     sdk: flutter
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
-  shared_preferences: 0.4.2
-  sqflite: 0.11.2+4
-  path_provider: 0.4.0
+  cupertino_icons: 0.1.2
+  shared_preferences: 0.5.3+4
+  sqflite: 1.1.6+2
+  path_provider: 1.2.0
   intl: 0.15.8
-  fluttertoast: 2.1.1
-  after_layout: 1.0.4
-  connectivity: 0.3.1
-  open_file: 1.1.1
-  package_info: 0.3.2
-  rxdart: 0.18.1
-  event_bus: 1.0.1
-  image_picker: 0.4.10
-  cached_network_image: 0.5.0+1
-  image: 2.0.4
-  flutter_boost: 0.0.417
-  barcode_scan: 0.0.8
+  fluttertoast: 3.1.0
+  after_layout: 1.0.7+2
+  connectivity: 0.4.3+6
+  open_file: 2.0.3
+  package_info: 0.4.0+6
+  rxdart: 0.22.1
+  event_bus: 1.1.0
+  image_picker: 0.6.0+17
+  cached_network_image: 1.1.1
+  image: 2.1.4
+  flutter_boost: 0.0.420
+  barcode_scan: 1.0.0
     # path: ../Plugins/flutter_barcode_reader
   dio:
     path: ../Plugins/dio

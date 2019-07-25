@@ -48,43 +48,43 @@ class OrderDetailData {
   String sopnum;
   String woprof;
   String faultlev;
-  List<Actions> actions;
+  List<HDActions> actions;
   int ownerid;
 
   OrderDetailData(
       {this.wonum,
-        this.description,
-        this.location,
-        this.locationDescription,
-        this.assetnum,
-        this.assetDescription,
-        this.status,
-        this.worktype,
-        this.site,
-        this.reportdate,
-        this.changedate,
-        this.targstartdate,
-        this.targcompdate,
-        this.actstart,
-        this.actfinish = 0,
-        this.lead,
-        this.reportedby,
-        this.phone,
-        this.actions,
-        this.wopriority,
-        this.supervisor,
-        this.ownerid,
-        this.woprof,
-        this.faultlev,
-        this.sopnum});
+      this.description,
+      this.location,
+      this.locationDescription,
+      this.assetnum,
+      this.assetDescription,
+      this.status,
+      this.worktype,
+      this.site,
+      this.reportdate,
+      this.changedate,
+      this.targstartdate,
+      this.targcompdate,
+      this.actstart,
+      this.actfinish = 0,
+      this.lead,
+      this.reportedby,
+      this.phone,
+      this.actions,
+      this.wopriority,
+      this.supervisor,
+      this.ownerid,
+      this.woprof,
+      this.faultlev,
+      this.sopnum});
 
   OrderDetailData.fromJson(Map<String, dynamic> json) {
     wonum = json['wonum'];
     description = json['description'];
-    location = json['location']??'';
-    locationDescription = json['location_description']??'';
-    assetnum = json['assetnum']??'';
-    assetDescription = json['asset_description']??'';
+    location = json['location'] ?? '';
+    locationDescription = json['location_description'] ?? '';
+    assetnum = json['assetnum'] ?? '';
+    assetDescription = json['asset_description'] ?? '';
     status = json['status'];
     worktype = json['worktype'];
     site = json['site'];
@@ -96,19 +96,19 @@ class OrderDetailData {
     actfinish = json['actfinish'];
     lead = json['lead'];
     reportedby = json['reportedby'];
-    phone = json['phone']??'';
-    phone  = phone.trim();
+    phone = json['phone'] ?? '';
+    phone = phone.trim();
     wopriority = json['wopriority'];
     supervisor = json['supervisor'];
     sopnum = json['sopnum'];
     ownerid = json['ownerid'];
-    woprof = json['woprof']??'';
-    faultlev = json['faultlev']??'';
+    woprof = json['woprof'] ?? '';
+    faultlev = json['faultlev'] ?? '';
 
     if (json['actions'] != null) {
-      actions = new List<Actions>();
+      actions = new List<HDActions>();
       json['actions'].forEach((v) {
-        actions.add(new Actions.fromJson(v));
+        actions.add(new HDActions.fromJson(v));
       });
     }
   }
@@ -144,15 +144,16 @@ class OrderDetailData {
   }
 }
 
-class Actions {
+class HDActions {
   String actionid;
   int isdefault;
   String sequence;
   String instruction;
 
-  Actions({this.actionid, this.isdefault, this.sequence, this.instruction = ''});
+  HDActions(
+      {this.actionid, this.isdefault, this.sequence, this.instruction = ''});
 
-  Actions.fromJson(Map<String, dynamic> json) {
+  HDActions.fromJson(Map<String, dynamic> json) {
     actionid = json['actionid'];
     isdefault = json['isdefault'];
     sequence = json['sequence'];
