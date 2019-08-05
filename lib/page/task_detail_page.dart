@@ -291,6 +291,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   Widget _getBody2() {
     Widget widget = Container();
+    var actfinish2 = _data?.actfinish;
     switch (_tabIndex) {
       case 0:
         widget = new RecentHistory(
@@ -311,7 +312,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       case 2:
       case 3:
         widget = new PeopleAndMaterialList(
-          read: _data?.actfinish > 0,
+          read: actfinish2 > 0,
           isPeople: _tabIndex == 2,
           data: _data,
           key: _peopleAndMaterialKey,
@@ -541,6 +542,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   void _selectMenu(String style) async {
+    debugPrint("[commit action] style: ${style}");
     switch (style) {
       case OrderPostStyle.Post:
         if (_type == OrderType.XJ) {
@@ -555,6 +557,13 @@ class _TaskDetailPageState extends State<TaskDetailPage>
               Func.showMessage(result.message);
             } else {
               Func.showMessage('提交成功');
+
+              // 自动刷新
+              clearMemoryCacheWithKeys(_wonum);
+              setState(() {
+                _show = true;
+              });
+              _getOrderDetail(force: true);
 
               getUserInfo(context).orders = await getApi(context).orderCount();
 
@@ -753,7 +762,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
     // workflow
     if (_data?.actfinish == 0) {
-      // refresh work_flow
       actions.add(
         new PopupMenuButton<String>(
           onSelected: _selectMenu,

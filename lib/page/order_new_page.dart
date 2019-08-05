@@ -36,6 +36,11 @@ final List<_StatusSelect> _faultlevList = <_StatusSelect>[
   _StatusSelect(3, 'C'),
 ];
 
+final List<_StatusSelect> _woTypeList = <_StatusSelect>[
+  _StatusSelect(0, '维修工单'),
+  _StatusSelect(1, '办公工单'),
+];
+
 class _StatusSelect {
   int key;
   String value;
@@ -88,6 +93,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
   String _woprof = ''; // 故障分类
   String _faultlev = ''; // 故障等级
+  String _woType = '维修工单'; // 工单类型
 
   String _tips;
 
@@ -387,7 +393,45 @@ class _OrderNewPageState extends State<OrderNewPage> {
   }
 
   Widget typeItem() {
-    return _getMenus(preText: '类型:', content: Text('维修单'));
+    if (Cache.instance.site != 'GM') {
+      return _getMenus(preText: '工单类型:', content: Text('维修单'));
+    }
+    return _getMenus(
+        preText: '工单类型:',
+        padding: EdgeInsets.only(left: 8.0),
+        content: SimpleButton(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Text(
+              _woType.length > 0 ? _woType : '请选择工单类型',
+              style: TextStyle(
+                  color: _woType.length > 0 ? Colors.black : Colors.grey),
+            ),
+            new Expanded(
+                child: new PopupMenuButton<_StatusSelect>(
+              tooltip: '请选择工单类型',
+              child: Align(
+                child: const Icon(Icons.arrow_drop_down),
+                alignment: Alignment.centerRight,
+                heightFactor: 1.5,
+              ),
+              itemBuilder: (BuildContext context) {
+                return _woTypeList.map((_StatusSelect status) {
+                  return new PopupMenuItem<_StatusSelect>(
+                    value: status,
+                    child: new Text(status.value),
+                  );
+                }).toList();
+              },
+              onSelected: (_StatusSelect value) {
+                setState(() {
+                  _woType = value.value;
+                });
+              },
+            ))
+          ],
+        )));
   }
 
   Widget typeDesItem() {

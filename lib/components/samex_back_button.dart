@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_boost/flutter_boost.dart';
-import 'package:samex_app/data/samex_instance.dart';
 
 class SamexBackButton extends StatelessWidget {
   const SamexBackButton({Key key, this.icon, this.onPressed}) : super(key: key);
