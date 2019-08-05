@@ -60,7 +60,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   @override
   void initState() {
     super.initState();
-    _wonum = widget.wonum??'';
+    _wonum = widget.wonum ?? '';
 
     _data = getMemoryCache(cacheKey, expired: false);
   }
@@ -542,10 +542,11 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   void _selectMenu(String style) async {
-    debugPrint("[commit action] style: ${style}");
+    debugPrint("[commit action] style: ${style}，type:${_type}");
     switch (style) {
       case OrderPostStyle.Post:
-        if (_type == OrderType.XJ) {
+        OrderType type = getOrderType(_data.worktype);
+        if (type == OrderType.XJ) {
           setState(() {
             _show = true;
           });
@@ -558,19 +559,10 @@ class _TaskDetailPageState extends State<TaskDetailPage>
             } else {
               Func.showMessage('提交成功');
 
-              // 自动刷新
-              clearMemoryCacheWithKeys(_wonum);
-              setState(() {
-                _show = true;
-              });
-              _getOrderDetail(force: true);
-
               getUserInfo(context).orders = await getApi(context).orderCount();
 
               if (mounted) {
-                Navigator.popUntil(
-                    context, ModalRoute.withName(TaskDetailPage.path));
-                Navigator.pop(context, true);
+                _popDone(true);
               }
               return;
             }
@@ -614,7 +606,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
           if (getUserInfo(context).orders > 0) {
             getUserInfo(context).orders -= 1;
           }
-          _popDone();
+          _popDone(false);
         }
       }
     });
@@ -884,9 +876,9 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     super.reassemble();
   }
 
-  void _popDone() {
+  void _popDone(bool needRefresh) {
     Navigator.popUntil(context, ModalRoute.withName(TaskDetailPage.path));
-    Navigator.pop(context, true);
+    Navigator.pop(context, needRefresh);
   }
 }
 

@@ -618,9 +618,10 @@ class _OrderListState extends State<OrderList>
               onTap: () async {
                 final result = await Navigator.push(
                     context,
-                    new MaterialPageRoute(
+                    MaterialPageRoute(
                         builder: (_) => new TaskDetailPage(wonum: info.wonum),
                         settings: RouteSettings(name: TaskDetailPage.path)));
+
                 if (result != null) {
                   removeAt(index);
                 }

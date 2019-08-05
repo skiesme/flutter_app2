@@ -84,9 +84,6 @@ class _SettingsPageState extends State<SettingsPage>
       }
     }
 
-    print(
-        '_scale=$_scale, ${_textScaleFactor.scale ?? 0} - ${_textScaleFactor.label}');
-
     return new Scaffold(
         appBar: new AppBar(
           leading: SamexBackButton(),

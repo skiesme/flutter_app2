@@ -609,10 +609,18 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     return SimpleButton(
       onTap: () async {
         Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (_) => new TaskDetailPage(wonum: info.wonum),
-                settings: RouteSettings(name: TaskDetailPage.path)));
+                context,
+                new MaterialPageRoute(
+                    builder: (_) => new TaskDetailPage(wonum: info.wonum),
+                    settings: RouteSettings(name: TaskDetailPage.path)))
+            .then(((value) {
+          debugPrint("[value] ${value}");
+          if (null == value || false == value) {
+            return;
+          }
+
+          _handleLoadNewDatas();
+        }));
       },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
