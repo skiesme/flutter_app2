@@ -31,9 +31,6 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
         Func.showMessage(result.message);
       } else {
         setMemoryCache(cacheKey, result.response);
-        if (mounted) {
-          setState(() {});
-        }
       }
     } catch (e) {
       print(e);
@@ -73,19 +70,19 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('资产编号: ${data.assetnum}'),
+      child: Text('资产编号: ${data.assetnum ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('资产描述: ${data.description}'),
+      child: Text('资产描述: ${data.description ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('位置编号: ${data.location}'),
+      child: Text('位置编号: ${data.location ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('位置描述: ${data.locationDescription}'),
+      child: Text('位置描述: ${data.locationDescription ?? ''}'),
     ));
 
     children.add(Padding(
@@ -98,29 +95,29 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
 
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('设备分类: ${data.serialnum}'),
+      child: Text('设备分类: ${data.categoryDes ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('运行状况: ${data.assetlev}'),
+      child: Text('运行状况: ${data.assetlev ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('重要等级: ${data.assetlev}'),
+      child: Text('重要等级: ${data.assetlev ?? ''}'),
     ));
     if (data.specific.isNotEmpty) {
       children.add(Padding(
         padding: Style.pagePadding4,
-        child: Text('规格型号: ${data.specific}'),
+        child: Text('规格型号: ${data.specific ?? ''}'),
       ));
     }
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('上级资产编号: ${data.parent}'),
+      child: Text('上级资产编号: ${data.parent ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('最后修改人员: ${data.changeby}'),
+      child: Text('最后修改人员: ${data.changeby ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,

@@ -38,24 +38,25 @@ class AssetNumDetail {
   String parent;
   String status;
   String specific;
+  String categoryDes; // 设备分类
   List<String> pic;
 
   AssetNumDetail(
       {this.assetnum,
-        this.location,
-        this.locationDescription,
-        this.description,
-        this.changedate,
-        this.changeby,
-        this.assettype,
-        this.funclass,
-        this.serialnum,
-        this.parent,
-        this.status,
-        this.specific,
-        this.assetlev,
-        this.pic
-      });
+      this.location,
+      this.locationDescription,
+      this.description,
+      this.changedate,
+      this.changeby,
+      this.assettype,
+      this.funclass,
+      this.serialnum,
+      this.parent,
+      this.status,
+      this.specific,
+      this.assetlev,
+      this.categoryDes,
+      this.pic});
 
   AssetNumDetail.fromJson(Map<String, dynamic> json) {
     assetnum = json['assetnum'];
@@ -64,13 +65,14 @@ class AssetNumDetail {
     description = json['description'];
     changedate = json['changedate'];
     changeby = json['changeby'];
-    assettype = json['assettype']??'';
-    funclass = json['funclass']??'';
-    serialnum = json['serialnum']??'';
-    parent = json['parent']??'';
-    status = json['status']??'';
-    specific = json['specific']??'';
+    assettype = json['assettype'] ?? '';
+    funclass = json['funclass'] ?? '';
+    serialnum = json['serialnum'] ?? '';
+    parent = json['parent'] ?? '';
+    status = json['status'] ?? '';
+    specific = json['specific'] ?? '';
     assetlev = json['assetlev'] ?? '';
+    categoryDes = json['categoryDes'] ?? '';
     pic = json['pic']?.cast<String>();
   }
 
@@ -90,6 +92,7 @@ class AssetNumDetail {
     data['specific'] = this.specific;
     data['pic'] = this.pic;
     data['assetlev'] = this.assetlev;
+    data['categoryDes'] = this.categoryDes;
     return data;
   }
 }
