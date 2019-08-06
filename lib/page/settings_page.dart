@@ -32,15 +32,6 @@ class GalleryTextScaleValue {
   }
 }
 
-const List<GalleryTextScaleValue> kAllGalleryTextScaleValues =
-    const <GalleryTextScaleValue>[
-  const GalleryTextScaleValue(null, '系统默认'),
-  const GalleryTextScaleValue(0.8, '小'),
-  const GalleryTextScaleValue(1.0, '正常'),
-  const GalleryTextScaleValue(1.3, '大'),
-//  const GalleryTextScaleValue(2.0, '超大'),
-];
-
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => new _SettingsPageState();
@@ -51,7 +42,6 @@ class _SettingsPageState extends State<SettingsPage>
   List<Site> _siteList = new List();
   String _defSite = Cache.instance.site;
   Site _selectedSite;
-  GalleryTextScaleValue _textScaleFactor = GalleryTextScaleValue(null, '系统默认');
 
   String get cacheKey => '__Cache.instance.site_list';
   @override
@@ -71,17 +61,6 @@ class _SettingsPageState extends State<SettingsPage>
   Widget build(BuildContext context) {
     if (_defSite == null && _siteList != null && _siteList.length > 0) {
       _defSite = _siteList.first.description;
-    }
-
-    double _scale = Cache.instance.textScaleFactor;
-    if (_scale != null) {
-      for (int i = 1; i < kAllGalleryTextScaleValues.length; i++) {
-        if ((kAllGalleryTextScaleValues[i].scale * 10).toInt() ==
-            (_scale * 10).toInt()) {
-          _textScaleFactor = kAllGalleryTextScaleValues[i];
-          break;
-        }
-      }
     }
 
     return new Scaffold(

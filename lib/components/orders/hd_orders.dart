@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:samex_app/components/load_more.dart';
 import 'package:samex_app/components/orders/hd_order_item.dart';
 import 'package:samex_app/components/orders/hd_order_option.dart';
-import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/data/badge_bloc.dart';
 import 'package:samex_app/data/bloc_provider.dart';
 import 'package:samex_app/data/samex_instance.dart';
@@ -13,9 +12,7 @@ import 'package:samex_app/helper/page_helper.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/steps.dart';
 import 'package:samex_app/page/task_detail_page.dart';
-import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/func.dart';
-import 'package:samex_app/utils/style.dart';
 
 /** HDOrderOptions */
 class HDOrders extends StatefulWidget {
@@ -30,7 +27,6 @@ class HDOrders extends StatefulWidget {
 }
 
 class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
-  static const double _padding = 16.0;
   static const force_scroller_head = 'force_scroller_head';
 
   bool _showOptionView = false;
