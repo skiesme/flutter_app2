@@ -46,10 +46,11 @@ typedef QueryListener(String value);
 typedef CallBackListener(bool show);
 
 enum OrderType {
-  ALL, //全部
-  PM, //保养
-  XJ, //巡检
-  CM, //报修
+  ALL, // 全部
+  PM, // 保养
+  XJ, // 巡检
+  CM, // 报修
+  BG, // 办公工单 - 报修
   XJ1,
   XJ2,
   XJ3,
@@ -62,6 +63,7 @@ OrderType getOrderType(String type) {
   if (type.startsWith('XJ')) return OrderType.XJ;
   if (type.startsWith('PM')) return OrderType.PM;
   if (type.startsWith('CM')) return OrderType.CM;
+  if (type.startsWith('BG')) return OrderType.BG;
 
   return OrderType.ALL;
 }

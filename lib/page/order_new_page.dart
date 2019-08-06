@@ -93,6 +93,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
 
   String _woprof = ''; // 故障分类
   String _faultlev = ''; // 故障等级
+
   String _woType = '维修工单'; // 工单类型
 
   String _tips;
@@ -263,6 +264,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
       var post = () async {
         try {
           _manager?.stop();
+
           Map response = await getApi(context).postOrder(
               worktype: _data.worktype,
               assetnum: _data.assetnum,
@@ -427,6 +429,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
               onSelected: (_StatusSelect value) {
                 setState(() {
                   _woType = value.value;
+                  _data.worktype = (value.key == 1) ? 'CM' : 'BG';
                 });
               },
             ))
