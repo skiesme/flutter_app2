@@ -102,12 +102,29 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     Widget listView = ListView.builder(
         physics: _query().isEmpty
             ? const AlwaysScrollableScrollPhysics()
-            : new ClampingScrollPhysics(),
+            : const ClampingScrollPhysics(),
         controller: _scrollController,
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
-          return Container(
-              color: Colors.transparent, child: _cellView(list[index]));
+          return GestureDetector(
+            onTap: () async {
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => TaskDetailPage(
+                                wonum: list[index].wonum,
+                              ),
+                          settings: RouteSettings(name: TaskDetailPage.path)))
+                  .then((value) {
+                if (null == value || false == value) {
+                  return;
+                }
+
+                _handleLoadNewDatas();
+              });
+            },
+            child: _cellView(list[index]),
+          );
         });
 
     _orderOptions = HDOrderOptions(
@@ -403,17 +420,18 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   /** Custom Views */
   Widget _cellView(OrderShortInfo info) {
     return Container(
-        color: Colors.transparent,
-        padding: EdgeInsets.symmetric(vertical: 5.0),
-        child: Card(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            _separateView(info),
-            _cellInfoView(info),
-          ],
-        )));
+      color: Colors.transparent,
+      padding: EdgeInsets.symmetric(vertical: 5.0),
+      child: Card(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _separateView(info),
+          _cellInfoView(info),
+        ],
+      )),
+    );
   }
 
   Widget _separateView(OrderShortInfo info) {
@@ -507,7 +525,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
             }
           }
           image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
-        } else if (info.status.contains('待验收')) {
+        } else if (info.status.contains('待��收')) {
           image = ImageAssets.order_pending_accept;
         } else {
           image = ImageAssets.order_done;
@@ -559,6 +577,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           str = '保养';
           break;
       }
+
       return Padding(
         padding: const EdgeInsets.symmetric(
             horizontal: _padding, vertical: _padding / 2),
@@ -583,8 +602,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           children: <Widget>[
             _getSyncStatus(info),
             SizedBox(width: _padding),
-            Expanded(
-                child: Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -599,39 +617,22 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
                     ? Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
                     : Text('更新时间: ${Func.getFullTimeString(info.reportDate)}')
               ],
-            ))
+            )
           ],
         ),
       );
     }
 
-    return SimpleButton(
-      onTap: () async {
-        debugPrint("[info] ${info.wonum}");
-        Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (_) => new TaskDetailPage(wonum: info.wonum),
-                    settings: RouteSettings(name: TaskDetailPage.path)))
-            .then(((value) {
-          if (null == value || false == value) {
-            return;
-          }
-
-          _handleLoadNewDatas();
-        }));
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          titleView(),
-          Divider(
-            height: 1.0,
-          ),
-          infoView()
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        titleView(),
+        Divider(
+          height: 1.0,
+        ),
+        infoView()
+      ],
     );
   }
 }

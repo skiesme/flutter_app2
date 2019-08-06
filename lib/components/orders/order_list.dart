@@ -1149,12 +1149,7 @@ class _OrderListState extends State<OrderList>
     }
 
     return new Container(
-        color: const Color(0xFFF0F0F0),
-        child: GestureDetector(
-            onTap: () {
-              Func.closeKeyboard(context);
-            },
-            child: new Stack(children: children)));
+        color: const Color(0xFFF0F0F0), child: Stack(children: children));
   }
 
   @override
