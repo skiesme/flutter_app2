@@ -60,8 +60,8 @@ class _RecentHistoryState extends State<RecentHistory>
           padding: Style.pagePadding,
           child: Row(children: <Widget>[
             Container(
-                width: 100,
-                child: Row(children: <Widget>[
+                width: 120,
+                child: Row(mainAxisSize: MainAxisSize.max, children: <Widget>[
                   Text('记录:${f.changby}', overflow: TextOverflow.ellipsis),
                 ])),
             SizedBox(width: 5),

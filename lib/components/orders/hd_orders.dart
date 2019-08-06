@@ -99,17 +99,16 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     List<OrderShortInfo> list =
         isUp ? _filterDatas.reversed.toList() : _filterDatas;
 
-    Widget listView = Scrollbar(
-        child: new ListView.builder(
-            physics: _query().isEmpty
-                ? const AlwaysScrollableScrollPhysics()
-                : new ClampingScrollPhysics(),
-            controller: _scrollController,
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                  color: Colors.transparent, child: _cellView(list[index]));
-            }));
+    Widget listView = ListView.builder(
+        physics: _query().isEmpty
+            ? const AlwaysScrollableScrollPhysics()
+            : new ClampingScrollPhysics(),
+        controller: _scrollController,
+        itemCount: list.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+              color: Colors.transparent, child: _cellView(list[index]));
+        });
 
     _orderOptions = HDOrderOptions(
       showView: _showOptionView,
@@ -608,13 +607,13 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
     return SimpleButton(
       onTap: () async {
+        debugPrint("[info] ${info.wonum}");
         Navigator.push(
                 context,
                 new MaterialPageRoute(
                     builder: (_) => new TaskDetailPage(wonum: info.wonum),
                     settings: RouteSettings(name: TaskDetailPage.path)))
             .then(((value) {
-          debugPrint("[value] ${value}");
           if (null == value || false == value) {
             return;
           }
