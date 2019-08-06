@@ -2,6 +2,7 @@ import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:samex_app/components/load_more.dart';
+import 'package:samex_app/components/orders/hd_order_item.dart';
 import 'package:samex_app/components/orders/hd_order_option.dart';
 import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/data/badge_bloc.dart';
@@ -106,25 +107,29 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         controller: _scrollController,
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () async {
-              Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => TaskDetailPage(
-                                wonum: list[index].wonum,
-                              ),
-                          settings: RouteSettings(name: TaskDetailPage.path)))
-                  .then((value) {
-                if (null == value || false == value) {
-                  return;
-                }
+          if (list.length > index) {
+            return HDOrderItem(
+              info: list[index],
+              isAll: widget.type == OrderType.ALL,
+              onTap: () {
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => TaskDetailPage(
+                                  wonum: list[index].wonum,
+                                ),
+                            settings: RouteSettings(name: TaskDetailPage.path)))
+                    .then((value) {
+                  if (null == value || false == value) {
+                    return;
+                  }
 
-                _handleLoadNewDatas();
-              });
-            },
-            child: _cellView(list[index]),
-          );
+                  _handleLoadNewDatas();
+                });
+              },
+            );
+          }
+          return null;
         });
 
     _orderOptions = HDOrderOptions(
@@ -136,7 +141,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     );
 
     Widget view = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         _orderOptions,
         Expanded(child: listView),
@@ -348,291 +353,5 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
   String _query() {
     return _queryInfo != null ? _queryInfo.query ?? '' : '';
-  }
-
-  /** Info */
-  String getLeadName(OrderShortInfo info) {
-    if (info.actfinish == 0 && getOrderType(info.worktype) == OrderType.XJ) {
-      return '';
-    } else {
-      String name = info.lead ?? info.changeby ?? '';
-      if (name.contains('Admin')) {
-        name = '';
-      }
-      return name;
-    }
-  }
-
-  /** Colors */
-  Color getColor(OrderShortInfo info) {
-    switch (getOrderType(info.worktype)) {
-      case OrderType.XJ:
-        if (info.actfinish == 0) {
-          return Colors.blue.shade900;
-        } else {
-          return Colors.green;
-        }
-        break;
-      case OrderType.CM:
-        if (info.status.contains('待批准')) {
-          return Colors.red.shade900;
-        } else if (info.status.contains('已批准')) {
-          return Colors.cyan;
-        } else if (info.status.contains('待验收')) {
-          return Colors.orange.shade600;
-        } else if (info.status.contains('重做')) {
-          return Colors.red.shade400;
-        } else {
-          return Colors.green;
-        }
-        break;
-      case OrderType.PM:
-        if (info.status.contains('进行中')) {
-          return Colors.blue.shade900;
-        } else if (info.status.contains('待验收')) {
-          return Colors.orange.shade600;
-        } else if (info.status.contains('重做')) {
-          return Colors.red.shade400;
-        } else {
-          return Colors.green;
-        }
-        break;
-      default:
-        return Colors.deepOrangeAccent;
-    }
-  }
-
-  Color getOrderTextColor(OrderShortInfo info) {
-    switch (getOrderType(info.worktype)) {
-      case OrderType.XJ:
-        return Colors.pink.shade600;
-      case OrderType.CM:
-        return Colors.deepPurpleAccent;
-      default:
-        return Colors.orange.shade600;
-    }
-  }
-
-  Color getBackGroundColor(OrderShortInfo info) {
-    return Colors.white;
-  }
-
-  /** Custom Views */
-  Widget _cellView(OrderShortInfo info) {
-    return Container(
-      color: Colors.transparent,
-      padding: EdgeInsets.symmetric(vertical: 5.0),
-      child: Card(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _separateView(info),
-          _cellInfoView(info),
-        ],
-      )),
-    );
-  }
-
-  Widget _separateView(OrderShortInfo info) {
-    return Container(
-      height: Style.separateHeight,
-      color: getColor(info),
-    );
-  }
-
-  Widget _getSyncStatus(OrderShortInfo info) {
-    List<Widget> children = new List();
-
-    switch (getOrderType(info.worktype)) {
-      case OrderType.XJ:
-        String image = info.actfinish == 0
-            ? ImageAssets.order_ing
-            : ImageAssets.order_done;
-        if (info.status.contains('进行中')) {
-          List<OrderStep> steps = info.steps;
-          bool isDid = false;
-          if (steps != null && steps.length > 0) {
-            for (var item in steps) {
-              String status = item.status ?? '';
-              if (status.length > 0) {
-                isDid = true;
-                break;
-              }
-            }
-          }
-          image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
-        }
-        children.addAll(<Widget>[
-          new CircleAvatar(
-            child: new Padding(
-                padding: EdgeInsets.all(8.0),
-                child: new Image.asset(
-                  image,
-                  height: 40.0,
-                )),
-            backgroundColor: getColor(info),
-          ),
-          Text(
-            info.status,
-            style: TextStyle(color: getColor(info)),
-          )
-        ]);
-        break;
-      case OrderType.CM:
-        String image = '';
-
-        if (info.status.contains('待批准')) {
-          image = ImageAssets.order_pending_approved;
-        } else if (info.status.contains('已批准')) {
-          image = ImageAssets.order_approved;
-        } else if (info.status.contains('待验收')) {
-          image = ImageAssets.order_pending_accept;
-        } else {
-          image = ImageAssets.order_done;
-        }
-
-        children.add(
-          new CircleAvatar(
-            child: new Padding(
-                padding: EdgeInsets.all(8.0),
-                child: new Image.asset(
-                  image,
-                  height: 40.0,
-                )),
-            backgroundColor: getColor(info),
-          ),
-        );
-        children.add(Text(
-            info.status.length > 3
-                ? info.status.substring(info.status.length - 3)
-                : info.status,
-            style: TextStyle(color: getColor(info))));
-        break;
-      default:
-        String image = '';
-
-        if (info.status.contains('进行中')) {
-          List<OrderStep> steps = info.steps;
-          bool isDid = false;
-          if (steps != null && steps.length > 0) {
-            for (var item in steps) {
-              String status = item.status ?? '';
-              if (status.length > 0) {
-                isDid = true;
-                break;
-              }
-            }
-          }
-          image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
-        } else if (info.status.contains('待��收')) {
-          image = ImageAssets.order_pending_accept;
-        } else {
-          image = ImageAssets.order_done;
-        }
-
-        children.add(
-          new CircleAvatar(
-            child: new Padding(
-                padding: EdgeInsets.all(8.0),
-                child: new Image.asset(
-                  image,
-                  height: 40.0,
-                )),
-            backgroundColor: getColor(info),
-          ),
-        );
-        children.add(Text(
-            info.status.length > 3
-                ? info.status.substring(info.status.length - 3)
-                : info.status,
-            style: TextStyle(color: getColor(info))));
-        break;
-    }
-
-    return Container(
-        padding: new EdgeInsets.only(right: _padding),
-        decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(
-                    width: 0.5, color: Theme.of(context).dividerColor))),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: children,
-        ));
-  }
-
-  Widget _cellInfoView(OrderShortInfo info) {
-    Widget titleView() {
-      String str = '';
-      switch (getOrderType(info.worktype)) {
-        case OrderType.XJ:
-          str = '巡检';
-          break;
-        case OrderType.CM:
-          str = '报修';
-          break;
-        default:
-          str = '保养';
-          break;
-      }
-
-      return Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: _padding, vertical: _padding / 2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text('$str工单 : ${info.wonum}',
-                style: TextStyle(fontWeight: FontWeight.w700)),
-            Text(getLeadName(info),
-                style: TextStyle(fontWeight: FontWeight.w700))
-          ],
-        ),
-      );
-    }
-
-    Widget infoView() {
-      return Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: _padding, vertical: _padding / 2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _getSyncStatus(info),
-            SizedBox(width: _padding),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '标题: ${info.description}',
-                  style: TextStyle(
-                      color: getOrderTextColor(info),
-                      fontWeight: FontWeight.w700),
-                ),
-                Text('设备: ${info.assetDescription}'),
-                widget.type == OrderType.ALL
-                    ? Text('上报时间: ${Func.getFullTimeString(info.reportDate)}')
-                    : Text('更新时间: ${Func.getFullTimeString(info.reportDate)}')
-              ],
-            )
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        titleView(),
-        Divider(
-          height: 1.0,
-        ),
-        infoView()
-      ],
-    );
   }
 }
