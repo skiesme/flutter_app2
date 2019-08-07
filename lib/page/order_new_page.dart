@@ -264,7 +264,6 @@ class _OrderNewPageState extends State<OrderNewPage> {
       var post = () async {
         try {
           _manager?.stop();
-
           Map response = await getApi(context).postOrder(
               worktype: _data.worktype,
               assetnum: _data.assetnum,
@@ -429,7 +428,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
               onSelected: (_StatusSelect value) {
                 setState(() {
                   _woType = value.value;
-                  _data.worktype = (value.key == 1) ? 'CM' : 'BG';
+                  _data.worktype = (value.key == 1) ? 'BG' : 'CM';
                 });
               },
             ))

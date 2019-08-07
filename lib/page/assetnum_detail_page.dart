@@ -30,7 +30,9 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
       if (result.code != 0) {
         Func.showMessage(result.message);
       } else {
-        setMemoryCache(cacheKey, result.response);
+        setState(() {
+          setMemoryCache(cacheKey, result.response);
+        });
       }
     } catch (e) {
       print(e);
