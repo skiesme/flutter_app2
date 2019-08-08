@@ -58,8 +58,8 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
     _StatusSelect defSelect(String key) {
       if (_statusList.length > 0 && key.length > 0) {
         List<_StatusSelect> kList = _statusList.where((_StatusSelect f) {
-              return f.key == key;
-            }).toList();
+          return f.key == key;
+        }).toList();
         if (kList.length > 0) {
           return kList.first;
         }
@@ -244,7 +244,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
 
     if (data == null || data.length == 0) {
       return Center(
-        child: Text('没有可选择的资���'),
+        child: Text('没有可选择的资源'),
       );
     }
 

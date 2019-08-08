@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/steps.dart';
@@ -279,25 +280,49 @@ class _HDOrderItemState extends State<HDOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-        onTap: () {
-          widget.onTap();
-        },
-        child: Container(
-            color: Colors.transparent,
-            padding: EdgeInsets.symmetric(vertical: 5.0),
-            child: Card(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                buildSeparateView(),
-                buildTitleView(),
-                Divider(
-                  height: 1.0,
-                ),
-                builfInfoView()
-              ],
-            ))));
+    return SimpleButton(
+      color: Colors.transparent,
+      padding: EdgeInsets.symmetric(vertical: 5.0),
+      child: Card(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            buildSeparateView(),
+            buildTitleView(),
+            Divider(
+              height: 1.0,
+            ),
+            builfInfoView()
+          ],
+        ),
+      ),
+      onTap: () {
+        widget.onTap();
+      },
+    );
+    // return Container(
+    //   color: Colors.transparent,
+    //   padding: EdgeInsets.symmetric(vertical: 5.0),
+    //   child: GestureDetector(
+    //     child: Card(
+    //       child: Column(
+    //         mainAxisAlignment: MainAxisAlignment.start,
+    //         crossAxisAlignment: CrossAxisAlignment.stretch,
+    //         children: <Widget>[
+    //           buildSeparateView(),
+    //           buildTitleView(),
+    //           Divider(
+    //             height: 1.0,
+    //           ),
+    //           builfInfoView()
+    //         ],
+    //       ),
+    //     ),
+    //     onTap: () {
+    //       widget.onTap();
+    //     },
+    //   ),
+    // );
   }
 }

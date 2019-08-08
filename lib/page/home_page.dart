@@ -403,7 +403,6 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
   @override
   void dispose() {
     super.dispose();
-    taskPageHelpers.clear();
     clearMemoryCache();
     Alarm.stop();
   }

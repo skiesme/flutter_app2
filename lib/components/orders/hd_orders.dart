@@ -16,11 +16,9 @@ import 'package:samex_app/utils/func.dart';
 
 /** HDOrderOptions */
 class HDOrders extends StatefulWidget {
-  final PageHelper<OrderShortInfo> helper;
   final OrderType type;
 
-  HDOrders({Key key, @required this.helper, this.type = OrderType.ALL})
-      : super(key: key);
+  HDOrders({Key key, this.type = OrderType.ALL}) : super(key: key);
 
   @override
   HDOrdersState createState() => HDOrdersState();
@@ -28,6 +26,8 @@ class HDOrders extends StatefulWidget {
 
 class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   static const force_scroller_head = 'force_scroller_head';
+
+  final PageHelper<OrderShortInfo> helper = PageHelper();
 
   bool _showOptionView = false;
 
@@ -97,35 +97,39 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         isUp ? _filterDatas.reversed.toList() : _filterDatas;
 
     Widget listView = ListView.builder(
-        physics: _query().isEmpty
-            ? const AlwaysScrollableScrollPhysics()
-            : const ClampingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         controller: _scrollController,
         itemCount: list.length,
-        itemBuilder: (BuildContext context, int index) {
+        itemBuilder: (_, int index) {
+          OrderShortInfo info;
           if (list.length > index) {
-            return HDOrderItem(
-              info: list[index],
-              isAll: widget.type == OrderType.ALL,
-              onTap: () {
-                Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => TaskDetailPage(
-                                  wonum: list[index].wonum,
-                                ),
-                            settings: RouteSettings(name: TaskDetailPage.path)))
-                    .then((value) {
-                  if (null == value || false == value) {
-                    return;
-                  }
-
-                  _handleLoadNewDatas();
-                });
-              },
-            );
+            info = list[index];
           }
-          return null;
+
+          if (null == info) {
+            return null;
+          }
+
+          return HDOrderItem(
+            info: info,
+            isAll: widget.type == OrderType.ALL,
+            onTap: () {
+              Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => TaskDetailPage(
+                                wonum: info.wonum,
+                              ),
+                          settings: RouteSettings(name: TaskDetailPage.path)))
+                  .then((value) {
+                if (null == value || false == value) {
+                  return;
+                }
+
+                _handleLoadNewDatas();
+              });
+            },
+          );
         });
 
     _orderOptions = HDOrderOptions(
@@ -147,7 +151,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     Widget refreshView = RefreshIndicator(
         onRefresh: _handleLoadNewDatas,
         child: LoadMore(
-            scrollNotification: widget.helper.handle,
+            scrollNotification: helper.handle,
             child: view,
             onLoadMore: () async {
               _handleLoadDatas(1);
@@ -157,9 +161,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
     if (list.length == 0) {
       children.add(new Center(
-          child: widget.helper.inital
-              ? CircularProgressIndicator()
-              : Text('没发现任务')));
+          child: helper.inital ? CircularProgressIndicator() : Text('没发现任务')));
     }
 
     return new Container(
@@ -180,16 +182,16 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     _selectedtType = widget.type;
     _showOptionView = widget.type == OrderType.ALL;
 
-    widget.helper.clear();
+    helper.clear();
     if (mounted) {
       setState(() {
         _filterDatas = filter();
       });
     }
 
-    widget.helper.inital = true;
+    helper.inital = true;
 
-    _scrollController = widget.helper.createController();
+    _scrollController = helper.createController();
     _scrollController.addListener(() {
       bool showTopBtn = _scrollController.offset > context.size.height;
       eventBus.fire(new HDTaskEvent(
@@ -212,9 +214,9 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
 
   Future<Null> _handleLoadNewDatas() async {
-    widget.helper.clear();
+    helper.clear();
     _handleLoadDatas();
-    widget.helper.inital = true;
+    helper.inital = true;
   }
 
   /** 网络请求 */
@@ -233,28 +235,26 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         time = _queryInfo.endTime;
         startTime = _queryInfo.startTime;
 
-        if (older == 0 && widget.helper.itemCount() > 0) {
-          var data = widget.helper.datas[0];
+        if (older == 0 && helper.itemCount() > 0) {
+          var data = helper.datas[0];
           startTime = data.reportDate;
         }
-        if (older == 1 && widget.helper.itemCount() > 0) {
-          var data = widget.helper.datas[widget.helper.itemCount() - 1];
+        if (older == 1 && helper.itemCount() > 0) {
+          var data = helper.datas[helper.itemCount() - 1];
           time = data.reportDate;
         }
       } else {
-        if (older == 0 && widget.helper.itemCount() > 0) {
-          var data = widget.helper.datas[0];
+        if (older == 0 && helper.itemCount() > 0) {
+          var data = helper.datas[0];
           startTime = data.reportDate;
         }
-        if (older == 1 && widget.helper.itemCount() > 0) {
-          var data = widget.helper.datas[widget.helper.itemCount() - 1];
+        if (older == 1 && helper.itemCount() > 0) {
+          var data = helper.datas[helper.itemCount() - 1];
           time = data.reportDate;
         }
       }
 
       _canLoadMore = false;
-
-      // debugPrint('hd-> query:${_queryInfo.query}, worktype:${_queryInfo.workType}, older:${older}, time:${time}, startTime:${startTime}');
 
       int isAll = _queryInfo.isAll ? 0 : 1;
       String status = _showOptionView ? _queryInfo.status : 'active';
@@ -278,9 +278,9 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         List<OrderShortInfo> info = result.response ?? [];
         if (info.length > 0) {
           if (older == 0) {
-            widget.helper.datas.insertAll(0, info);
+            helper.datas.insertAll(0, info);
           } else {
-            widget.helper.addData(info);
+            helper.addData(info);
           }
 
           // 加载步骤
@@ -297,7 +297,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
           if (widget.type != OrderType.ALL) {
             bloc.badgeChange
-                .add(new BadgeInEvent(widget.helper.itemCount(), widget.type));
+                .add(new BadgeInEvent(helper.itemCount(), widget.type));
           }
         } catch (e) {
           // debugPrint('badgeChange   error: $e');
@@ -312,7 +312,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       // debugPrint('获取工单列表失败，$e');
       Func.showMessage('网络出现异常, 获取工单列表失败');
     }
-    if (widget.helper.inital) widget.helper.inital = false;
+    if (helper.inital) helper.inital = false;
   }
 
   void loadSteps(String wonum, String site) async {
@@ -323,7 +323,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
       if (result.code == 0) {
         if (mounted) {
           setState(() {
-            List<OrderShortInfo> infos = widget.helper.datas.toList();
+            List<OrderShortInfo> infos = helper.datas.toList();
             OrderShortInfo info =
                 infos.where((e) => e.wonum == wonum).toList().first;
             info.steps = result.response.steps;
@@ -336,9 +336,9 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   }
 
   List<OrderShortInfo> filter() {
-    List<OrderShortInfo> list = widget.helper.datas;
+    List<OrderShortInfo> list = helper.datas;
     if (_query().isNotEmpty) {
-      list = widget.helper.datas
+      list = helper.datas
           .where((i) =>
               i.wonum.contains(_query()?.toUpperCase()) ||
               (i.assetnum ?? '').contains(_query()?.toUpperCase()))

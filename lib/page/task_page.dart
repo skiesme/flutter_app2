@@ -6,8 +6,6 @@ import 'package:samex_app/helper/event_bus_helper.dart';
 
 import 'package:samex_app/utils/assets.dart';
 import 'package:samex_app/utils/style.dart';
-import 'package:samex_app/helper/page_helper.dart';
-import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -21,11 +19,8 @@ class TaskPage extends StatefulWidget {
   TaskPage({this.isTask = true});
 
   @override
-  _TaskPageState createState() => new _TaskPageState();
+  _TaskPageState createState() => _TaskPageState();
 }
-
-List<PageHelper<OrderShortInfo>> taskPageHelpers = new List();
-List<HDOrders> taskOrderLists = new List();
 
 class _TaskPageState extends State<TaskPage>
     with SingleTickerProviderStateMixin, AfterLayoutMixin<TaskPage> {
@@ -38,25 +33,22 @@ class _TaskPageState extends State<TaskPage>
   bool _isSearching = false;
   bool _showFloatActionButton = false;
 
+  // 工单箱
+  final HDOrders woPage = HDOrders(type: OrderType.ALL);
+
+  final HDOrders cmPage = HDOrders(type: OrderType.CM);
+  final HDOrders xjPage = HDOrders(type: OrderType.XJ);
+  final HDOrders pmPage = HDOrders(type: OrderType.PM);
+
   @override
   void initState() {
     super.initState();
 
     _controller =
-        new TabController(length: 3, vsync: this, initialIndex: _tabIndex);
-    _searchQuery = new TextEditingController();
-
-    // 创建页面
-    if (taskPageHelpers.length == 0) {
-      taskPageHelpers.add(new PageHelper());
-      taskPageHelpers.add(new PageHelper());
-      taskPageHelpers.add(new PageHelper());
-      taskPageHelpers.add(new PageHelper());
-    }
+        TabController(length: 3, vsync: this, initialIndex: _tabIndex);
+    _searchQuery = TextEditingController();
 
     _setupIndex();
-
-    _creatOrderLists();
 
     eventBus.on<HDTaskEvent>().listen((event) {
       if (event.type == HDTaskEventType.showFloatTopBtn) {
@@ -73,7 +65,7 @@ class _TaskPageState extends State<TaskPage>
 
   void _startSearch() {
     ModalRoute.of(context)
-        .addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
+        .addLocalHistoryEntry(LocalHistoryEntry(onRemove: _stopSearching));
 
     setState(() {
       _isSearching = true;
@@ -95,21 +87,6 @@ class _TaskPageState extends State<TaskPage>
     });
   }
 
-  void _creatOrderLists() {
-    taskOrderLists = new List();
-    if (!widget.isTask) {
-      taskOrderLists
-          .add(new HDOrders(helper: taskPageHelpers[3], type: OrderType.ALL));
-    } else {
-      taskOrderLists.add(new HDOrders(
-          helper: taskPageHelpers[0], type: OrderType.CM, key: ValueKey(0)));
-      taskOrderLists.add(new HDOrders(
-          helper: taskPageHelpers[1], type: OrderType.XJ, key: ValueKey(1)));
-      taskOrderLists.add(new HDOrders(
-          helper: taskPageHelpers[2], type: OrderType.PM, key: ValueKey(2)));
-    }
-  }
-
   void _setupIndex() {
     _tabIndex = 1;
 
@@ -118,8 +95,7 @@ class _TaskPageState extends State<TaskPage>
       _tabIndex = 0;
     }
 
-    _pageController = new PageController(initialPage: _tabIndex);
-    // _pageController.
+    _pageController = PageController(initialPage: _tabIndex);
   }
 
   List<BottomNavigationBarItem> _getBottomBar(Map<OrderType, int> badges) {
@@ -128,10 +104,10 @@ class _TaskPageState extends State<TaskPage>
     int index = 0;
     double imH = 24.0;
 
-    list.add(new BottomNavigationBarItem(
+    list.add(BottomNavigationBarItem(
         icon: BadgeIconButton(
             itemCount: badges[OrderType.CM] ?? 0,
-            icon: new Image.asset(ImageAssets.task_cm,
+            icon: Image.asset(ImageAssets.task_cm,
                 color: index == _tabIndex ? Style.primaryColor : Colors.grey,
                 height: imH)),
         title: Text(
@@ -141,10 +117,10 @@ class _TaskPageState extends State<TaskPage>
               : Style.textStyleNormal,
         )));
 
-    list.add(new BottomNavigationBarItem(
+    list.add(BottomNavigationBarItem(
         icon: BadgeIconButton(
             itemCount: badges[OrderType.XJ] ?? 0,
-            icon: new Image.asset(ImageAssets.task_xj,
+            icon: Image.asset(ImageAssets.task_xj,
                 color: index == _tabIndex ? Style.primaryColor : Colors.grey,
                 height: imH)),
         title: Text(
@@ -154,10 +130,10 @@ class _TaskPageState extends State<TaskPage>
               : Style.textStyleNormal,
         )));
 
-    list.add(new BottomNavigationBarItem(
+    list.add(BottomNavigationBarItem(
         icon: BadgeIconButton(
             itemCount: badges[OrderType.PM] ?? 0,
-            icon: new Image.asset(ImageAssets.task_pm,
+            icon: Image.asset(ImageAssets.task_pm,
                 color: index == _tabIndex ? Style.primaryColor : Colors.grey,
                 height: imH)),
         title: Text(
@@ -171,14 +147,13 @@ class _TaskPageState extends State<TaskPage>
   }
 
   Widget _getBody() {
-    Widget show = taskOrderLists[0];
     double width = MediaQuery.of(context).size.width;
 
     if (!widget.isTask) {
-      return show;
+      return woPage;
     } else {
-      return new LayoutBuilder(
-          builder: (context, constraints) => new NotificationListener(
+      return LayoutBuilder(
+          builder: (context, constraints) => NotificationListener(
               onNotification: (ScrollNotification note) {
                 setState(() {
                   _currentPage = _pageController.page;
@@ -188,8 +163,7 @@ class _TaskPageState extends State<TaskPage>
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 controller: _pageController,
-                physics: const PageScrollPhysics(
-                    parent: const BouncingScrollPhysics()),
+                physics: const NeverScrollableScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: constraints.maxHeight,
@@ -200,15 +174,12 @@ class _TaskPageState extends State<TaskPage>
                     children: <Widget>[
                       Container(
                         width: width,
-                        child: taskOrderLists[0],
+                        child: cmPage,
                       ),
+                      Container(width: width, child: xjPage),
                       Container(
                         width: width,
-                        child: taskOrderLists[1],
-                      ),
-                      Container(
-                        width: width,
-                        child: taskOrderLists[2],
+                        child: pmPage,
                       ),
                     ],
                   ),
@@ -220,7 +191,7 @@ class _TaskPageState extends State<TaskPage>
   List<Widget> _buildActions() {
     if (_isSearching) {
       return <Widget>[
-        new IconButton(
+        IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () {
             if (_searchQuery == null || _searchQuery.text.isEmpty) {
@@ -237,32 +208,32 @@ class _TaskPageState extends State<TaskPage>
 
     return widget.isTask
         ? <Widget>[
-            new IconButton(
+            IconButton(
               icon: const Icon(Icons.search),
               tooltip: '工单搜索',
               onPressed: _startSearch,
             ),
-            new IconButton(
+            IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: '强制刷新',
               onPressed: () {
-                eventBus.fire(new HDTaskEvent(type: HDTaskEventType.refresh));
+                eventBus.fire(HDTaskEvent(type: HDTaskEventType.refresh));
               },
             ),
           ]
         : <Widget>[
-            new IconButton(
+            IconButton(
               icon: const Icon(Icons.refresh),
               tooltip: '强制刷新',
               onPressed: () {
-                eventBus.fire(new HDTaskEvent(type: HDTaskEventType.refresh));
+                eventBus.fire(HDTaskEvent(type: HDTaskEventType.refresh));
               },
             ),
           ];
   }
 
   Widget _buildSearchField() {
-    var textField = new TextField(
+    var textField = TextField(
       controller: _searchQuery,
       autofocus: true,
       decoration: const InputDecoration(
@@ -278,13 +249,12 @@ class _TaskPageState extends State<TaskPage>
     return textField;
   }
 
-  void _updateSearchQuery(String newQuery) {
-    eventBus
-        .fire(new HDTaskEvent(type: HDTaskEventType.query, value: newQuery));
+  void _updateSearchQuery(String Query) {
+    eventBus.fire(HDTaskEvent(type: HDTaskEventType.query, value: Query));
   }
 
   BottomNavigationBar getBottomBar(Map<OrderType, int> badges) {
-    return new BottomNavigationBar(
+    return BottomNavigationBar(
       items: _getBottomBar(badges),
       currentIndex: _tabIndex,
       onTap: (index) {
@@ -307,8 +277,8 @@ class _TaskPageState extends State<TaskPage>
   Widget build(BuildContext context) {
     final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
 
-    return new Scaffold(
-      appBar: new AppBar(
+    return Scaffold(
+      appBar: AppBar(
         leading: _buildAppBarLeading(),
         title: _isSearching
             ? _buildSearchField()
@@ -330,10 +300,9 @@ class _TaskPageState extends State<TaskPage>
             )
           : null,
       floatingActionButton: _showFloatActionButton
-          ? new FloatingActionButton(
+          ? FloatingActionButton(
               onPressed: () {
-                eventBus
-                    .fire(new HDTaskEvent(type: HDTaskEventType.scrollHeader));
+                eventBus.fire(HDTaskEvent(type: HDTaskEventType.scrollHeader));
               },
               child: Icon(Icons.navigation),
             )
