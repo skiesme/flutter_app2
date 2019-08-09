@@ -1,6 +1,5 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:samex_app/components/load_more.dart';
 import 'package:samex_app/components/orders/hd_order_item.dart';
 import 'package:samex_app/components/orders/hd_order_option.dart';
@@ -34,7 +33,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
   HDOrderOptions _orderOptions;
   HDOrderOptionsResult _queryInfo;
   bool _canLoadMore = true;
-  List<OrderShortInfo> _filterDatas = new List();
+  List<OrderShortInfo> _filterDatas = List();
   OrderType _selectedtType;
   ScrollController _scrollController;
 
@@ -50,8 +49,6 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           _handleLoadNewDatas();
         } else if (event.type == HDTaskEventType.query) {
           String query = event.value;
-          print('query: $query');
-          // _orderOptions.
           if (mounted) {
             setState(() {
               _queryInfo.query = query;
@@ -82,7 +79,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     }
 
     if (_scrollController.initialScrollOffset > 0) {
-      Future.delayed(new Duration(milliseconds: 100), () {
+      Future.delayed(Duration(milliseconds: 100), () {
         _scrollController.jumpTo(_scrollController.initialScrollOffset + 0.1);
       });
     }
@@ -160,11 +157,11 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     List<Widget> children = <Widget>[_query().isEmpty ? refreshView : view];
 
     if (list.length == 0) {
-      children.add(new Center(
+      children.add(Center(
           child: helper.inital ? CircularProgressIndicator() : Text('没发现任务')));
     }
 
-    return new Container(
+    return Container(
         color: const Color(0xFFF0F0F0),
         child: GestureDetector(
             onTap: () {
@@ -194,7 +191,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     _scrollController = helper.createController();
     _scrollController.addListener(() {
       bool showTopBtn = _scrollController.offset > context.size.height;
-      eventBus.fire(new HDTaskEvent(
+      eventBus.fire(HDTaskEvent(
           type: HDTaskEventType.showFloatTopBtn, value: showTopBtn));
     });
   }
@@ -268,7 +265,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           older: older,
           task: _queryInfo.task,
           count: _queryInfo.count);
-      OrderListResult result = new OrderListResult.fromJson(response);
+      OrderListResult result = OrderListResult.fromJson(response);
 
       _canLoadMore = true;
       // debugPrint('order List: ${result.toJson()}');
@@ -287,7 +284,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
           for (var item in info) {
             if (item.steps == null) {
               String wonum = item.wonum;
-              String site = wonum.replaceAll(new RegExp('\\d+'), '');
+              String site = wonum.replaceAll(RegExp('\\d+'), '');
               loadSteps(wonum, site);
             }
           }
@@ -296,8 +293,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         try {
           final BadgeBloc bloc = BlocProvider.of<BadgeBloc>(context);
           if (widget.type != OrderType.ALL) {
-            bloc.badgeChange
-                .add(new BadgeInEvent(helper.itemCount(), widget.type));
+            bloc.badgeChange.add(BadgeInEvent(helper.itemCount(), widget.type));
           }
         } catch (e) {
           // debugPrint('badgeChange   error: $e');
@@ -319,7 +315,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     try {
       Map response =
           await getApi(context).steps(sopnum: '', wonum: wonum, site: site);
-      StepsResult result = new StepsResult.fromJson(response);
+      StepsResult result = StepsResult.fromJson(response);
       if (result.code == 0) {
         if (mounted) {
           setState(() {

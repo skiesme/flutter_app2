@@ -80,7 +80,17 @@ class HDOrderOptionsResult {
   int task;
   int count;
 
-  HDOrderOptionsResult({this.type, this.query, this.isAll, this.startTime, this.endTime, this.isUp, this.workType, this.status, this.task, this.count});
+  HDOrderOptionsResult(
+      {this.type,
+      this.query,
+      this.isAll,
+      this.startTime,
+      this.endTime,
+      this.isUp,
+      this.workType,
+      this.status,
+      this.task,
+      this.count});
 }
 
 /** HDOrderOptions */
@@ -95,7 +105,14 @@ class HDOrderOptions extends StatefulWidget {
   final onSureBtnClicked;
   final onTimeSortChanged;
 
-  HDOrderOptions({Key key, @required this.showView, @required this.type, this.badgeCount, this.onSureBtnClicked, this.onTimeSortChanged}) :super(key:key);
+  HDOrderOptions(
+      {Key key,
+      @required this.showView,
+      @required this.type,
+      this.badgeCount,
+      this.onSureBtnClicked,
+      this.onTimeSortChanged})
+      : super(key: key);
 
   @override
   HDOrderOptionsState createState() => HDOrderOptionsState();
@@ -108,8 +125,10 @@ class HDOrderOptions extends StatefulWidget {
 
 class HDOrderOptionsState extends State<HDOrderOptions> {
   bool _isAll = true;
-  int _startTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 - 365*24*60*60;
-  int _endTime = new DateTime.now().millisecondsSinceEpoch ~/ 1000 +24*60*60;
+  int _startTime =
+      new DateTime.now().millisecondsSinceEpoch ~/ 1000 - 365 * 24 * 60 * 60;
+  int _endTime =
+      new DateTime.now().millisecondsSinceEpoch ~/ 1000 + 24 * 60 * 60;
   bool _isUp = false;
 
   bool _expend = false;
@@ -117,7 +136,8 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   _OrderStatusItem _selectedStatus;
   static const double padding = 3.0;
   static const double ICON_SIZE = 16.0;
-  static const itemPadding = const EdgeInsets.symmetric(horizontal: padding, vertical: padding);
+  static const itemPadding =
+      const EdgeInsets.symmetric(horizontal: padding, vertical: padding);
 
   @override
   void initState() {
@@ -129,11 +149,12 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
   @override
   Widget build(BuildContext context) {
-    
-    List<Widget> children = widget.showView ? <Widget>[
-      Card( child: _filterOptionView()),
-      Card( child: _sortOptionView())
-    ] : new List();
+    List<Widget> children = widget.showView
+        ? <Widget>[
+            Card(child: _filterOptionView()),
+            Card(child: _sortOptionView())
+          ]
+        : new List();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: children,
@@ -148,23 +169,24 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
   void _setupDatas() {
     _selectedStatus = _statusList(widget.type)[0];
-    
-    widget.def = widget.showView ? getMemoryCache<HDOrderOptionsResult>(option_cache_key, expired: false) : null;
-    if (widget.def == null){
+
+    widget.def = widget.showView
+        ? getMemoryCache<HDOrderOptionsResult>(option_cache_key, expired: false)
+        : null;
+    if (widget.def == null) {
       widget.def = HDOrderOptionsResult(
-        type: widget.type,
-        query: _searchQuery?.text,
-        isAll: _isAll,
-        startTime: _startTime,
-        endTime: _endTime,
-        isUp: _isUp,
-        workType: _workType(),
-        status: _statusKey(),
-        task: _task(),
-        count: _count()
-      );
+          type: widget.type,
+          query: _searchQuery?.text,
+          isAll: _isAll,
+          startTime: _startTime,
+          endTime: _endTime,
+          isUp: _isUp,
+          workType: _workType(),
+          status: _statusKey(),
+          task: _task(),
+          count: _count());
     } else {
-      setState(() {        
+      setState(() {
         widget.type = widget.def.type;
         _selectedStatus = _status(widget.def.status);
         _searchQuery.text = widget.def.query;
@@ -177,7 +199,7 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   }
 
   String _workType() {
-    switch (widget.type){
+    switch (widget.type) {
       case OrderType.PM:
         return 'PM';
       case OrderType.CM:
@@ -206,15 +228,15 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   }
 
   int _task() {
-    return widget.type == OrderType.ALL ? 0: 1;
+    return widget.type == OrderType.ALL ? 0 : 1;
   }
 
   int _count() {
-    return widget.type == OrderType.ALL ? 20 :100;
+    return widget.type == OrderType.ALL ? 20 : 100;
   }
 
-  String _typeName(OrderType type){
-    switch (type){
+  String _typeName(OrderType type) {
+    switch (type) {
       case OrderType.PM:
         return '保养';
       case OrderType.CM:
@@ -243,23 +265,26 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
     });
   }
 
-  List<_OrderStatusItem> _statusList(OrderType type){
+  List<_OrderStatusItem> _statusList(OrderType type) {
     if (type == OrderType.CM) {
       return _orderCMStatusList;
     } else if (type == OrderType.PM) {
       return _orderPMStatusList;
-    }  else if (type == OrderType.XJ ||
-                type == OrderType.XJ1 || type == OrderType.XJ2 ||
-                type == OrderType.XJ3 || type == OrderType.XJ4) {
+    } else if (type == OrderType.XJ ||
+        type == OrderType.XJ1 ||
+        type == OrderType.XJ2 ||
+        type == OrderType.XJ3 ||
+        type == OrderType.XJ4) {
       return _orderStatusList;
     } else {
       return _orderALLStatusList;
     }
   }
-  String _statusName(_OrderStatusItem item){
+
+  String _statusName(_OrderStatusItem item) {
     List<_OrderStatusItem> list = _statusList(widget.type);
     String name = _selectedStatus.value;
-    for (int i = 0; i< list.length; i++) {
+    for (int i = 0; i < list.length; i++) {
       if (item.key == list[i].key) {
         name = item.value;
       }
@@ -273,14 +298,21 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
     Widget badge() {
       String badgeStr = showBadge ? widget.badgeCount.toString() : '';
-      return Material(color: Colors.transparent,
+      return Material(
+        color: Colors.transparent,
         elevation: 2.0,
         child: Container(
-          height: 22.0,
-          padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5.0),
-          decoration: BoxDecoration(color: const Color(0xFFFF232D), borderRadius: BorderRadius.circular(5.0)),
-          child: Center(child: Text('${badgeStr}', style: TextStyle(color: Colors.white, fontSize: 14.0), textAlign: TextAlign.center,))
-        ),
+            height: 22.0,
+            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5.0),
+            decoration: BoxDecoration(
+                color: const Color(0xFFFF232D),
+                borderRadius: BorderRadius.circular(5.0)),
+            child: Center(
+                child: Text(
+              '${badgeStr}',
+              style: TextStyle(color: Colors.white, fontSize: 14.0),
+              textAlign: TextAlign.center,
+            ))),
       );
     }
 
@@ -291,8 +323,14 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           showBadge ? badge() : Center(),
-          Text('筛选', style: TextStyle(color: Style.primaryColor, fontSize: 18.0),),
-          Icon(_expend ? Icons.expand_less : Icons.expand_more, color: Style.primaryColor,)
+          Text(
+            '筛选',
+            style: TextStyle(color: Style.primaryColor, fontSize: 18.0),
+          ),
+          Icon(
+            _expend ? Icons.expand_less : Icons.expand_more,
+            color: Style.primaryColor,
+          )
         ],
       ),
     );
@@ -301,20 +339,19 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   Widget _queryItem() {
     return Padding(
       padding: itemPadding,
-      child: Row (
+      child: Row(
         children: <Widget>[
           Text('内容过滤: ', style: const TextStyle(color: Colors.black87)),
-          Expanded( 
-            child: TextField(
-              controller: _searchQuery,
-              decoration: const InputDecoration(
-                contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-                hintText: '输入工单号/资产编号进行查询',
-                border: InputBorder.none,
-              ),
-              style: const TextStyle(color: Colors.black87, fontSize: 16.0),
-            )
-          )
+          Expanded(
+              child: TextField(
+            controller: _searchQuery,
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+              hintText: '输入工单号/资产编号进行查询',
+              border: InputBorder.none,
+            ),
+            style: const TextStyle(color: Colors.black87, fontSize: 16.0),
+          ))
         ],
       ),
     );
@@ -323,10 +360,10 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   Widget _orderItem() {
     Widget allBtn() {
       return SimpleButton(
-        onTap: (){
+        onTap: () {
           setState(() {
             _isAll = !_isAll;
-            if(_isAll){
+            if (_isAll) {
               widget.type = OrderType.ALL;
               _selectedStatus = _statusList(OrderType.ALL)[0];
             }
@@ -336,17 +373,24 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text('所有工单'),
-            Icon(_isAll ? Icons.radio_button_checked :Icons.radio_button_unchecked, size: ICON_SIZE,),
+            Icon(
+              _isAll
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              size: ICON_SIZE,
+            ),
           ],
         ),
       );
     }
 
     void showChooseTypeDialog(BuildContext ctx) {
-      bool isXJExpanded (){
+      bool isXJExpanded() {
         if (widget.type == OrderType.XJ ||
-            widget.type == OrderType.XJ1 || widget.type == OrderType.XJ2 ||
-            widget.type == OrderType.XJ3 || widget.type == OrderType.XJ4) {
+            widget.type == OrderType.XJ1 ||
+            widget.type == OrderType.XJ2 ||
+            widget.type == OrderType.XJ3 ||
+            widget.type == OrderType.XJ4) {
           return true;
         }
         return false;
@@ -356,10 +400,15 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
         bool hasSub = item.subItems != null;
         bool isSelected = (item.type == widget.type);
 
-        if(hasSub) {
+        if (hasSub) {
           return ExpansionTile(
             title: new Text(item.title),
-            trailing: isSelected ? const Icon(Icons.check, size: ICON_SIZE,) : null,
+            trailing: isSelected
+                ? const Icon(
+                    Icons.check,
+                    size: ICON_SIZE,
+                  )
+                : null,
             initiallyExpanded: isXJExpanded(),
             children: item.subItems.map((OrderItem item) {
               return itemcell(state, item);
@@ -369,7 +418,12 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
           return ListTile(
             title: new Text(item.title),
             selected: isSelected,
-            trailing: isSelected ? const Icon(Icons.check, size: ICON_SIZE,) : null,
+            trailing: isSelected
+                ? const Icon(
+                    Icons.check,
+                    size: ICON_SIZE,
+                  )
+                : null,
             onTap: () {
               state(() {
                 setState(() {
@@ -396,12 +450,11 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
                 );
               },
             );
-          }
-      );
+          });
     }
 
     Widget orderType() {
-      return  Row(
+      return Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text('工单类型:'),
@@ -412,7 +465,11 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
             child: Row(
               children: <Widget>[
                 Text('${_typeName(widget.type)}'),
-                Align(child: const Icon(Icons.arrow_drop_down, size: ICON_SIZE,))
+                Align(
+                    child: const Icon(
+                  Icons.arrow_drop_down,
+                  size: ICON_SIZE,
+                ))
               ],
             ),
           )
@@ -426,12 +483,17 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
         return ListTile(
           title: new Text(item.value),
           selected: isSelected,
-          trailing: isSelected ? const Icon(Icons.check, size: ICON_SIZE,) : null,
+          trailing: isSelected
+              ? const Icon(
+                  Icons.check,
+                  size: ICON_SIZE,
+                )
+              : null,
           onTap: () {
             state(() {
               setState(() {
-                  _selectedStatus = item;
-                  _checkAll();
+                _selectedStatus = item;
+                _checkAll();
               });
             });
           },
@@ -445,18 +507,18 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
               builder: (context, state) {
                 return SimpleDialog(
                   contentPadding: const EdgeInsets.all(5.0),
-                  children: _statusList(widget.type).map((_OrderStatusItem item) {
+                  children:
+                      _statusList(widget.type).map((_OrderStatusItem item) {
                     return itemcell(state, item);
                   }).toList(),
                 );
               },
             );
-          }
-      );
+          });
     }
 
     Widget orderStatus() {
-      return  Row(
+      return Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Text('工单状态:'),
@@ -477,27 +539,25 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
     return Padding(
       padding: itemPadding,
-      child: Row (
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          allBtn(),
-          orderType(),
-          orderStatus()
-        ],
+        children: <Widget>[allBtn(), orderType(), orderStatus()],
       ),
     );
   }
 
   Widget _timeItem() {
-
     Widget startTime() {
       return InkWell(
         onTap: () {
-          DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-              _startTime * 1000);
+          DateTime time =
+              new DateTime.fromMillisecondsSinceEpoch(_startTime * 1000);
           Func.selectDate(context, time, (DateTime date) {
             setState(() {
-              int start = (new DateTime(date.year, date.month, date.day).millisecondsSinceEpoch ~/ 1000).toInt();
+              int start = (new DateTime(date.year, date.month, date.day)
+                          .millisecondsSinceEpoch ~/
+                      1000)
+                  .toInt();
               print("startTime --> :${start}");
               _startTime = start;
             });
@@ -506,7 +566,10 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
         child: Row(
           children: <Widget>[
             new Text('${Func.getYearMonthDay(_startTime * 1000)}'),
-            Icon(Icons.arrow_drop_down, size: ICON_SIZE,)
+            Icon(
+              Icons.arrow_drop_down,
+              size: ICON_SIZE,
+            )
           ],
         ),
       );
@@ -515,19 +578,24 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
     Widget endTime() {
       return InkWell(
         onTap: () {
-          DateTime time = new DateTime.fromMillisecondsSinceEpoch(
-              _endTime * 1000);
+          DateTime time =
+              new DateTime.fromMillisecondsSinceEpoch(_endTime * 1000);
           Func.selectDate(context, time, (DateTime date) {
             setState(() {
-              _endTime = (new DateTime(date.year, date.month, date.day).millisecondsSinceEpoch ~/ 1000).toInt();
+              _endTime = (new DateTime(date.year, date.month, date.day)
+                          .millisecondsSinceEpoch ~/
+                      1000)
+                  .toInt();
             });
           });
-
         },
         child: Row(
           children: <Widget>[
             new Text('${Func.getYearMonthDay(_endTime * 1000)}'),
-            Icon(Icons.arrow_drop_down, size: ICON_SIZE,)
+            Icon(
+              Icons.arrow_drop_down,
+              size: ICON_SIZE,
+            )
           ],
         ),
       );
@@ -549,94 +617,90 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   }
 
   Widget _sureBtn() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        SimpleButton(
-          onTap: (){
+    return Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+      SimpleButton(
+          onTap: () {
             setState(() {
               _expend = false;
             });
 
-            if(widget.onSureBtnClicked != null) {
+            if (widget.onSureBtnClicked != null) {
               // option -> model
               HDOrderOptionsResult res = new HDOrderOptionsResult(
-                type: widget.type,
-                query: _searchQuery?.text,
-                isAll: _isAll,
-                startTime: _startTime,
-                endTime: _endTime,
-                isUp: _isUp,
-                workType: _workType(),
-                status: _statusKey(),
-                task: _task(),
-                count: _count()
-              );
+                  type: widget.type,
+                  query: _searchQuery?.text,
+                  isAll: _isAll,
+                  startTime: _startTime,
+                  endTime: _endTime,
+                  isUp: _isUp,
+                  workType: _workType(),
+                  status: _statusKey(),
+                  task: _task(),
+                  count: _count());
               widget.cached(res);
               widget.onSureBtnClicked(res);
             }
           },
           elevation: 2.0,
-          shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(4.0)),
+          shape: new RoundedRectangleBorder(
+              borderRadius: new BorderRadius.circular(4.0)),
           padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 24.0),
           color: Colors.blueAccent,
-          child: Text('确定', style: TextStyle(color: Colors.white),)
-        )
-      ]
-    );
+          child: Text(
+            '确定',
+            style: TextStyle(color: Colors.white),
+          ))
+    ]);
   }
 
-  Widget _getOptionView(){
-    if(!_expend){
+  Widget _getOptionView() {
+    if (!_expend) {
       return Container();
     } else {
       return Container(
-        padding: EdgeInsets.all(4.0),
-        child: Wrap(
-            children: <Widget>[
-              Divider(height: 1),
-              _queryItem(),
-              Divider(height: 1),
-              _orderItem(),
-              Divider(height: 1),
-              _timeItem(),
-              Divider(height: 1),
-              _sureBtn()
-            ],
-            spacing: 12.0,
-            runSpacing: 8.0,
-            runAlignment: WrapAlignment.center
-        ));
+          padding: EdgeInsets.all(4.0),
+          child: Wrap(
+              children: <Widget>[
+                Divider(height: 1),
+                _queryItem(),
+                Divider(height: 1),
+                _orderItem(),
+                Divider(height: 1),
+                _timeItem(),
+                Divider(height: 1),
+                _sureBtn()
+              ],
+              spacing: 12.0,
+              runSpacing: 8.0,
+              runAlignment: WrapAlignment.center));
     }
   }
 
-  Widget _filterOptionView(){
-    return  new Column(
+  Widget _filterOptionView() {
+    return new Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SimpleButton(
-            onTap: (){
+        GestureDetector(
+            onTap: () {
               setState(() {
                 _expend = !_expend;
               });
             },
-            child: _titleView()
-        ),
+            child: _titleView()),
         _getOptionView()
       ],
     );
   }
 
-
   Widget _sortOptionView() {
     Widget timeUp() {
       return SimpleButton(
-        onTap: (){
+        onTap: () {
           setState(() {
             _isUp = true;
           });
 
-          if(widget.onTimeSortChanged != null) {
+          if (widget.onTimeSortChanged != null) {
             widget.onTimeSortChanged(_isUp);
           }
         },
@@ -644,7 +708,10 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text('升序'),
-            Icon(_isUp ? Icons.radio_button_checked :Icons.radio_button_unchecked, size: ICON_SIZE,),
+            Icon(
+              _isUp ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+              size: ICON_SIZE,
+            ),
           ],
         ),
       );
@@ -652,43 +719,39 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
 
     Widget timeDown() {
       return SimpleButton(
-        onTap: (){
+        onTap: () {
           setState(() {
             _isUp = false;
           });
-          if(widget.onTimeSortChanged != null) {
+          if (widget.onTimeSortChanged != null) {
             widget.onTimeSortChanged(_isUp);
           }
         },
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            SizedBox(width: 10.0,),
+            SizedBox(
+              width: 10.0,
+            ),
             Text('降序'),
-            Icon(_isUp ? Icons.radio_button_unchecked :Icons.radio_button_checked, size: ICON_SIZE,),
+            Icon(
+              _isUp ? Icons.radio_button_unchecked : Icons.radio_button_checked,
+              size: ICON_SIZE,
+            ),
           ],
         ),
       );
     }
 
     return Container(
-      height: 40,
-      padding: EdgeInsets.all(4.0),
-      child: Wrap(
-        children: <Widget>[
+        height: 40,
+        padding: EdgeInsets.all(4.0),
+        child: Wrap(children: <Widget>[
           Text('按时间排序:'),
           Row(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              timeUp(),
-              timeDown()
-            ],
+            children: <Widget>[timeUp(), timeDown()],
           ),
-        ],
-        spacing: 12.0,
-        runSpacing: 8.0,
-        runAlignment: WrapAlignment.center
-      )
-    );
+        ], spacing: 12.0, runSpacing: 8.0, runAlignment: WrapAlignment.center));
   }
 }

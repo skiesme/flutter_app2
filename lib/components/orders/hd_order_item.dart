@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/order_list.dart';
 import 'package:samex_app/model/steps.dart';
@@ -15,7 +14,7 @@ class HDOrderItem extends StatefulWidget {
   HDOrderItem({@required this.info, this.isAll, this.onTap});
 
   @override
-  _HDOrderItemState createState() => new _HDOrderItemState();
+  _HDOrderItemState createState() => _HDOrderItemState();
 }
 
 class _HDOrderItemState extends State<HDOrderItem> {
@@ -130,7 +129,7 @@ class _HDOrderItemState extends State<HDOrderItem> {
   }
 
   Widget buildSyncStatus() {
-    List<Widget> children = new List();
+    List<Widget> children = List();
     String worktype = widget.info.worktype;
     bool finished = (widget.info.actfinish == 0);
     List<OrderStep> steps = widget.info.steps;
@@ -154,10 +153,10 @@ class _HDOrderItemState extends State<HDOrderItem> {
           image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
         }
         children.addAll(<Widget>[
-          new CircleAvatar(
-            child: new Padding(
+          CircleAvatar(
+            child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: new Image.asset(
+                child: Image.asset(
                   image,
                   height: 40.0,
                 )),
@@ -183,10 +182,10 @@ class _HDOrderItemState extends State<HDOrderItem> {
         }
 
         children.add(
-          new CircleAvatar(
-            child: new Padding(
+          CircleAvatar(
+            child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: new Image.asset(
+                child: Image.asset(
                   image,
                   height: 40.0,
                 )),
@@ -218,10 +217,10 @@ class _HDOrderItemState extends State<HDOrderItem> {
         }
 
         children.add(
-          new CircleAvatar(
-            child: new Padding(
+          CircleAvatar(
+            child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: new Image.asset(
+                child: Image.asset(
                   image,
                   height: 40.0,
                 )),
@@ -235,10 +234,10 @@ class _HDOrderItemState extends State<HDOrderItem> {
     }
 
     return Container(
-        padding: new EdgeInsets.only(right: _padding),
-        decoration: new BoxDecoration(
-            border: new Border(
-                right: new BorderSide(
+        padding: EdgeInsets.only(right: _padding),
+        decoration: BoxDecoration(
+            border: Border(
+                right: BorderSide(
                     width: 0.5, color: Theme.of(context).dividerColor))),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -280,49 +279,28 @@ class _HDOrderItemState extends State<HDOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleButton(
+    return Container(
       color: Colors.transparent,
       padding: EdgeInsets.symmetric(vertical: 5.0),
-      child: Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            buildSeparateView(),
-            buildTitleView(),
-            Divider(
-              height: 1.0,
-            ),
-            builfInfoView()
-          ],
+      child: GestureDetector(
+        child: Card(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              buildSeparateView(),
+              buildTitleView(),
+              Divider(
+                height: 1.0,
+              ),
+              builfInfoView()
+            ],
+          ),
         ),
+        onTap: () {
+          widget.onTap();
+        },
       ),
-      onTap: () {
-        widget.onTap();
-      },
     );
-    // return Container(
-    //   color: Colors.transparent,
-    //   padding: EdgeInsets.symmetric(vertical: 5.0),
-    //   child: GestureDetector(
-    //     child: Card(
-    //       child: Column(
-    //         mainAxisAlignment: MainAxisAlignment.start,
-    //         crossAxisAlignment: CrossAxisAlignment.stretch,
-    //         children: <Widget>[
-    //           buildSeparateView(),
-    //           buildTitleView(),
-    //           Divider(
-    //             height: 1.0,
-    //           ),
-    //           builfInfoView()
-    //         ],
-    //       ),
-    //     ),
-    //     onTap: () {
-    //       widget.onTap();
-    //     },
-    //   ),
-    // );
   }
 }
