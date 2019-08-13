@@ -12,57 +12,56 @@ import 'package:samex_app/page/step_new_page.dart';
 
 import 'package:after_layout/after_layout.dart';
 
-
 class StepList extends StatefulWidget {
-
   final OrderDetailData data;
   final onImgChanged;
-  StepList({Key key, @required this.data, this.onImgChanged}) : super(key:key);
+  StepList({Key key, @required this.data, this.onImgChanged}) : super(key: key);
 
   @override
   StepListState createState() => new StepListState();
 }
 
 class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
-
   bool _first = true;
   bool _request = false;
 
   Future<Null> gotoStep(String asset, [int index = -1]) async {
-    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
+    List<OrderStep> list =
+        getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
 
-    if(list !=null && widget.data != null){
+    if (list != null && widget.data != null) {
       final goo = (int i) async {
-        final result = await Navigator.push(context, new MaterialPageRoute(
-            builder: (_) => new StepPage(
-              index: i,
-              data: list[i],
-              info: widget.data,
-              isTask: widget.data.actfinish == 0,
-              isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,
-              onImgChanged: (){
-                widget.onImgChanged(widget.data);
-              },
-            ),
-            settings: new RouteSettings(name: StepPage.path)
-        ));
-        if(result != null) {
+        final result = await Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (_) => new StepPage(
+                      index: i,
+                      data: list[i],
+                      info: widget.data,
+                      isTask: widget.data.actfinish == 0,
+                      isXJ: getOrderType(widget.data.worktype) == OrderType.XJ,
+                      onImgChanged: () {
+                        widget.onImgChanged(widget.data);
+                      },
+                    ),
+                settings: new RouteSettings(name: StepPage.path)));
+        if (result != null) {
           getSteps();
         }
       };
 
-      if(index > 0  && index < list.length){
+      if (index > 0 && index < list.length) {
         goo(index);
         return;
       }
 
-      for(int i = 0, len = list.length; i< len; i++){
-        if(asset == list[i].assetnum ){
+      for (int i = 0, len = list.length; i < len; i++) {
+        if (asset == list[i].assetnum) {
           goo(i);
           break;
         }
 
-        if(i == (len - 1)){
+        if (i == (len - 1)) {
           Func.showMessage('资产: $asset, 未发现');
         }
       }
@@ -70,38 +69,43 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   }
 
   Future<Null> gotoStep2(int index) async {
-    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
+    List<OrderStep> list =
+        getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
 
     OrderStep step = list[index];
-    final result = await Navigator.push(context, new MaterialPageRoute(
-        builder: (_)=> new StepNewPage(step: step, read: widget.data.actfinish != 0,)));
-    if(result != null) {
+    final result = await Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (_) => new StepNewPage(
+                  step: step,
+                  read: widget.data.actfinish != 0,
+                )));
+    if (result != null) {
       getSteps();
     }
   }
 
-
   void getSteps() async {
-    if(_request) return;
+    if (_request) return;
     _request = true;
     OrderDetailData data = widget.data;
-    if(data != null){
-      try{
-        Map response = await getApi(context).steps(sopnum: '', wonum: data.wonum, site: data.site);
+    if (data != null) {
+      try {
+        Map response = await getApi(context)
+            .steps(sopnum: '', wonum: data.wonum, site: data.site);
         StepsResult result = new StepsResult.fromJson(response);
 
-        if(result.code != 0){
+        if (result.code != 0) {
           Func.showMessage(result.message);
         } else {
-          if(mounted) {
+          if (mounted) {
             setState(() {
               setMemoryCache<List<OrderStep>>(cacheKey, result.response.steps);
             });
           }
         }
-
-      } catch (e){
-        print (e);
+      } catch (e) {
+        print(e);
         Func.showMessage('网络出现异常: 获取步骤列表失败');
       }
     }
@@ -110,19 +114,18 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   }
 
   get cacheKey {
-    var key = widget.data?.wonum ??'';
-    if(key.isEmpty) return '';
+    var key = widget.data?.wonum ?? '';
+    if (key.isEmpty) return '';
     return 'stepsList_$key';
   }
 
-  int get  steps {
-    final list = getMemoryCache<List<OrderStep> >(cacheKey, expired: false);
+  int get steps {
+    final list = getMemoryCache<List<OrderStep>>(cacheKey, expired: false);
     return list == null ? 0 : list.length;
   }
 
-
-  bool _isModify(OrderStep f){
-    if(getOrderType(widget.data?.worktype) == OrderType.CM){
+  bool _isModify(OrderStep f) {
+    if (getOrderType(widget.data?.worktype) == OrderType.CM) {
       return false;
     } else {
       return (f.status == null || f.status.isEmpty);
@@ -133,11 +136,12 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   Widget build(BuildContext context) {
 //    print('orderdata ; ${widget.data.toJson()}');
 
-    List<OrderStep> list = getMemoryCache<List<OrderStep> >(cacheKey, callback: (){
+    List<OrderStep> list =
+        getMemoryCache<List<OrderStep>>(cacheKey, callback: () {
       getSteps();
     });
-    if(list == null || list.isEmpty){
-      if(_first && list == null) {
+    if (list == null || list.isEmpty) {
+      if (_first && list == null) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Center(child: CircularProgressIndicator()),
@@ -164,18 +168,36 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     }).toList();
   }
 
-  Widget _buildItemCell(int i, OrderStep step) {
-    // debugPrint('资产: ${step.assetnum??' '}-${step.assetDescription??' '}');
+  Widget buildItemStatus(OrderStep step) {
+    bool isCM = getOrderType(widget.data?.worktype) == OrderType.CM;
+    String statusStr = step.status ?? '未处理';
+    return isCM
+        ? Container(
+            height: 1.0,
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              const Text('状态: '),
+              Text(statusStr, style: Style.getStatusStyle(statusStr)),
+            ],
+          );
+  }
 
-    Widget info(){
-      bool isCM = getOrderType(widget.data?.worktype) == OrderType.CM;
+  Widget _buildItemCell(int i, OrderStep step) {
+    // debugPrint('资产: ${step.assetnum??' '}-${step.assetDescription??' '}')
+    Widget info() {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text('任务${i+1}: ${step.description??''}', style: TextStyle(color: _isModify(step) ?  Style.primaryColor : Colors.grey),),
-          Text('资产: ${step.assetnum??''}-${step.assetDescription??''}'),
+          Text(
+            '任务${i + 1}: ${step.description ?? ''}',
+            style: TextStyle(
+                color: _isModify(step) ? Style.primaryColor : Colors.grey),
+          ),
+          Text('资产: ${step.assetnum ?? ''}-${step.assetDescription ?? ''}'),
           Text('时间: ${Func.getFullTimeString(step.statusdate)}'),
-          isCM ? Container(height: 1.0,) : Text('状态: ${step.status??'未处理'}')
+          buildItemStatus(step)
         ],
       );
     }
@@ -184,13 +206,13 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       children: <Widget>[
         SimpleButton(
           padding: Style.pagePadding,
-          onTap: (){
-            if(getOrderType(widget.data.worktype) == OrderType.CM){
+          onTap: () {
+            if (getOrderType(widget.data.worktype) == OrderType.CM) {
               gotoStep2(i);
             }
           },
-          onDoubleTap: (){
-            if(getOrderType(widget.data.worktype) != OrderType.CM) {
+          onDoubleTap: () {
+            if (getOrderType(widget.data.worktype) != OrderType.CM) {
               gotoStep(step.assetnum, i);
             }
           },
@@ -201,10 +223,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     );
   }
 
-
   @override
   void afterFirstLayout(BuildContext context) {
     _first = false;
   }
 }
-
