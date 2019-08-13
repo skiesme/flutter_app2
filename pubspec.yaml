@@ -24,6 +24,7 @@ dependencies:
   cached_network_image: 0.5.1
   image: 2.0.4
   flutter_boost: 0.0.417
+  flutter_easyrefresh: 2.0.2
   barcode_scan: 0.0.8
     # path: ../Plugins/flutter_barcode_reader
   dio:

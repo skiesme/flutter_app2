@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-
-class PageHelper<Data>{
+class PageHelper<Data> {
   List<Data> datas = new List();
   int page = 0;
   bool inital = true;
@@ -22,7 +21,7 @@ class PageHelper<Data>{
   }
 
   ScrollController createController() {
-    return new ScrollController(initialScrollOffset: _offset);
+    return ScrollController(initialScrollOffset: _offset);
   }
 
 //  void init(Function initFunction)  {
@@ -32,7 +31,7 @@ class PageHelper<Data>{
 //    }
 //  }
 
-  void toHeader(){
+  void toHeader() {
     _offset = 0.0;
   }
 
@@ -51,10 +50,10 @@ class PageHelper<Data>{
     isFinish = datas.isEmpty;
   }
 
-  void clear(){
+  void clear() {
     inital = false;
     _offset = 0.0;
-    snm='';
+    snm = '';
     this.datas.clear();
     page = 0;
   }

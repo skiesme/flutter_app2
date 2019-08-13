@@ -1,6 +1,7 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flutter/material.dart';
-import 'package:samex_app/components/load_more.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_easyrefresh/material_header.dart';
 import 'package:samex_app/components/orders/hd_order_item.dart';
 import 'package:samex_app/components/orders/hd_order_option.dart';
 import 'package:samex_app/data/badge_bloc.dart';
@@ -93,41 +94,66 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
     List<OrderShortInfo> list =
         isUp ? _filterDatas.reversed.toList() : _filterDatas;
 
-    Widget listView = ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        controller: _scrollController,
-        itemCount: list.length,
-        itemBuilder: (_, int index) {
-          OrderShortInfo info;
-          if (list.length > index) {
-            info = list[index];
-          }
+    Widget listView = EasyRefresh.custom(
+      onRefresh: _handleLoadNewDatas,
+      onLoad: () async {
+        _handleLoadDatas(1);
+      },
+      scrollController: _scrollController,
+      header: MaterialHeader(),
+      footer: CustomFooter(
+          enableInfiniteLoad: true,
+          extent: 10.0,
+          triggerDistance: 10.0,
+          footerBuilder: (context,
+              loadState,
+              pulledExtent,
+              loadTriggerPullDistance,
+              loadIndicatorExtent,
+              axisDirection,
+              float,
+              completeDuration,
+              enableInfiniteLoad,
+              success,
+              noMore) {
+            return Stack();
+          }),
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            OrderShortInfo info;
+            if (list.length > index) {
+              info = list[index];
+            }
 
-          if (null == info) {
-            return null;
-          }
+            if (null == info) {
+              return null;
+            }
 
-          return HDOrderItem(
-            info: info,
-            isAll: widget.type == OrderType.ALL,
-            onTap: () {
-              Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => TaskDetailPage(
-                                wonum: info.wonum,
-                              ),
-                          settings: RouteSettings(name: TaskDetailPage.path)))
-                  .then((value) {
-                if (null == value || false == value) {
-                  return;
-                }
+            return HDOrderItem(
+              info: info,
+              isAll: widget.type == OrderType.ALL,
+              onTap: () {
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => TaskDetailPage(
+                                  wonum: info.wonum,
+                                ),
+                            settings: RouteSettings(name: TaskDetailPage.path)))
+                    .then((value) {
+                  if (null == value || false == value) {
+                    return;
+                  }
 
-                _handleLoadNewDatas();
-              });
-            },
-          );
-        });
+                  _handleLoadNewDatas();
+                });
+              },
+            );
+          }),
+        )
+      ],
+    );
 
     _orderOptions = HDOrderOptions(
       showView: _showOptionView,
@@ -144,15 +170,8 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
         Expanded(child: listView),
       ],
     );
-
-    Widget refreshView = RefreshIndicator(
-        onRefresh: _handleLoadNewDatas,
-        child: LoadMore(
-            scrollNotification: helper.handle,
-            child: view,
-            onLoadMore: () async {
-              _handleLoadDatas(1);
-            }));
+    Widget refreshView =
+        NotificationListener(onNotification: helper.handle, child: view);
 
     List<Widget> children = <Widget>[_query().isEmpty ? refreshView : view];
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:samex_app/components/simple_button.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/utils/func.dart';
@@ -107,9 +106,10 @@ class HDOrderOptions extends StatefulWidget {
 
   HDOrderOptions(
       {Key key,
-      @required this.showView,
-      @required this.type,
+      this.showView,
+      this.type,
       this.badgeCount,
+      this.def,
       this.onSureBtnClicked,
       this.onTimeSortChanged})
       : super(key: key);
