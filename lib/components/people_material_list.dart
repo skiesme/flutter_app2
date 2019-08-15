@@ -40,7 +40,7 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
       try{
 
         if(widget.isPeople){
-          Map response = await getApi(context).getWorkTime(data.wonum);
+          Map response = await getApi().getWorkTime(data.wonum);
           WorkTimeResult result = new WorkTimeResult.fromJson(response);
 
           if(result.code != 0){
@@ -50,7 +50,7 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
 
           }
         } else {
-          Map response = await getApi(context).getOrderMaterial(data.wonum);
+          Map response = await getApi().getOrderMaterial(data.wonum);
           OrderMaterialResult result = new OrderMaterialResult.fromJson(response);
 
           if(result.code != 0){

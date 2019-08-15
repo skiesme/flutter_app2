@@ -15,7 +15,7 @@ class SamexInstance {
   UserInfo user;
 }
 
-SaMexApi getApi(BuildContext context) {
+SaMexApi getApi() {
   return SaMexApi.singleton;
 }
 
@@ -33,12 +33,16 @@ UserInfo getUserInfo(BuildContext context) {
 }
 
 String getCountUrl() {
-  return SaMexApi.baseUrl + '/user/count';
+  return getApi().baseUrl() + '/user/count';
 }
 
 void setUserInfo(BuildContext context, UserInfo info) {
   if (info == null) return;
   SamexInstance.singleton.user = info;
+}
+
+void setInProduction(bool pro) {
+  Cache.instance.setBoolValue(KEY_ENV, pro);
 }
 
 typedef QueryListener(String value);

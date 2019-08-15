@@ -333,7 +333,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       _request = true;
 
       if (!widget.chooseLocation) {
-        Map response = await getApi(context).getAssets(
+        Map response = await getApi().getAssets(
           location: widget.location,
           count: count,
           queryOne: queryOne,
@@ -346,7 +346,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
           setMemoryCache<List<DescriptionData>>(cacheKey, result.response);
         }
       } else {
-        Map response = await getApi(context).getLocations(
+        Map response = await getApi().getLocations(
           location: widget.location,
           count: count,
           queryOne: queryOne,

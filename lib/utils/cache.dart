@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
 const String KEY_TOKEN = "__token";
+const String KEY_ENV = "__app_env";
 const String KEY_SITE = "__site";
 const String KEY_USER_NAME = '__username';
 const String KEY_FONT_SIZE = '__textfontsize';
@@ -56,12 +57,14 @@ class Cache {
   double get textScaleFactor => _getDouble(KEY_FONT_SIZE);
   int get orderCount => _getInt(KEY_ORDER_COUNT);
 
+  bool get inProduction => _getBool(KEY_ENV, true);
+
   String _getString(String key) {
     return _prefs.getString(key) ?? "";
   }
 
-  bool _getBool(String key) {
-    return _prefs.getBool(key) ?? false;
+  bool _getBool(String key, bool def) {
+    return _prefs.getBool(key) ?? def;
   }
 
   int _getInt(String key) {

@@ -317,7 +317,7 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
     try {
       locationSite.clear();
       _request = true;
-      Map response = await getApi(context).getMaterials();
+      Map response = await getApi().getMaterials();
       MaterialResult result = new MaterialResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);

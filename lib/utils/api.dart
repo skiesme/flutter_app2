@@ -22,21 +22,13 @@ class SaMexApi {
   static final SaMexApi _instance = SaMexApi();
   static SaMexApi get singleton => _instance;
 
-  // static const bool inProduction = true;
-  static const bool inProduction =
-      const bool.fromEnvironment("dart.vm.product");
-  static String ipAndPort =
-      inProduction ? '172.19.1.63:40001' : '172.19.1.30:40001';
-  // static String ipAndPort = '10.18.40.7:40001'; // 嘉兴测试
+  Options _option;
 
-  static String baseUrl = 'http://$ipAndPort/app/api';
-  static Options _option;
+  CancelToken token;
 
-  static CancelToken token;
+  StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  static StreamSubscription<ConnectivityResult> _connectivitySubscription;
-
-  static Options _options(
+  Options _options(
       {int connectTimeout = 6000,
       receiveTimeout = 3000,
       Map<String, dynamic> headers,
@@ -69,6 +61,16 @@ class SaMexApi {
     return _option;
   }
 
+  String ipAndPort() {
+    return Cache.instance.inProduction
+        ? '172.19.1.63:40001'
+        : '172.19.1.30:40001';
+  }
+
+  String baseUrl() {
+    return 'http://${ipAndPort()}/app/api';
+  }
+
   String getImageUrl(String docinfoid) {
     return 'http://$ipAndPort/static/stepimage/${Cache.instance.site}/$docinfoid';
   }
@@ -78,7 +80,7 @@ class SaMexApi {
 
     String projectCode = packageInfo.buildNumber;
 
-    String url = 'http://$ipAndPort/app/version/$projectCode';
+    String url = 'http://${ipAndPort()}/app/version/$projectCode';
 
     Response response = await _dio.get(url, options: _option);
 //    print('$url: ${response.data}');
@@ -102,7 +104,7 @@ class SaMexApi {
   }
 
   Future<Map> getSites() async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/site/all');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/site/all');
 //    print(uri.toString());
     Response response = await _dio.get(uri.toString(), options: _options());
 //    print('${uri.toString()}: ${response.data}');
@@ -110,7 +112,7 @@ class SaMexApi {
   }
 
   Future<Map> changeSite(String siteID) async {
-    Response response = await _dio.post(baseUrl + '/changedefsite',
+    Response response = await _dio.post(baseUrl() + '/changedefsite',
         data: json.encode({
           'defsite': siteID,
         }),
@@ -120,9 +122,9 @@ class SaMexApi {
   }
 
   Future<Map> login(String userName, String password) async {
-    Response response = await _dio.post(baseUrl + '/login',
+    Response response = await _dio.post(baseUrl() + '/login',
         data: json.encode({'username': userName, 'password': password}));
-    print('login:$baseUrl ${response.data}');
+    print(baseUrl() + '/login');
     return response.data;
   }
 
@@ -150,7 +152,7 @@ class SaMexApi {
     });
 //    print('submit post: $data');
 
-    Response response = await _dio.post(baseUrl + '/workflow/submit',
+    Response response = await _dio.post(baseUrl() + '/workflow/submit',
         data: data, options: _options());
 //    print('submit: ${response.data}');
     return response.data;
@@ -158,7 +160,7 @@ class SaMexApi {
 
   Future<UserInfo> user([bool onlyCount = false]) async {
     UserInfo info;
-    String url = baseUrl + '/user' + (onlyCount ? '/count' : '');
+    String url = baseUrl() + '/user' + (onlyCount ? '/count' : '');
 
     try {
       Response response = await _dio.get(url, options: _options());
@@ -187,30 +189,8 @@ class SaMexApi {
     return info;
   }
 
-  static Future<int> getScheduleCount() async {
-    UserInfo info;
-    String url = baseUrl + '/user/count';
-
-    try {
-      Response response = await _dio.get(url, options: _options());
-//      print('user: ${response.data}');
-
-      UserResult result = new UserResult.fromJson(response.data);
-      if (result.code != 0) {
-//        print(result.message);
-      } else {
-        info = result.response;
-      }
-    } catch (e) {
-//      print('$url :  $e');
-//        Func.showMessage('网络出现异常: 获取用户数据失败!');
-    }
-
-    return info.orders;
-  }
-
   Future<Map> userAll() async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/user/all');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/user/all');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -235,7 +215,7 @@ class SaMexApi {
       int task = 0, // 1: 任务箱  0:工单箱
       String status = 'active' // 工单状态, '': 全部, 'active': 进行中, 'inactive':'完成'
       }) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/order', {
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/order', {
       'worktype': type,
       'time': '$time',
       'count': '$count',
@@ -254,7 +234,7 @@ class SaMexApi {
   }
 
   Future<Map> orderDetail(String orderId, [int time]) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/order/$orderId', {
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/order/$orderId', {
       'time': '${time ?? '0'}',
     });
 
@@ -266,7 +246,7 @@ class SaMexApi {
   }
 
   Future<Map> steps({String sopnum, String wonum, String site}) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/orderstep',
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/orderstep',
         {'sopnum': sopnum, 'wonum': wonum, 'site': site});
 
     Response response = await _dio.get(uri.toString(), options: _options());
@@ -277,7 +257,7 @@ class SaMexApi {
   }
 
   Future<Map> historyXj(String sopnum) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/ordernews/$sopnum');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/ordernews/$sopnum');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -287,7 +267,7 @@ class SaMexApi {
   }
 
   Future<Map> historyCM(String assetnum, {String location}) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/ordercmnews/$assetnum',
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/ordercmnews/$assetnum',
         location == null ? null : {'location': location});
 
     Response response = await _dio.get(uri.toString(), options: _options());
@@ -297,7 +277,7 @@ class SaMexApi {
   }
 
   Future<Map> orderStatus(String wonum) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/status/order/$wonum');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/status/order/$wonum');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -308,7 +288,7 @@ class SaMexApi {
 
   Future<Map> postStep(OrderStep step, List<UploadFileInfo> files,
       {OnUploadProgress onProgress}) async {
-    Uri uri = Uri.parse(baseUrl + '/orderstep/upload');
+    Uri uri = Uri.parse(baseUrl() + '/orderstep/upload');
 
     int stepno = step.stepno;
     if (stepno < 10) {
@@ -333,7 +313,7 @@ class SaMexApi {
 
   Future<Map> postAsset(String asset, List<UploadFileInfo> files,
       {OnUploadProgress onProgress}) async {
-    Uri uri = Uri.parse(baseUrl + '/asset/$asset');
+    Uri uri = Uri.parse(baseUrl() + '/asset/$asset');
 
     FormData formData = new FormData.from({"files": files});
 
@@ -361,7 +341,7 @@ class SaMexApi {
       String faultlev, // 故障等级
       List<UploadFileInfo> files,
       OnUploadProgress onProgress}) async {
-    Uri uri = Uri.parse(baseUrl + '/ordernew');
+    Uri uri = Uri.parse(baseUrl() + '/ordernew');
 
     Map<String, dynamic> jsonData = {
       "worktype": worktype,
@@ -393,7 +373,7 @@ class SaMexApi {
   }
 
   Future<Map> postOrderUpdate(OrderDetailData params) async {
-    Response response = await _dio.post(baseUrl + '/orderupdate',
+    Response response = await _dio.post(baseUrl() + '/orderupdate',
         data: json.encode(params.toJson()), options: _options());
     // print('postWorkTime: ${response.data}');
     return response.data;
@@ -401,7 +381,7 @@ class SaMexApi {
 
   Future<Map> postXJ(String woNum) async {
     Response response =
-        await _dio.post(baseUrl + '/order/xj/$woNum', options: _options());
+        await _dio.post(baseUrl() + '/order/xj/$woNum', options: _options());
 //    print('postXJ: ${response.data}');
     return response.data;
   }
@@ -411,7 +391,7 @@ class SaMexApi {
       int count = 50,
       bool queryOne = false,
       String asset = ''}) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/assetnums', {
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/assetnums', {
       'location': location,
       'asset': asset,
       'queryOne': '${queryOne ?? ''}',
@@ -429,7 +409,7 @@ class SaMexApi {
 
   Future<Map> getLocations(
       {String location = '', int count = 50, bool queryOne}) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/locations', {
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/locations', {
       'location': location,
       'queryOne': '${queryOne ?? ''}',
       'count': '$count'
@@ -445,7 +425,7 @@ class SaMexApi {
   }
 
   Future<Map> getWorkTime(String wonum) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/worktime/$wonum');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/worktime/$wonum');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -455,7 +435,7 @@ class SaMexApi {
   }
 
   Future<Map> getOrderMaterial(String wonum) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/ordermaterial/$wonum');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/ordermaterial/$wonum');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -465,21 +445,21 @@ class SaMexApi {
   }
 
   Future<Map> postOrderMaterial(OrderMaterialData params) async {
-    Response response = await _dio.post(baseUrl + '/ordermaterial',
+    Response response = await _dio.post(baseUrl() + '/ordermaterial',
         data: json.encode(params.toJson()), options: _options());
 //    print('postOrderMaterial: ${response.data}');
     return response.data;
   }
 
   Future<Map> delOrderMaterial(int id) async {
-    Response response =
-        await _dio.delete(baseUrl + '/ordermaterial/$id', options: _options());
+    Response response = await _dio.delete(baseUrl() + '/ordermaterial/$id',
+        options: _options());
 //    print('delOrderMaterial: ${response.data}');
     return response.data;
   }
 
   Future<Map> postWorkTime(WorkTimeData params) async {
-    Response response = await _dio.post(baseUrl + '/worktime',
+    Response response = await _dio.post(baseUrl() + '/worktime',
         data: json.encode(params.toJson()), options: _options());
 //    print('postWorkTime: ${response.data}');
     return response.data;
@@ -487,13 +467,13 @@ class SaMexApi {
 
   Future<Map> delWorkTime(int id) async {
     Response response =
-        await _dio.delete(baseUrl + '/worktime/$id', options: _options());
+        await _dio.delete(baseUrl() + '/worktime/$id', options: _options());
 //    print('delWorkTime: ${response.data}');
     return response.data;
   }
 
   Future<Map> getCMAttachments(int id) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/cm/attactments/$id');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/cm/attactments/$id');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
@@ -503,21 +483,21 @@ class SaMexApi {
   }
 
   Future<Map> getMaterials() async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/material');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/material');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-//    print('${uri.toString()}: ${response.data}');
+    print(uri.toString());
 
     return response.data;
   }
 
   Future<Map> getAssetDetail(String asset) async {
-    Uri uri = new Uri.http(ipAndPort, '/app/api/asset/$asset');
+    Uri uri = new Uri.http(ipAndPort(), '/app/api/asset/$asset');
 
     Response response = await _dio.get(uri.toString(), options: _options());
 
-//    print('${uri.toString()}: ${response.data}');
+    print(uri.toString());
 
     return response.data;
   }

@@ -91,7 +91,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
     });
 
     try {
-      Map response = await getApi(context).submit(
+      Map response = await getApi().submit(
           assigncode: _data?.hrid ?? Cache.instance.userName,
           actionid: widget.action.actionid,
           notes: _controller.text,

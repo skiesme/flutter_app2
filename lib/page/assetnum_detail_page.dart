@@ -25,7 +25,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
 
   void _getAssetDetail() async {
     try {
-      Map response = await getApi(context).getAssetDetail(widget.asset);
+      Map response = await getApi().getAssetDetail(widget.asset);
       AssetNumDetailResult result = new AssetNumDetailResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);

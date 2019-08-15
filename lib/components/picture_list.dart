@@ -148,7 +148,7 @@ class PictureListState extends State<PictureList> {
 
           ImageData data = ImageData.fromString(id);
           var cachedNetworkImage = CachedNetworkImage(
-              imageUrl: getApi(context).getImageUrl(data.path),
+              imageUrl: getApi().getImageUrl(data.path),
               placeholder: Center(child: CircularProgressIndicator()),
               errorWidget: Icon(
                 Icons.error,
@@ -159,7 +159,7 @@ class PictureListState extends State<PictureList> {
               Container(height: width, width: width, child: cachedNetworkImage),
               count));
 
-          data.path = getApi(context).getImageUrl(data.path);
+          data.path = getApi().getImageUrl(data.path);
 
           _resources.add(data);
           children.add(SizedBox(

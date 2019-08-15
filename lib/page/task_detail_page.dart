@@ -67,7 +67,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   Future _getOrderDetail({bool force = false}) async {
     try {
-      final response = await getApi(context)
+      final response = await getApi()
           .orderDetail(_wonum, force ? 0 : _data?.changedate);
       OrderDetailResult result = new OrderDetailResult.fromJson(response);
       if (result.code != 0) {
@@ -552,14 +552,14 @@ class _TaskDetailPageState extends State<TaskDetailPage>
           });
 
           try {
-            Map response = await getApi(context).postXJ(_wonum);
+            Map response = await getApi().postXJ(_wonum);
             OrderDetailResult result = new OrderDetailResult.fromJson(response);
             if (result.code != 0) {
               Func.showMessage(result.message);
             } else {
               Func.showMessage('提交成功');
 
-              getUserInfo(context).orders = await getApi(context).orderCount();
+              getUserInfo(context).orders = await getApi().orderCount();
 
               if (mounted) {
                 _popDone(true);
@@ -654,7 +654,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   void _updateTaskInfo(OrderDetailData newData) async {
     // debugPrint('资产编号：${newData.assetnum}, 描述：${newData.assetDescription}');
     try {
-      Map response = await getApi(context).postOrderUpdate(newData);
+      Map response = await getApi().postOrderUpdate(newData);
       OrderNewResult result = new OrderNewResult.fromJson(response);
       if (result.code == 0 && mounted) {
         setState(() {
@@ -825,7 +825,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       var images = new List();
 
       if (_type != OrderType.CM) {
-        Map response = await getApi(context)
+        Map response = await getApi()
             .steps(sopnum: '', wonum: _wonum, site: data.site);
         StepsResult result = new StepsResult.fromJson(response);
 
@@ -843,7 +843,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
           }
         }
       } else {
-        Map response = await getApi(context).getCMAttachments(data.ownerid);
+        Map response = await getApi().getCMAttachments(data.ownerid);
         CMAttachmentsResult result = new CMAttachmentsResult.fromJson(response);
 
         print(result.toJson().toString());

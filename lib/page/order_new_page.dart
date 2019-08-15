@@ -157,7 +157,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
     });
 
     try {
-      Map response = await getApi(context)
+      Map response = await getApi()
           .historyCM(_data.assetnum, location: _data.location);
       CMHistoryResult result = new CMHistoryResult.fromJson(response);
 
@@ -264,7 +264,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
       var post = () async {
         try {
           _manager?.stop();
-          Map response = await getApi(context).postOrder(
+          Map response = await getApi().postOrder(
               worktype: _data.worktype,
               assetnum: _data.assetnum,
               location: _data.location,

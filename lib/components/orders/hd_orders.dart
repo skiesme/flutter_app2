@@ -274,7 +274,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
       int isAll = _queryInfo.isAll ? 0 : 1;
       String status = _showOptionView ? _queryInfo.status : 'active';
-      Map response = await getApi(context).orderList(
+      Map response = await getApi().orderList(
           type: _queryInfo.workType,
           status: status,
           time: time,
@@ -332,8 +332,7 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
 
   void loadSteps(String wonum, String site) async {
     try {
-      Map response =
-          await getApi(context).steps(sopnum: '', wonum: wonum, site: site);
+      Map response = await getApi().steps(sopnum: '', wonum: wonum, site: site);
       StepsResult result = StepsResult.fromJson(response);
       if (result.code == 0) {
         if (mounted) {

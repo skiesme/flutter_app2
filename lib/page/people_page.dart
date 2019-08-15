@@ -198,7 +198,7 @@ class _PeoplePageState extends State<PeoplePage> {
       _loading = true;
     });
     try{
-      Map response = await getApi(context).userAll();
+      Map response = await getApi().userAll();
       PeopleResult result = new PeopleResult.fromJson(response);
       if(result.code != 0) {
         Func.showMessage(result.message);

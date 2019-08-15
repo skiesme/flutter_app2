@@ -124,7 +124,7 @@ class _StepNewPageState extends State<StepNewPage> {
       var postStep = () async {
         try {
           _manager?.stop();
-          Map response = await getApi(context).postStep(
+          Map response = await getApi().postStep(
               _step, lists,
               onProgress: (send, total){
               });

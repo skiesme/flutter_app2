@@ -100,7 +100,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
     });
 
     try{
-      Map response = await getApi(context).delWorkTime(widget.data.hrtransid);
+      Map response = await getApi().delWorkTime(widget.data.hrtransid);
       WorkTimeResult result = new WorkTimeResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);
@@ -135,7 +135,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
     _data.actualhrs = double.parse(_controller.text);
 
     try{
-      Map response = await getApi(context).postWorkTime(_data);
+      Map response = await getApi().postWorkTime(_data);
       WorkTimeResult result = new WorkTimeResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);

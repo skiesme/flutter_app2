@@ -260,7 +260,7 @@ class _RecentHistoryState extends State<RecentHistory>
         if (type == OrderType.XJ &&
             data.sopnum != null &&
             data.sopnum.length > 0) {
-          Map response = await getApi(context).historyXj(data.sopnum);
+          Map response = await getApi().historyXj(data.sopnum);
           HistoryResult result = new HistoryResult.fromJson(response);
           if (result.code != 0) {
             Func.showMessage(result.message);
@@ -269,7 +269,7 @@ class _RecentHistoryState extends State<RecentHistory>
           }
         } else if (type == OrderType.CM || type == OrderType.PM) {
           if (data.actfinish != 0) {
-            Map response = await getApi(context).orderStatus(data.wonum);
+            Map response = await getApi().orderStatus(data.wonum);
             OrderStatusResult result = new OrderStatusResult.fromJson(response);
 
             if (result.code != 0) {
@@ -279,7 +279,7 @@ class _RecentHistoryState extends State<RecentHistory>
             }
           } else {
             if (data.assetnum.isNotEmpty) {
-              Map response = await getApi(context).historyCM(data.assetnum);
+              Map response = await getApi().historyCM(data.assetnum);
               CMHistoryResult result = new CMHistoryResult.fromJson(response);
 
               if (result.code != 0) {

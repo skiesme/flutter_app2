@@ -79,7 +79,7 @@ class _UploadAssetPageState extends State<UploadAssetPage> {
       var post = () async {
         try {
           _manager?.stop();
-          Map response = await getApi(context).postAsset(
+          Map response = await getApi().postAsset(
               widget.asset.assetnum,
               list);
           OrderNewResult result = new OrderNewResult.fromJson(response);

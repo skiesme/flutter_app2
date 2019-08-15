@@ -80,7 +80,7 @@ then
     uploadIos
 elif [ "$1" = "apk" ]
 then
-    echo "build ios release ..."
+    echo "build apk release ..."
     uploadAndroid
 else
     echo "please choose platform eg: 'sh public.sh ios/apk/all'"

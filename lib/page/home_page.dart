@@ -234,7 +234,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
 
   void _checkUpdate() async {
     try {
-      final response = await getApi(context).checkUpdate();
+      final response = await getApi().checkUpdate();
       UpdateResult result = UpdateResult.fromJson(response);
       if (result.code == 0) {
         showDialog(
@@ -253,7 +253,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
                       Navigator.of(context).pop(true);
 
                       try {
-                        OpenFile.open(await getApi(context).download(
+                        OpenFile.open(await getApi().download(
                             result.response.url, (int received, int total) {
                           int percent = ((received / total) * 100).toInt();
 
@@ -378,7 +378,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
   }
 
   Future<Null> _handlerRefresh() async {
-    UserInfo info = await getApi(context).user();
+    UserInfo info = await getApi().user();
     if (Platform.isAndroid) {
       _checkUpdate();
     }

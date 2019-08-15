@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final response = await getApi(context).login(_controller.text, _controller2.text);
+      final response = await getApi().login(_controller.text, _controller2.text);
       LoginResult result = new LoginResult.fromJson(response);
       if(result.code != 0){
         if(result.code == 20000) {

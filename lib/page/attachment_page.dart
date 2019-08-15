@@ -193,7 +193,7 @@ class _AttachmentPageState extends State<AttachmentPage>
   Future<Null> _getSteps() async {
     if (widget.detailData.wonum != null) {
       try {
-        Map response = await getApi(context).steps(
+        Map response = await getApi().steps(
             sopnum: '', wonum: widget.detailData.wonum, site: Cache.instance.site);
         StepsResult result = new StepsResult.fromJson(response);
 
@@ -217,7 +217,7 @@ class _AttachmentPageState extends State<AttachmentPage>
     if (widget.detailData.wonum != null) {
       try {
         Map response =
-            await getApi(context).getCMAttachments(widget.detailData.ownerid);
+            await getApi().getCMAttachments(widget.detailData.ownerid);
         CMAttachmentsResult result = new CMAttachmentsResult.fromJson(response);
 
         print(result.toJson().toString());

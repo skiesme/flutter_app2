@@ -105,7 +105,7 @@ class _StepPageState extends State<StepPage>{
       var postStep = () async {
         try {
           _manager?.stop();
-          Map response = await getApi(context).postStep(
+          Map response = await getApi().postStep(
             widget.data, lists,
             onProgress: (send, total){
               int percent = ((send / total) * 100).toInt();

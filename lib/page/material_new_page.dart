@@ -65,8 +65,7 @@ class _MaterialPageState extends State<MaterialPage> {
     });
 
     try {
-      Map response =
-          await getApi(context).delOrderMaterial(widget.data.woitemid);
+      Map response = await getApi().delOrderMaterial(widget.data.woitemid);
       OrderMaterialResult result = new OrderMaterialResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);
@@ -116,7 +115,7 @@ class _MaterialPageState extends State<MaterialPage> {
     _data.itemqty = double.parse(_controller.text);
 
     try {
-      Map response = await getApi(context).postOrderMaterial(_data);
+      Map response = await getApi().postOrderMaterial(_data);
       OrderMaterialResult result = new OrderMaterialResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);
