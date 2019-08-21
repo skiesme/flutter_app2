@@ -252,22 +252,25 @@ class _HDOrderItemState extends State<HDOrderItem> {
         children: <Widget>[
           buildSyncStatus(),
           SizedBox(width: _padding),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '标题: ${widget.info.description}',
-                style: TextStyle(
-                    color: getOrderTextColor(), fontWeight: FontWeight.w700),
-              ),
-              Text('设备: ${widget.info.assetDescription}'),
-              widget.isAll
-                  ? Text(
-                      '上报时间: ${Func.getFullTimeString(widget.info.reportDate)}')
-                  : Text(
-                      '更新时间: ${Func.getFullTimeString(widget.info.reportDate)}')
-            ],
+          Flexible(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '标题: ${widget.info.description}',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: getOrderTextColor(), fontWeight: FontWeight.w700),
+                ),
+                Text('设备: ${widget.info.assetDescription}'),
+                widget.isAll
+                    ? Text(
+                        '上报时间: ${Func.getFullTimeString(widget.info.reportDate)}')
+                    : Text(
+                        '更新时间: ${Func.getFullTimeString(widget.info.reportDate)}')
+              ],
+            ),
           )
         ],
       ),

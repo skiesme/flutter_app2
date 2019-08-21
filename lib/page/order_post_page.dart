@@ -97,7 +97,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
           notes: _controller.text,
           ownerid: widget.data.ownerid,
           action: widget.action.instruction,
-          site: Cache.instance.site,
+          site: widget.data.site ?? Cache.instance.site,
           wonum: widget.data.wonum,
           woprof: _woprof,
           faultlev: _faultlev);
