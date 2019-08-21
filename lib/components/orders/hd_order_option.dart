@@ -241,6 +241,8 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
         return '保养';
       case OrderType.CM:
         return '报修';
+      case OrderType.BG:
+        return '办公';
       case OrderType.XJ:
         return '巡检';
       case OrderType.XJ1:

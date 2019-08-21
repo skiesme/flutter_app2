@@ -329,7 +329,6 @@ class _ChooseMaterialPageState extends State<ChooseMaterialPage>
         });
       }
     } catch (e) {
-      print(e);
       setState(() {
         setMemoryCache<List<MaterialData>>(
             cacheKey, getMemoryCache(cacheKey) ?? []);

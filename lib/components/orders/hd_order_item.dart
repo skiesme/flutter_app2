@@ -25,47 +25,39 @@ class _HDOrderItemState extends State<HDOrderItem> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   /** Colors */
   Color getColor() {
-    switch (getOrderType(widget.info.worktype)) {
-      case OrderType.XJ:
-        if (widget.info.actfinish == 0) {
-          return Colors.blue.shade900;
-        } else {
-          return Colors.green;
-        }
-        break;
-      case OrderType.CM:
-        if (widget.info.status.contains('待批准')) {
-          return Colors.red.shade900;
-        } else if (widget.info.status.contains('已批准')) {
-          return Colors.cyan;
-        } else if (widget.info.status.contains('待验收')) {
-          return Colors.orange.shade600;
-        } else if (widget.info.status.contains('重做')) {
-          return Colors.red.shade400;
-        } else {
-          return Colors.green;
-        }
-        break;
-      case OrderType.PM:
-        if (widget.info.status.contains('进行中')) {
-          return Colors.blue.shade900;
-        } else if (widget.info.status.contains('待验收')) {
-          return Colors.orange.shade600;
-        } else if (widget.info.status.contains('重做')) {
-          return Colors.red.shade400;
-        } else {
-          return Colors.green;
-        }
-        break;
-      default:
-        return Colors.deepOrangeAccent;
+    OrderType type = getOrderType(widget.info.worktype);
+    if (type == OrderType.XJ) {
+      if (widget.info.actfinish == 0) {
+        return Colors.blue.shade900;
+      } else {
+        return Colors.green;
+      }
+    } else if (type == OrderType.CM || type == OrderType.BG) {
+      if (widget.info.status.contains('待批准')) {
+        return Colors.red.shade900;
+      } else if (widget.info.status.contains('已批准')) {
+        return Colors.cyan;
+      } else if (widget.info.status.contains('待验收')) {
+        return Colors.orange.shade600;
+      } else if (widget.info.status.contains('重做')) {
+        return Colors.red.shade400;
+      } else {
+        return Colors.green;
+      }
+    } else if (type == OrderType.PM) {
+      if (widget.info.status.contains('进行中')) {
+        return Colors.blue.shade900;
+      } else if (widget.info.status.contains('待验收')) {
+        return Colors.orange.shade600;
+      } else if (widget.info.status.contains('重做')) {
+        return Colors.red.shade400;
+      } else {
+        return Colors.green;
+      }
+    } else {
+      return Colors.deepOrangeAccent;
     }
   }
 
@@ -88,6 +80,8 @@ class _HDOrderItemState extends State<HDOrderItem> {
         return Colors.pink.shade600;
       case OrderType.CM:
         return Colors.deepPurpleAccent;
+      case OrderType.BG:
+        return Colors.deepPurpleAccent;
       default:
         return Colors.orange.shade600;
     }
@@ -108,6 +102,9 @@ class _HDOrderItemState extends State<HDOrderItem> {
         break;
       case OrderType.CM:
         str = '报修';
+        break;
+      case OrderType.BG:
+        str = '办公';
         break;
       default:
         str = '保养';

@@ -135,11 +135,17 @@ class _RecentHistoryState extends State<RecentHistory>
     List<Widget> children = <Widget>[];
     for (int i = 0, len = _cmHistoryList.length; i < len; i++) {
       CMHistoryData f = _cmHistoryList[i];
+      String title = '保养单';
+      if (f.worktype == 'CM') {
+        title = '报修单';
+      } else if (f.worktype == 'BG') {
+        title = '办公工单';
+      }
+
       children.add(SimpleButton(
         child: ListTile(
           isThreeLine: true,
-          title:
-              Text(f.wonum ?? '' + '(${f.worktype == 'CM' ? '报修单' : '保养单'})'),
+          title: Text(f.wonum ?? '' + '(${title})'),
           subtitle:
               Text('${f.description}\n${Func.getFullTimeString(f.actfinish)}'),
           trailing: Text(

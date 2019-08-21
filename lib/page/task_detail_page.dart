@@ -61,27 +61,33 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   void initState() {
     super.initState();
     _wonum = widget.wonum ?? '';
+    _updateData(getMemoryCache(cacheKey, expired: false));
+  }
 
-    _data = getMemoryCache(cacheKey, expired: false);
+  void _updateData(OrderDetailData d) {
+    if (null == d) {
+      d = OrderDetailData();
+    }
+
+    setState(() {
+      _data = d;
+      _type = getOrderType(d.worktype);
+    });
   }
 
   Future _getOrderDetail({bool force = false}) async {
     try {
-      final response = await getApi()
-          .orderDetail(_wonum, force ? 0 : _data?.changedate);
+      final response =
+          await getApi().orderDetail(_wonum, force ? 0 : _data?.changedate);
       OrderDetailResult result = new OrderDetailResult.fromJson(response);
       if (result.code != 0) {
         Func.showMessage(result.message);
       } else {
         OrderDetailData data = result.response;
         if (data != null) {
-          if (mounted) {
-            setMemoryCache<OrderDetailData>(cacheKey, data);
-            setState(() {
-              _data = data;
-              _type = getOrderType(_data.worktype);
-            });
-          }
+          setMemoryCache<OrderDetailData>(cacheKey, data);
+
+          _updateData(data);
         }
 
         if (_data != null) {
@@ -109,6 +115,8 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   String getWorkTypeString() {
     switch (_type) {
+      case OrderType.BG:
+        return '办公工单';
       case OrderType.CM:
         return '报修单';
       case OrderType.XJ:
@@ -340,8 +348,8 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   Color getColor(String status) {
-    String type = getWorkTypeString();
-    if (type.contains('报修')) {
+    debugPrint("type:${_type}");
+    if (_type == OrderType.CM || _type == OrderType.BG) {
       if (status.contains('待批准')) {
         return Colors.red.shade900;
       } else if (status.contains('已批准')) {
@@ -353,13 +361,17 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       } else {
         return Colors.green;
       }
-    } else if (type.contains('巡检')) {
+    } else if (_type == OrderType.XJ ||
+        _type == OrderType.XJ1 ||
+        _type == OrderType.XJ2 ||
+        _type == OrderType.XJ3 ||
+        _type == OrderType.XJ4) {
       if (status.contains('进行中')) {
         return Colors.blue.shade900;
       } else {
         return Colors.green;
       }
-    } else if (type.contains('保养')) {
+    } else if (_type == OrderType.PM) {
       if (status.contains('进行中')) {
         return Colors.blue.shade900;
       } else if (status.contains('待验收')) {
@@ -825,8 +837,8 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       var images = new List();
 
       if (_type != OrderType.CM) {
-        Map response = await getApi()
-            .steps(sopnum: '', wonum: _wonum, site: data.site);
+        Map response =
+            await getApi().steps(sopnum: '', wonum: _wonum, site: data.site);
         StepsResult result = new StepsResult.fromJson(response);
 
         if (result.code == 0) {
