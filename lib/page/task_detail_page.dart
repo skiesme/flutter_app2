@@ -61,13 +61,16 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   void initState() {
     super.initState();
     _wonum = widget.wonum ?? '';
-    _updateData(getMemoryCache(cacheKey, expired: false));
   }
 
   void _updateData(OrderDetailData d) {
     if (null == d) {
       d = OrderDetailData();
+    } else {
+      _getSteps(_data);
     }
+
+    debugPrint("task detail :${d.toJson()}");
 
     setState(() {
       _data = d;
@@ -85,15 +88,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       } else {
         OrderDetailData data = result.response;
         if (data != null) {
-          setMemoryCache<OrderDetailData>(cacheKey, data);
-
           _updateData(data);
-        }
-
-        if (_data != null) {
-          _getSteps(_data);
-        } else if (data != null) {
-          _getSteps(data);
         }
       }
 
@@ -348,7 +343,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   Color getColor(String status) {
-    debugPrint("type:${_type}");
     if (_type == OrderType.CM || _type == OrderType.BG) {
       if (status.contains('待批准')) {
         return Colors.red.shade900;
@@ -626,7 +620,9 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   List<PopupMenuItem<String>> getPopupMenuButton() {
     List<PopupMenuItem<String>> list = new List();
-    switch (getOrderType(_data?.worktype)) {
+
+    debugPrint("actions: ${_data.actions}");
+    switch (_type) {
       case OrderType.XJ:
         list.addAll(<PopupMenuItem<String>>[
           const PopupMenuItem<String>(
@@ -640,6 +636,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         ]);
         break;
       case OrderType.CM:
+      case OrderType.BG:
       case OrderType.PM:
         _data?.actions?.forEach((HDActions f) {
           if (_data?.status.contains('待验收') &&
@@ -669,10 +666,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       Map response = await getApi().postOrderUpdate(newData);
       OrderNewResult result = new OrderNewResult.fromJson(response);
       if (result.code == 0 && mounted) {
-        setState(() {
-          _data = newData;
-        });
-        setMemoryCache<OrderDetailData>(cacheKey, newData);
+        _updateData(newData);
       } else {
         Func.showMessage('保存失败');
         return;
@@ -824,14 +818,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         ));
   }
 
-  String get cacheKey {
-    return 'task_detail_${_wonum}';
-  }
-
-  String get cacheStepsKey {
-    return 'stepsList_${_wonum}';
-  }
-
   void _getSteps(OrderDetailData data) async {
     try {
       var images = new List();
@@ -851,7 +837,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
             for (OrderStep item in resSteps) {
               images.addAll(item.images);
             }
-            setMemoryCache<List<OrderStep>>(cacheStepsKey, resSteps);
           }
         }
       } else {
@@ -880,7 +865,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
 
   @override
   void afterFirstLayout(BuildContext context) {
-    _getOrderDetail();
+    _getOrderDetail(force: true);
   }
 
   @override
