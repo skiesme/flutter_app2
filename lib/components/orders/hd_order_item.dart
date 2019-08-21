@@ -198,13 +198,10 @@ class _HDOrderItemState extends State<HDOrderItem> {
         if (status.contains('进行中')) {
           bool isDid = false;
           if (steps != null && steps.length > 0) {
-            for (var item in steps) {
+            isDid = steps.any((item) {
               String status = item.status ?? '';
-              if (status.length > 0) {
-                isDid = true;
-                break;
-              }
-            }
+              return status.length > 0;
+            });
           }
           image = isDid ? ImageAssets.order_ing_red : ImageAssets.order_ing;
         } else if (status.contains('待验收')) {

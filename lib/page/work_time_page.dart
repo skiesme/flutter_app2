@@ -238,8 +238,8 @@ class _WorkTimePageState extends State<WorkTimePage> {
       String names = '';
       List<PeopleData> data = _people;
 
-      for(int i = 0, len = data.length; i < len ; i++){
-        names += '${data[i].displayname} ';
+      for (PeopleData item in data) {
+        names += '${item.displayname} ';
       }
 
       return names;

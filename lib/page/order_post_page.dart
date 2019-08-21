@@ -86,9 +86,11 @@ class _OrderPostPageState extends State<OrderPostPage> {
 
     await new Future.delayed(new Duration(milliseconds: 200), () {});
 
-    setState(() {
-      _show = true;
-    });
+    if (mounted) {
+      setState(() {
+        _show = true;
+      });
+    }
 
     try {
       Map response = await getApi().submit(

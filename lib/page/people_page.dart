@@ -7,7 +7,6 @@ import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/components/simple_button.dart';
 
 class PeoplePage extends StatefulWidget {
-
   final RegExp req;
   final bool trade;
   final bool multiple;
@@ -18,7 +17,6 @@ class PeoplePage extends StatefulWidget {
 }
 
 class _PeoplePageState extends State<PeoplePage> {
-
   TextEditingController _scroller;
   bool _loading = true;
 
@@ -26,72 +24,65 @@ class _PeoplePageState extends State<PeoplePage> {
 
   List<PeopleData> _data;
 
-
   @override
   void initState() {
     super.initState();
 
-    _scroller = new  TextEditingController(text: '');
-    _scroller.addListener((){
-      setState(() {
-
-      });
+    _scroller = new TextEditingController(text: '');
+    _scroller.addListener(() {
+      setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final list = getMemoryCache(cacheKey, callback: (){
+    final list = getMemoryCache(cacheKey, callback: () {
       _getUsers();
     });
 
-    if(list != null) _loading = false;
+    if (list != null) _loading = false;
 
     var actions = <Widget>[
       new IconButton(
           icon: Icon(Icons.refresh),
           tooltip: '数据刷新',
-          onPressed: (){
-            if(!_loading){
+          onPressed: () {
+            if (!_loading) {
               _getUsers();
             }
           }),
     ];
 
-    if(widget.multiple){
-      actions.add(IconButton(icon: Icon(Icons.done), onPressed: (){
-        if(_chooseData.length == 0){
-          Func.showMessage("请至少选择一个人员");
-        } else {
-          List<PeopleData> result = new List();
+    if (widget.multiple) {
+      actions.add(IconButton(
+          icon: Icon(Icons.done),
+          onPressed: () {
+            if (_chooseData.length == 0) {
+              Func.showMessage("请至少选择一个人员");
+            } else {
+              List<PeopleData> result = new List();
 
+              for (var key in _chooseData.keys) {
+                print('key = $key');
+                result.add(_data[key]);
+              }
 
-          for(var key in _chooseData.keys){
-            print('key = $key');
-            result.add(_data[key]);
-          }
+              print('$result');
 
-          print('$result');
-
-          Navigator.pop(context, result);
-
-        }
-      }));
+              Navigator.pop(context, result);
+            }
+          }));
     }
 
     return new Scaffold(
-      appBar: new AppBar(
-        title: Text('人员选择'),
-        centerTitle: true,
-        actions: actions
-      ),
+      appBar:
+          new AppBar(title: Text('人员选择'), centerTitle: true, actions: actions),
       body: new Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Container(
-            color:Style.backgroundColor,
+            color: Style.backgroundColor,
             padding: const EdgeInsets.all(20.0),
             child: new TextField(
               controller: _scroller,
@@ -101,93 +92,99 @@ class _PeoplePageState extends State<PeoplePage> {
                   contentPadding: const EdgeInsets.all(8.0),
                   hintStyle: TextStyle(fontSize: 16.0),
                   border: new OutlineInputBorder(),
-                  suffixIcon: _scroller.text.isNotEmpty ? new IconButton(icon: Icon(Icons.clear), onPressed: (){
-                    _scroller.clear();
-                  }): null
-              ),
+                  suffixIcon: _scroller.text.isNotEmpty
+                      ? new IconButton(
+                          icon: Icon(Icons.clear),
+                          onPressed: () {
+                            _scroller.clear();
+                          })
+                      : null),
             ),
           ),
-          Expanded(child: _loading ? Center(child: CircularProgressIndicator(),) : _getContent(),)
-
+          Expanded(
+            child: _loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : _getContent(),
+          )
         ],
       ),
     );
   }
 
-  List<PeopleData> _filters(List<PeopleData> data){
-    if(data == null) return null;
+  List<PeopleData> _filters(List<PeopleData> data) {
+    if (data == null) return null;
 
     return data.where((PeopleData f) {
-      if(widget.req != null) {
+      if (widget.req != null) {
         bool req = widget.req.hasMatch(f.department);
 //        print('req = ${widget.req}, f.department=${f.department}, result=$req');
-        if(!req) return false;
+        if (!req) return false;
       }
 
-      if(widget.trade){
-        if(f.trade == null || f.trade.isEmpty){
+      if (widget.trade) {
+        if (f.trade == null || f.trade.isEmpty) {
           return false;
         }
       }
 
-      if(_scroller.text.length > 0){
-        return  f.hrid.contains(_scroller.text) || f.displayname.contains(_scroller.text);
+      if (_scroller.text.length > 0) {
+        return f.hrid.contains(_scroller.text) ||
+            f.displayname.contains(_scroller.text);
       }
 
-      return  true;
-
+      return true;
     }).toList();
-
   }
 
-  Widget _getContent(){
+  Widget _getContent() {
     List<PeopleData> data = getMemoryCache(cacheKey, expired: false);
 
     data = _filters(data);
 
-    if(data == null || data.length == 0){
-      return Center(child: Text('没有可选择的人员'),);
+    if (data == null || data.length == 0) {
+      return Center(
+        child: Text('没有可选择的人员'),
+      );
     }
 
     _data = data;
     return new ListView.builder(
       shrinkWrap: true,
       itemCount: data.length,
-      itemBuilder: (_, int index){
+      itemBuilder: (_, int index) {
         PeopleData people = data[index];
         return new Container(
             child: new Column(
-              children: <Widget>[
-                SimpleButton(
-
-                  child:ListTile(
-                    title: Text(people.displayname),
-                    subtitle: Text(people.title),
-                    trailing: Text(people.department),
-                    selected: widget.multiple ? _chooseData.containsKey(index) : false,
-                  ),
-                  onTap: (){
-                    if(widget.multiple){
-                      if(_chooseData.containsKey(index)){
-                        _chooseData.remove(index);
-                      } else {
-                        _chooseData[index] = true;
-                      }
-                      setState(() {
-
-                      });
-                    } else {
-                      Navigator.pop(context, people);
-                    }
-                  },
-                ),
-
-                Divider(height: 1.0,)
-              ],
+          children: <Widget>[
+            SimpleButton(
+              child: ListTile(
+                title: Text(people.displayname),
+                subtitle: Text(people.title),
+                trailing: Text(people.department),
+                selected:
+                    widget.multiple ? _chooseData.containsKey(index) : false,
+              ),
+              onTap: () {
+                if (widget.multiple) {
+                  if (_chooseData.containsKey(index)) {
+                    _chooseData.remove(index);
+                  } else {
+                    _chooseData[index] = true;
+                  }
+                  setState(() {});
+                } else {
+                  Navigator.pop(context, people);
+                }
+              },
+            ),
+            Divider(
+              height: 1.0,
             )
-        );
+          ],
+        ));
       },
-
     );
   }
 
@@ -197,22 +194,22 @@ class _PeoplePageState extends State<PeoplePage> {
     setState(() {
       _loading = true;
     });
-    try{
+    try {
       Map response = await getApi().userAll();
       PeopleResult result = new PeopleResult.fromJson(response);
-      if(result.code != 0) {
+      if (result.code != 0) {
         Func.showMessage(result.message);
       } else {
         setMemoryCache<List<PeopleData>>(cacheKey, result.response);
       }
-
-    } catch (e){
-      setMemoryCache<List<PeopleData>>(cacheKey, getMemoryCache(cacheKey)??[]);
+    } catch (e) {
+      setMemoryCache<List<PeopleData>>(
+          cacheKey, getMemoryCache(cacheKey) ?? []);
 
       Func.showMessage('网络异常, 请求人员接口失败');
     }
 
-    if(mounted){
+    if (mounted) {
       setState(() {
         _loading = false;
       });
