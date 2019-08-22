@@ -48,6 +48,8 @@ class _SettingsPageState extends State<SettingsPage>
   List<String> _envList = ['生产', '测试'];
   String _selectedEnv = Cache.instance.inProduction ? '生产' : '测试';
 
+  String _verStr = 'Version 1.2.1908221016';
+
   String get cacheKey => '__Cache.instance.site_list';
   @override
   void initState() {
@@ -68,8 +70,8 @@ class _SettingsPageState extends State<SettingsPage>
       _defSite = _siteList.first.description;
     }
 
-    return new Scaffold(
-        appBar: new AppBar(
+    return Scaffold(
+        appBar: AppBar(
           leading: SamexBackButton(),
           title: GestureDetector(
             onLongPress: () {
@@ -81,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage>
           ),
           centerTitle: true,
         ),
-        body: new Container(
+        body: Container(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[_buildBody(), _buildVersion()],
@@ -125,28 +127,27 @@ class _SettingsPageState extends State<SettingsPage>
               builder: (context, state) {
                 return SimpleDialog(
                   contentPadding: const EdgeInsets.all(10.0),
-                  title: new Text('选择水厂',
-                      style: new TextStyle(fontSize: 18.0, color: Colors.black),
+                  title: Text('选择水厂',
+                      style: TextStyle(fontSize: 18.0, color: Colors.black),
                       textAlign: TextAlign.center),
                   children: _siteList.map((Site site) {
-                    return new ListTile(
+                    return ListTile(
                       trailing: site.description == title
                           ? const Icon(Icons.check)
                           : null,
-                      title: new Text(site.description),
+                      title: Text(site.description),
                       onTap: () {
                         Navigator.pop(context);
                         String msg1 = '确定切换水厂后，您需要进行重新登录。';
-                        String msg2 =
-                            '是否将水厂切换至 "${_selectedSite.description}"？';
-                        final commit = () {
+                        String msg2 = '是否将水厂切换至 "${site.description ?? ''}"？';
+                        final changeSite = () {
                           setState(() {
                             _selectedSite = site;
                             // 切换水厂 重新登录
                             updateUserSite(_selectedSite.siteid);
                           });
                         };
-                        showLogOutDialog(context, msg1, msg2, commit);
+                        showLogOutDialog(context, msg1, msg2, changeSite);
                       },
                     );
                   }).toList(),
@@ -232,17 +233,13 @@ class _SettingsPageState extends State<SettingsPage>
   void loadSiteDatas() async {
     try {
       final response = await getApi().getSites();
-      SiteResult res = new SiteResult.fromJson(response);
+      SiteResult res = SiteResult.fromJson(response);
       if (res.code != 0) {
         Func.showMessage(res.message);
       } else {
         setMemoryCache<List<Site>>(cacheKey, res.response);
         setState(() {
           _siteList = res.response;
-
-          if (_defSite == null && _siteList != null && _siteList.length > 0) {
-            _defSite = _siteList.first.description;
-          }
         });
       }
     } catch (e) {
@@ -259,7 +256,7 @@ class _SettingsPageState extends State<SettingsPage>
           style: TextStyle(fontSize: 17.0),
         ),
         Text(
-          'Version 1.2.1908131123',
+          _verStr,
           style: TextStyle(fontSize: 11.0),
         ),
         Text('')
@@ -270,7 +267,7 @@ class _SettingsPageState extends State<SettingsPage>
   void updateUserSite(String site) async {
     try {
       final response = await getApi().changeSite(site);
-      UserResult res = new UserResult.fromJson(response);
+      UserResult res = UserResult.fromJson(response);
       if (res.code != 0) {
         Func.showMessage(res.message);
       } else {
@@ -288,7 +285,7 @@ class _SettingsPageState extends State<SettingsPage>
     clearMemoryCache();
 
     Navigator.pushReplacement(
-        context, new MaterialPageRoute(builder: (_) => new LoginPage()));
+        context, MaterialPageRoute(builder: (_) => new LoginPage()));
   }
 
   void showLogOutDialog(

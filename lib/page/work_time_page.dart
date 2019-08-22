@@ -458,7 +458,7 @@ class _WorkTimePageState extends State<WorkTimePage> {
                           controller: _controller,
                           keyboardType: TextInputType.number,
                           enabled: !widget.read,
-                          decoration: new InputDecoration.collapsed(
+                          decoration: InputDecoration.collapsed(
                             hintText: '请输入实际工时',
                           ),
                         ),
