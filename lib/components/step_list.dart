@@ -149,7 +149,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
       }
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Center(child: Text('没有发现步骤')),
+        child: Center(child: Text('未发现步骤')),
       );
     }
 

@@ -51,7 +51,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     if (data == null) {
       if (_error)
         return Center(
-          child: Text('没有发现该资产对应的数据'),
+          child: Text('未发现该资产对应的数据'),
         );
       return Center(
         child: CircularProgressIndicator(),

@@ -212,7 +212,7 @@ class PeopleAndMaterialListState extends State<PeopleAndMaterialList>  with Afte
       if(_first) {
         child =  Center(child: CircularProgressIndicator());
       } else {
-        child =  Center(child: Text('没有发现'));
+        child =  Center(child: Text('未发现'));
       }
 
       return Container(
