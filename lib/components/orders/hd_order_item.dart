@@ -81,7 +81,7 @@ class _HDOrderItemState extends State<HDOrderItem> {
       case OrderType.CM:
         return Colors.deepPurpleAccent;
       case OrderType.BG:
-        return Colors.deepPurpleAccent;
+        return Colors.lightGreen.shade400;
       default:
         return Colors.orange.shade600;
     }
