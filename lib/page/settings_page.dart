@@ -200,7 +200,7 @@ class _SettingsPageState extends State<SettingsPage>
                         final commit = () {
                           setState(() {
                             _selectedEnv = env;
-                            setInProduction((env == '生产'));
+                            setInProduction(pro: (env == '生产'));
                           });
                           gotoLogin();
                         };

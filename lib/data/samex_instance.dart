@@ -9,7 +9,7 @@ class SamexInstance {
   static final SamexInstance _instance = SamexInstance();
   static SamexInstance get singleton => _instance;
 
-  static final bool isModule = false;
+  static final bool isModule = true;
 
   String token = Cache.instance.toke ?? '';
   UserInfo user;
@@ -41,7 +41,7 @@ void setUserInfo(BuildContext context, UserInfo info) {
   SamexInstance.singleton.user = info;
 }
 
-void setInProduction(bool pro) {
+void setInProduction({bool pro = true}) {
   Cache.instance.setBoolValue(KEY_ENV, pro);
 }
 

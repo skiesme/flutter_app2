@@ -162,50 +162,62 @@ class _MyAppState extends State<MyApp> {
     return null;
   }
 
+  void _setup(Map params) {
+    String token = _value(params, 'token');
+    if (null != token) {
+      setToken(context, token);
+    }
+
+    bool dev = _value(params, 'dev');
+    if (null != dev) {
+      setInProduction(pro: !dev);
+    }
+  }
+
   /** 对外Native 开放的 页面 */
   /// 其他
   Widget renderHome(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return MainPage();
   }
 
   Widget renderSetting(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return SettingsPage();
   }
 
   /// 任务箱
   Widget renderTaksList(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return TaskPage();
   }
 
   Widget renderTaksDetail(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     String wonum = _value(params, 'wonum');
     return TaskDetailPage(wonum: wonum);
   }
 
   // 工单
   Widget renderWorkOrderList(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return TaskPage(isTask: false);
   }
 
   // 新增工单
   Widget renderWorkOrderAdd(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return OrderNewPage();
   }
 
   // 资产
   Widget renderChooseAsset(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return ChooseAssetPage();
   }
 
   Widget renderChooseMaterial(String pageName, Map params, String _) {
-    setToken(context, _value(params, 'token'));
+    _setup(params);
     return ChooseMaterialPage();
   }
 }
