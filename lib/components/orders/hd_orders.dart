@@ -135,19 +135,12 @@ class HDOrdersState extends State<HDOrders> with AfterLayoutMixin<HDOrders> {
               isAll: widget.type == OrderType.ALL,
               onTap: () {
                 Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => TaskDetailPage(
-                                  wonum: info.wonum,
-                                ),
-                            settings: RouteSettings(name: TaskDetailPage.path)))
-                    .then((value) {
-                  if (null == value || false == value) {
-                    return;
-                  }
-
-                  _handleLoadNewDatas();
-                });
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => TaskDetailPage(
+                              wonum: info.wonum,
+                            ),
+                        settings: RouteSettings(name: TaskDetailPage.path)));
               },
             );
           }),

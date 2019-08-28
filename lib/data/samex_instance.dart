@@ -74,8 +74,8 @@ OrderType getOrderType(String type) {
 
 const ChangeBool_Scroll = 'changevoid_scroll';
 
-GlobListeners globalListeners = new GlobListeners();
-EventBus eventBus = new EventBus();
+GlobListeners globalListeners = GlobListeners();
+EventBus eventBus = EventBus();
 
 class TimeCache<T> {
   int time = DateTime.now().millisecondsSinceEpoch;

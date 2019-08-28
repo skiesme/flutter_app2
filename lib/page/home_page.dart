@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:samex_app/components/samex_back_button.dart';
+import 'package:samex_app/helper/event_bus_helper.dart';
 import 'package:samex_app/page/login_page.dart';
 import 'package:samex_app/page/settings_page.dart';
 import 'package:samex_app/utils/cache.dart';
@@ -224,12 +225,22 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
   void initState() {
     super.initState();
 
+    _eventBusObserver();
+
     _menus.add(new _Menu(image: ImageAssets.home_order, title: '工单箱'));
     _menus.add(new _Menu(image: ImageAssets.home_assets, title: '资产扫描'));
     _menus.add(new _Menu(image: ImageAssets.home_material, title: '库存查询'));
 //    _menus.add(new _Menu(image: ImageAssets.home_history, title: '历史记录'));
 //    _menus.add(new _Menu(image: ImageAssets.home_notification, title: '通知公告'));
 //    _menus.add(new _Menu(image: ImageAssets.home_meter, title: '仪表抄表'));
+  }
+
+  void _eventBusObserver() {
+    eventBus.on<HDTaskEvent>().listen((event) {
+      if (event.type == HDTaskEventType.refresh) {
+        _handlerRefresh();
+      }
+    });
   }
 
   void _checkUpdate() async {
@@ -383,7 +394,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
       _checkUpdate();
     }
 
-    if (info != null) {
+    if (info != null && mounted) {
       setState(() {
         setUserInfo(context, info);
         Alarm.start(

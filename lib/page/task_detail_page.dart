@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:samex_app/components/samex_back_button.dart';
+import 'package:samex_app/helper/event_bus_helper.dart';
 import 'package:samex_app/model/cm_attachments.dart';
 import 'package:samex_app/model/description.dart';
 import 'package:samex_app/model/order_detail.dart';
@@ -874,8 +875,11 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   void _popDone(bool needRefresh) {
+    if (needRefresh) {
+      eventBus.fire(HDTaskEvent(type: HDTaskEventType.refresh));
+    }
     Navigator.popUntil(context, ModalRoute.withName(TaskDetailPage.path));
-    Navigator.pop(context, needRefresh);
+    Navigator.pop(context);
   }
 }
 

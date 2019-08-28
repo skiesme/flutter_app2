@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:samex_app/helper/event_bus_helper.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/components/loading_view.dart';
 import 'package:samex_app/data/samex_instance.dart';
@@ -115,6 +116,8 @@ class _OrderPostPageState extends State<OrderPostPage> {
         }
 
         Func.showMessage('提交成功');
+
+        eventBus.fire(HDTaskEvent(type: HDTaskEventType.refresh));
       }
     } catch (e) {
       Func.showMessage('提交失败: ${e.toString()}');
