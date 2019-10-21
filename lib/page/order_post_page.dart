@@ -196,7 +196,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
   }
 
   Widget _buildUser() {
-    if (showFaultlev == false) {
+    if (otherConfig == true) {
       return Container();
     }
     return ListTile(
