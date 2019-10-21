@@ -122,9 +122,9 @@ class SaMexApi {
   }
 
   Future<Map> login(String userName, String password) async {
+    print(baseUrl() + '/login');
     Response response = await _dio.post(baseUrl() + '/login',
         data: json.encode({'username': userName, 'password': password}));
-    print(baseUrl() + '/login');
     return response.data;
   }
 

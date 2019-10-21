@@ -152,7 +152,7 @@ class _MyAppState extends State<MyApp> {
       'samex/choose/material': (pageName, params, _) =>
           renderChooseMaterial(pageName, params, _),
     });
-    FlutterBoost.handleOnStartPage();
+    // FlutterBoost.handleOnStartPage();
   }
 
   dynamic _value(Map params, String key) {
