@@ -62,10 +62,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
     _controller = new TextEditingController();
 
     String title = Cache.instance.userTitle;
-    if (title != null && title.contains('部长')) {
-      if (widget.action.instruction == '工单验收通过') {
-        otherConfig = true;
-      }
+    if (title != null &&
+        title.contains('部长') &&
+        widget.action.instruction == '工单验收通过') {
+      otherConfig = true;
     }
   }
 
@@ -74,7 +74,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
   void _submit() async {
     Func.closeKeyboard(context);
 
-    if (otherConfig && widget.data.worktype != "PM") {
+    if (showFaultlev) {
       if (_faultlev.length == 0) {
         Func.showMessage('请先设置故障等级');
         return;
