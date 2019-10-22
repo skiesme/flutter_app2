@@ -232,6 +232,7 @@ class _RecentHistoryState extends State<RecentHistory>
       case OrderType.XJ:
         children = getXJHistoryWidget();
         break;
+      case OrderType.BG:
       case OrderType.CM:
         if (widget.data.actfinish == 0) {
           children = getCMHistoryWidget();
@@ -273,7 +274,9 @@ class _RecentHistoryState extends State<RecentHistory>
           } else {
             setMemoryCache<List<HistoryData>>(cacheKey, result.response);
           }
-        } else if (type == OrderType.CM || type == OrderType.PM) {
+        } else if (type == OrderType.CM ||
+            type == OrderType.BG ||
+            type == OrderType.PM) {
           if (data.actfinish != 0) {
             Map response = await getApi().orderStatus(data.wonum);
             OrderStatusResult result = new OrderStatusResult.fromJson(response);

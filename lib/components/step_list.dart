@@ -124,8 +124,13 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
     return list == null ? 0 : list.length;
   }
 
+  bool isCM() {
+    return getOrderType(widget.data?.worktype) == OrderType.CM ||
+        getOrderType(widget.data?.worktype) == OrderType.BG;
+  }
+
   bool _isModify(OrderStep f) {
-    if (getOrderType(widget.data?.worktype) == OrderType.CM) {
+    if (isCM()) {
       return false;
     } else {
       return (f.status == null || f.status.isEmpty);
@@ -169,9 +174,8 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
   }
 
   Widget buildItemStatus(OrderStep step) {
-    bool isCM = getOrderType(widget.data?.worktype) == OrderType.CM;
     String statusStr = step.status ?? '未处理';
-    return isCM
+    return isCM()
         ? Container(
             height: 1.0,
           )
@@ -207,12 +211,12 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
         SimpleButton(
           padding: Style.pagePadding,
           onTap: () {
-            if (getOrderType(widget.data.worktype) == OrderType.CM) {
+            if (isCM()) {
               gotoStep2(i);
             }
           },
           onDoubleTap: () {
-            if (getOrderType(widget.data.worktype) != OrderType.CM) {
+            if (isCM()) {
               gotoStep(step.assetnum, i);
             }
           },

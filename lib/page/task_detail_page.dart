@@ -124,6 +124,10 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     }
   }
 
+  bool isCM() {
+    return _type == OrderType.CM || _type == OrderType.BG;
+  }
+
   List<BottomNavigationBarItem> _getBottomBar() {
     List<BottomNavigationBarItem> list = <BottomNavigationBarItem>[];
     int index = 0;
@@ -221,7 +225,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         break;
       case 1:
         children.add(Text('任务列表'));
-        if (_type == OrderType.CM && _data?.actfinish == 0) {
+        if (isCM() && _data?.actfinish == 0) {
           children.add(newButton('新增任务', () async {
             if (_stepKey.currentState == null) return;
             int _stepNo = (_stepKey.currentState.steps + 1) * 10;
@@ -344,7 +348,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   }
 
   Color getColor(String status) {
-    if (_type == OrderType.CM || _type == OrderType.BG) {
+    if (isCM()) {
       if (status.contains('待批准')) {
         return Colors.red.shade900;
       } else if (status.contains('已批准')) {
@@ -405,8 +409,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       ]);
 
       // 故障等级 && 故障分类
-
-      if (_type == OrderType.CM) {
+      if (isCM()) {
         list.add(Text('故障分类: ${_data?.woprof ?? ''}'));
         list.add(Text('故障等级: ${_data?.faultlev ?? ''}'));
       }
@@ -750,7 +753,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     /** edit, 维修工单在工单验收前都可修改 */
     String status = _data?.status ?? '';
     bool isCanEdit = status != '已验收';
-    if (_type == OrderType.CM && isCanEdit) {
+    if (isCM() && isCanEdit) {
       actions.add(IconButton(
           icon: Icon(Icons.edit),
           iconSize: 16.0,
@@ -784,29 +787,28 @@ class _TaskDetailPageState extends State<TaskDetailPage>
             actions: _buildBarActions(),
           ),
           body: _data == null ? Text('') : _getBody(),
-          floatingActionButton: _tabIndex == 1 &&
-                  getOrderType(_data?.worktype) != OrderType.CM &&
-                  _data?.actfinish == 0
-              ? new FloatingActionButton(
-                  child: Tooltip(
-                    child: new Image.asset(
-                      ImageAssets.scan,
-                      height: 20.0,
-                    ),
-                    message: '扫码',
-                    preferBelow: false,
-                  ),
-                  backgroundColor: Colors.redAccent,
-                  onPressed: () async {
-                    String result = await Func.scan();
+          floatingActionButton:
+              _tabIndex == 1 && !isCM() && _data?.actfinish == 0
+                  ? new FloatingActionButton(
+                      child: Tooltip(
+                        child: new Image.asset(
+                          ImageAssets.scan,
+                          height: 20.0,
+                        ),
+                        message: '扫码',
+                        preferBelow: false,
+                      ),
+                      backgroundColor: Colors.redAccent,
+                      onPressed: () async {
+                        String result = await Func.scan();
 
-                    if (result != null &&
-                        result.isNotEmpty &&
-                        result.length > 0) {
-                      _stepKey.currentState?.gotoStep(result);
-                    }
-                  })
-              : null,
+                        if (result != null &&
+                            result.isNotEmpty &&
+                            result.length > 0) {
+                          _stepKey.currentState?.gotoStep(result);
+                        }
+                      })
+                  : null,
           bottomNavigationBar: new BottomNavigationBar(
             items: _getBottomBar(),
             currentIndex: _tabIndex,
@@ -823,7 +825,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     try {
       var images = new List();
 
-      if (_type != OrderType.CM) {
+      if (!isCM()) {
         Map response =
             await getApi().steps(sopnum: '', wonum: _wonum, site: data.site);
         StepsResult result = new StepsResult.fromJson(response);

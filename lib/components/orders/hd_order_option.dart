@@ -8,6 +8,7 @@ import 'package:samex_app/utils/style.dart';
 final List<OrderItem> _orderTypeItmes = <OrderItem>[
   OrderItem(OrderType.ALL, '全部', null),
   OrderItem(OrderType.CM, '报修', null),
+  OrderItem(OrderType.BG, '办公', null),
   OrderItem(OrderType.XJ, '巡检', _orderXJTypeSubItems),
   OrderItem(OrderType.PM, '保养', null),
 ];
@@ -202,6 +203,8 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
     switch (widget.type) {
       case OrderType.PM:
         return 'PM';
+      case OrderType.BG:
+        return 'BG';
       case OrderType.CM:
         return 'CM';
       case OrderType.XJ:
@@ -268,7 +271,7 @@ class HDOrderOptionsState extends State<HDOrderOptions> {
   }
 
   List<_OrderStatusItem> _statusList(OrderType type) {
-    if (type == OrderType.CM) {
+    if (type == OrderType.CM || type == OrderType.BG) {
       return _orderCMStatusList;
     } else if (type == OrderType.PM) {
       return _orderPMStatusList;

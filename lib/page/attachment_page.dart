@@ -16,7 +16,7 @@ class AttachmentPage extends StatefulWidget {
   final OrderDetailData detailData;
   final List<OrderStep> steps;
 
-  AttachmentPage({@required this.detailData ,this.steps});
+  AttachmentPage({@required this.detailData, this.steps});
 
   @override
   _AttachmentPageState createState() => new _AttachmentPageState();
@@ -159,7 +159,7 @@ class _AttachmentPageState extends State<AttachmentPage>
   Widget build(BuildContext context) {
     Widget child;
 
-    if (getOrderType(widget.detailData.worktype) != OrderType.CM) {
+    if (!isCM()) {
       getMemoryCache(cacheKey, callback: () {
         _getSteps();
       });
@@ -180,7 +180,7 @@ class _AttachmentPageState extends State<AttachmentPage>
             new IconButton(
                 icon: Icon(Icons.refresh),
                 onPressed: () {
-                  if (getOrderType(widget.detailData.worktype) == OrderType.CM) {
+                  if (isCM()) {
                     _getCMAttachments();
                   }
                   _getSteps();
@@ -194,7 +194,9 @@ class _AttachmentPageState extends State<AttachmentPage>
     if (widget.detailData.wonum != null) {
       try {
         Map response = await getApi().steps(
-            sopnum: '', wonum: widget.detailData.wonum, site: Cache.instance.site);
+            sopnum: '',
+            wonum: widget.detailData.wonum,
+            site: Cache.instance.site);
         StepsResult result = new StepsResult.fromJson(response);
 
         if (result.code != 0) {
@@ -241,7 +243,7 @@ class _AttachmentPageState extends State<AttachmentPage>
   get cacheKey {
     var key = widget.detailData.wonum ?? '';
 
-    if (getOrderType(widget.detailData.worktype) != OrderType.CM) {
+    if (!isCM()) {
       if (key.isEmpty) return '';
 
       return 'stepsList_$key';
@@ -253,13 +255,18 @@ class _AttachmentPageState extends State<AttachmentPage>
   get cacheKey2 {
     var key = '2_' + widget.detailData.wonum ?? '';
 
-    if (getOrderType(widget.detailData.worktype) != OrderType.CM) {
+    if (!isCM()) {
       if (key.isEmpty) return '';
 
       return 'stepsList_$key';
     } else {
       return 'cm_attachments+$key';
     }
+  }
+
+  bool isCM() {
+    return getOrderType(widget.detailData.worktype) != OrderType.CM ||
+        getOrderType(widget.detailData.worktype) != OrderType.BG;
   }
 
   @override

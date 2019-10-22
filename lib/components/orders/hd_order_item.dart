@@ -165,9 +165,8 @@ class _HDOrderItemState extends State<HDOrderItem> {
           )
         ]);
         break;
-      case OrderType.CM:
+      case OrderType.CM: case OrderType.BG:
         String image = '';
-
         if (status.contains('待批准')) {
           image = ImageAssets.order_pending_approved;
         } else if (status.contains('已批准')) {
