@@ -47,8 +47,6 @@ class _OrderPostPageState extends State<OrderPostPage> {
   PeopleData _data;
   TextEditingController _controller;
 
-  bool otherConfig = false;
-
   String _woprof = ''; // 故障分类
   String _faultlev = ''; // 故障等级
 
@@ -60,16 +58,16 @@ class _OrderPostPageState extends State<OrderPostPage> {
     _faultlev = widget.data.faultlev;
 
     _controller = new TextEditingController();
-
-    String title = Cache.instance.userTitle;
-    if (title != null &&
-        title.contains('部长') &&
-        widget.action.instruction == '工单验收通过') {
-      otherConfig = true;
-    }
   }
 
-  bool get showFaultlev => (otherConfig && widget.data.worktype != "PM");
+  bool get showFaultlev => (showUserSelecte() && widget.data.worktype != "PM");
+  bool showUserSelecte() {
+    String title = Cache.instance.userTitle;
+    if (title.contains('部长')) {
+      return widget.action.instruction == '工单验收通过';
+    }
+    return false;
+  }
 
   void _submit() async {
     Func.closeKeyboard(context);
@@ -109,7 +107,7 @@ class _OrderPostPageState extends State<OrderPostPage> {
       if (result.code != 0) {
         Func.showMessage(result.message);
       } else {
-        if (otherConfig) {
+        if (showUserSelecte()) {
           Navigator.pop(context, 'done');
         } else {
           Navigator.of(context)..pop()..pop();
@@ -196,9 +194,10 @@ class _OrderPostPageState extends State<OrderPostPage> {
   }
 
   Widget _buildUser() {
-    if (otherConfig == true) {
+    if (widget.action.instruction.contains(new RegExp(r'[责任人|指派]')) == false) {
       return Container();
     }
+
     return ListTile(
       title: Text('指派工单负责人'),
       subtitle: Text(_assignCode ?? '请选择人员'),
