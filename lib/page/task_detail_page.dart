@@ -416,7 +416,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       }
       list.add(Text('上报时间: ${Func.getFullTimeString(_data?.reportdate)}'));
 
-      if (_data != null && _data?.actfinish > 0) {
+      if (_data != null && _data.actfinish > 0) {
         list.add(Text('完成时间: ${Func.getFullTimeString(_data?.actfinish)}'));
       }
       if (_type != OrderType.XJ) {
@@ -640,7 +640,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
       case OrderType.BG:
       case OrderType.PM:
         _data?.actions?.forEach((HDActions f) {
-          if (_data?.status.contains('待验收') &&
+          if (_data.status.contains('待验收') &&
               f.instruction.contains('指派工单责任人')) {
             return;
           }

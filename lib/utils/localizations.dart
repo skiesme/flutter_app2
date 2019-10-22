@@ -163,6 +163,5 @@ class ChineseCupertinoLocalizations implements CupertinoLocalizations {
       _CupertinoLocalizationsDelegate();
 
   @override
-  // TODO: implement todayLabel
   String get todayLabel => null;
 }

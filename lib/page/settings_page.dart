@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:samex_app/components/samex_back_button.dart';
 import 'package:samex_app/model/site.dart';
 import 'package:samex_app/model/user.dart';
-import 'package:samex_app/utils/api.dart';
 
 import 'package:samex_app/utils/cache.dart';
 import 'package:samex_app/data/samex_instance.dart';

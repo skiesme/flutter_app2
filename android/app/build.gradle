@@ -20,6 +20,10 @@ if(isLib) {
     apply plugin: 'com.android.application'
 }
 
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 rootProject.allprojects {
@@ -86,6 +90,8 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.2.41'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.xdandroid:hellodaemon:+'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
 
     ///为库的方式才添加本地仓库依赖，这个本地仓库目前是从 include 那里读取的。
