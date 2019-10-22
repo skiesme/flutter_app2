@@ -43,11 +43,6 @@ class PictureListState extends State<PictureList> {
     File image = await ImagePicker.pickImage(
         source: value, maxHeight: 1280.0, maxWidth: 1280.0);
 
-//    if(Platform.isIOS){
-//      image = await FlutterNativeImage.compressImage(image.path,
-//          quality: 98, percentage: 100);
-//    }
-
     if (image != null) {
       setState(() {
         ImageData data = new ImageData(
@@ -56,8 +51,10 @@ class PictureListState extends State<PictureList> {
             userName:
                 '${Cache.instance.userName}-${Cache.instance.userDisplayName}');
         _images.add(data);
-        widget.onPictureListChanged();
-//        getModel(context).step.images.add(data.toString());
+
+        if (null != widget.onPictureListChanged) {
+          widget.onPictureListChanged(); 
+        }
       });
     }
   }
@@ -67,8 +64,6 @@ class PictureListState extends State<PictureList> {
   }
 
   Widget _largeImage(Widget child, int index) {
-//    print('largeimage : ${this._resources.toString()}');
-
     return new GestureDetector(
       onTap: () {
         Navigator.push(context,
@@ -137,8 +132,6 @@ class PictureListState extends State<PictureList> {
     int count = 0;
 
     _resources.clear();
-
-//    print('show picture list: ${widget.step.toString()}');
 
     if (widget.images != null) {
       for (int i = 0, len = widget.images.length; i < len; i++) {

@@ -258,7 +258,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
         }
       }
 
-      List<MultipartFile> list = new List();
+      List<UploadFileInfo> list = new List();
       List<String> uploadImages =
           getUploadImages(_key.currentState.getImages());
       var post = () async {
@@ -319,7 +319,7 @@ class _OrderNewPageState extends State<OrderNewPage> {
                 _tips = '图片$step处理中';
               });
             },
-            onResultListener: (List<MultipartFile> files) {
+            onResultListener: (List<UploadFileInfo> files) {
               print('onResultListener ....len=${files.length}, ');
               list = files;
 

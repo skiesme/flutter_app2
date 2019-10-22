@@ -103,7 +103,7 @@ class _StepPageState extends State<StepPage> {
       List<String> images = widget.data.getUploadImages();
 
       debugPrint('found len=${images.length}  upload');
-      List<MultipartFile> lists = new List();
+      List<UploadFileInfo> lists = new List();
 
       var postStep = () async {
         try {
@@ -144,7 +144,7 @@ class _StepPageState extends State<StepPage> {
                 _tips = '图片$step处理中';
               });
             },
-            onResultListener: (List<MultipartFile> files) {
+            onResultListener: (List<UploadFileInfo> files) {
               print('onResultListener ....len=${files.length}');
               lists = files;
 

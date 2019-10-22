@@ -265,7 +265,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
 
                   try {
                     OpenFile.open(await getApi().download(result.response.url,
-                        onReceiveProgress: (int count, int total) {
+                        (int count, int total) {
                       int percent = ((count / total) * 100).toInt();
                       setMountState(() {
                         if (percent == 100) {

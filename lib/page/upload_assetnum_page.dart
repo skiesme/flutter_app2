@@ -63,7 +63,7 @@ class _UploadAssetPageState extends State<UploadAssetPage> {
 
       List<ImageData> data = _key.currentState.getImages();
 
-      List<MultipartFile> list = new List();
+      List<UploadFileInfo> list = new List();
 
       List<String> uploadImages = getUploadImages(data);
 
@@ -109,7 +109,7 @@ class _UploadAssetPageState extends State<UploadAssetPage> {
               _tips = '图片$step处理中';
             });
           },
-          onResultListener: (List<MultipartFile> files) {
+          onResultListener: (List<UploadFileInfo> files) {
             print('onResultListener ....len=${files.length}, ');
             list = files;
 

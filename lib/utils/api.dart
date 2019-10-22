@@ -28,13 +28,13 @@ class SaMexApi {
 
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
-  RequestOptions _options(
+  Options _options(
       {int connectTimeout = 6000,
       receiveTimeout = 3000,
       Map<String, dynamic> headers,
-      ProgressCallback onSendProgress}) {
+      OnUploadProgress onProgress}) {
     if (_option == null) {
-      _option = RequestOptions(onSendProgress: onSendProgress);
+      _option = new Options();
 
       _connectivitySubscription = new Connectivity()
           .onConnectivityChanged
@@ -54,8 +54,9 @@ class SaMexApi {
       _option.headers = headers;
     }
 
-    _option.sendTimeout = connectTimeout;
+    _option.connectTimeout = connectTimeout;
     _option.receiveTimeout = receiveTimeout;
+    _option.onUploadProgress = onProgress;
 
     return _option;
   }
@@ -86,15 +87,19 @@ class SaMexApi {
     return response.data;
   }
 
-  Future<String> download(String url, {ProgressCallback onReceiveProgress}) async {
+  Future<String> download(String url, OnDownloadProgress cb) async {
     Io.Directory cacheDir = await getTemporaryDirectory();
 
     if (!url.startsWith('http')) {
       url = 'http://$ipAndPort$url';
     }
 
+//    print('$url: download');
+
     String save = cacheDir.path + '/release.apk';
-    await _dio.download(url, save, onReceiveProgress: onReceiveProgress);
+
+    await _dio.download(url, save, onProgress: cb);
+
     return save;
   }
 
@@ -117,9 +122,9 @@ class SaMexApi {
   }
 
   Future<Map> login(String userName, String password) async {
-    print(baseUrl() + '/login');
     Response response = await _dio.post(baseUrl() + '/login',
         data: json.encode({'username': userName, 'password': password}));
+    print(baseUrl() + '/login');
     return response.data;
   }
 
@@ -186,6 +191,7 @@ class SaMexApi {
 
   Future<Map> userAll() async {
     Uri uri = new Uri.http(ipAndPort(), '/app/api/user/all');
+
     Response response = await _dio.get(uri.toString(), options: _options());
 
 //    print('${uri.toString()}: ${response.data}');
@@ -280,8 +286,8 @@ class SaMexApi {
     return response.data;
   }
 
-  Future<Map> postStep(OrderStep step, List<MultipartFile> files,
-      {ProgressCallback onProgress}) async {
+  Future<Map> postStep(OrderStep step, List<UploadFileInfo> files,
+      {OnUploadProgress onProgress}) async {
     Uri uri = Uri.parse(baseUrl() + '/orderstep/upload');
 
     int stepno = step.stepno;
@@ -293,31 +299,30 @@ class SaMexApi {
     Map<String, dynamic> jsonData = step.toJson();
     jsonData["files"] = files;
 
-    // FormD
-    FormData formData = new FormData.fromMap(jsonData);
+    FormData formData = new FormData.from(jsonData);
     Response response = await _dio.post(uri.toString(),
         data: formData,
         options: _options(
             connectTimeout: 60000,
             receiveTimeout: 60000,
-            onSendProgress: onProgress),
+            onProgress: onProgress),
         cancelToken: token = new CancelToken());
 //    print('${uri.toString()}: ${response.data}');
     return response.data;
   }
 
-  Future<Map> postAsset(String asset, List<MultipartFile> files,
-      {ProgressCallback onProgress}) async {
+  Future<Map> postAsset(String asset, List<UploadFileInfo> files,
+      {OnUploadProgress onProgress}) async {
     Uri uri = Uri.parse(baseUrl() + '/asset/$asset');
 
-    FormData formData = new FormData.fromMap({"files": files});
+    FormData formData = new FormData.from({"files": files});
 
     Response response = await _dio.post(uri.toString(),
         data: formData,
         options: _options(
             connectTimeout: 60000,
             receiveTimeout: 60000,
-            onSendProgress: onProgress),
+            onProgress: onProgress),
         cancelToken: token = new CancelToken());
 //    print('${uri.toString()}: ${response.data}');
 
@@ -334,8 +339,8 @@ class SaMexApi {
       String phone,
       String woprof, // 故障分类
       String faultlev, // 故障等级
-      List<MultipartFile> files,
-      ProgressCallback onProgress}) async {
+      List<UploadFileInfo> files,
+      OnUploadProgress onProgress}) async {
     Uri uri = Uri.parse(baseUrl() + '/ordernew');
 
     Map<String, dynamic> jsonData = {
@@ -353,14 +358,14 @@ class SaMexApi {
 
 //    print('${uri.toString()}: ${jsonData.toString()}, length=${files?.length}');
 
-    FormData formData = new FormData.fromMap(jsonData);
+    FormData formData = new FormData.from(jsonData);
 
     Response response = await _dio.post(uri.toString(),
         data: formData,
         options: _options(
             connectTimeout: 60000,
             receiveTimeout: 60000,
-            onSendProgress: onProgress),
+            onProgress: onProgress),
         cancelToken: token = new CancelToken());
 //    print('${uri.toString()}: ${response.data}');
 

@@ -74,18 +74,18 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   barcode_scan: 33f586d02270046fc6559135038b34b5754eaa4f
-  connectivity: c72716e202a1225ec4810740d5cb56b8ae3bf4cc
+  connectivity: 6e94255659cc86dcbef1d452ad3e0491bb1b3e75
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_boost: a7cfa776b75329d5e7d101d0cd33e75042bcde69
   fluttertoast: b644586ef3b16f67fae9a1f8754cef6b2d6b634b
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  image_picker: a211f28b95a560433c00f5cd3773f4710a20404d
+  image_picker: e3eacd46b94694dde7cf2705955cece853aa1a8f
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
   open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
-  package_info: 78cabb3c322943c55d39676f4a5bfc748c01d055
+  package_info: 48b108e75b8802c2d5e126f208ef540561c98aef
   path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
+  shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
   sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
 
 PODFILE CHECKSUM: 1e5af4103afd21ca5ead147d7b81d06f494f51a2

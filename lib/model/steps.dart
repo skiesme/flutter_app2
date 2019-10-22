@@ -8,7 +8,7 @@ import 'package:image/image.dart';
 
 import 'package:path/path.dart';
 
-typedef void OnResultListener(List<MultipartFile> result);
+typedef void OnResultListener(List<UploadFileInfo> result);
 typedef void OnProgressListener(int step);
 
 class Calculator {
@@ -23,7 +23,7 @@ class Calculator {
   final List<String> data;
 
   void run() {
-    List<MultipartFile> list = [];
+    List<UploadFileInfo> list = [];
 
     for (int i = 0, len = data.length; i < len; i++) {
       String f = data[i];
@@ -48,11 +48,9 @@ class Calculator {
 
             // Save the thumbnail as a PNG.
             Io.File(cachePath).writeAsBytesSync(encodeJpg(image, quality: 80));
-            list.add(MultipartFile.fromFileSync(cachePath,
-                filename: basename(cachePath)));
+            list.add(UploadFileInfo(Io.File(cachePath), basename(cachePath)));
           } else {
-            list.add(
-                MultipartFile.fromFileSync(path, filename: basename(path)));
+            list.add(UploadFileInfo(Io.File(path), basename(path)));
           }
         }
       } catch (e) {
@@ -141,7 +139,7 @@ class CalculationManager {
   }
 
   void _handleMessage(dynamic message) {
-    if (message is List<MultipartFile>) {
+    if (message is List<UploadFileInfo>) {
       onResultListener(message);
     } else if (message is int) {
       onProgressListener(message);
