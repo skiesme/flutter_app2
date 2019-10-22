@@ -22,7 +22,7 @@ class SamexBackButton extends StatelessWidget {
         if (Navigator.canPop(context)) {
           Navigator.maybePop(context);
         } else {
-          FlutterBoost.singleton.closeByContext(context);
+          FlutterBoost.singleton.closePageForContext(context);
         }
       },
     );

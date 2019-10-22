@@ -251,43 +251,42 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
         showDialog(
           context: context,
           builder: (BuildContext context) => new AlertDialog(
-                title: new Text('发现新版本!'),
-                actions: <Widget>[
-                  new FlatButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: new Text('取消'),
-                  ),
-                  new FlatButton(
-                    onPressed: () async {
-                      Navigator.of(context).pop(true);
-
-                      try {
-                        OpenFile.open(await getApi().download(
-                            result.response.url, (int received, int total) {
-                          int percent = ((received / total) * 100).toInt();
-
-                          setMountState(() {
-                            if (percent == 100) {
-                              _progress = 0;
-                              _tips = '';
-                              _show = false;
-                            } else {
-                              _progress = percent;
-                              _tips = '更新包下载中...($percent\%)';
-                              _show = true;
-                            }
-                          });
-                        }));
-                      } catch (e) {
-                        print(e);
-                      }
-                    },
-                    child: new Text('下载'),
-                  ),
-                ],
+            title: new Text('发现新版本!'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: new Text('取消'),
               ),
+              new FlatButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(true);
+
+                  try {
+                    OpenFile.open(await getApi().download(result.response.url,
+                        onReceiveProgress: (int count, int total) {
+                      int percent = ((count / total) * 100).toInt();
+                      setMountState(() {
+                        if (percent == 100) {
+                          _progress = 0;
+                          _tips = '';
+                          _show = false;
+                        } else {
+                          _progress = percent;
+                          _tips = '更新包下载中...($percent\%)';
+                          _show = true;
+                        }
+                      });
+                    }));
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: new Text('下载'),
+              ),
+            ],
+          ),
         );
       }
     } catch (e) {
@@ -350,34 +349,34 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) => new AlertDialog(
-                          content: new Text('确定退出登录?'),
-                          actions: <Widget>[
-                            new FlatButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              child: new Text(
-                                '取消',
-                              ),
-                            ),
-                            new FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                                setToken(context, null);
-
-                                // 清除缓存
-                                clearMemoryCache();
-
-                                Navigator.pushReplacement(
-                                    context,
-                                    new MaterialPageRoute(
-                                        builder: (_) => new LoginPage()));
-                              },
-                              child: new Text(
-                                '退出',
-                                style: TextStyle(color: Colors.redAccent),
-                              ),
-                            ),
-                          ],
+                      content: new Text('确定退出登录?'),
+                      actions: <Widget>[
+                        new FlatButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: new Text(
+                            '取消',
+                          ),
                         ),
+                        new FlatButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                            setToken(context, null);
+
+                            // 清除缓存
+                            clearMemoryCache();
+
+                            Navigator.pushReplacement(
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (_) => new LoginPage()));
+                          },
+                          child: new Text(
+                            '退出',
+                            style: TextStyle(color: Colors.redAccent),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
                 backgroundColor: Colors.transparent,

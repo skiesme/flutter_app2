@@ -113,7 +113,7 @@ class _StepNewPageState extends State<StepNewPage> {
       List<String> images = _step.getUploadImages();
 
       print('found len=${images.length}  upload');
-      List<UploadFileInfo> lists = new List();
+      List<MultipartFile> lists = new List();
 
       var postStep = () async {
         try {
@@ -144,7 +144,7 @@ class _StepNewPageState extends State<StepNewPage> {
         _manager = new CalculationManager(
             images: images,
             onProgressListener: (int step) {},
-            onResultListener: (List<UploadFileInfo> files) {
+            onResultListener: (List<MultipartFile> files) {
               print('onResultListener ....len=${files.length}');
               lists = files;
               postStep();
