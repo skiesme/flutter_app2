@@ -114,10 +114,12 @@ packages:
   flutter_boost:
     dependency: "direct main"
     description:
-      name: flutter_boost
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.420"
+      path: "."
+      ref: "feature/flutter_1.9_androidx_upgrade"
+      resolved-ref: "47732cda82f0eec763a115bb96dd1e149429710e"
+      url: "https://github.com/alibaba/flutter_boost.git"
+    source: git
+    version: "0.1.54"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -357,13 +359,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.5.0"
-  xservice_kit:
-    dependency: transitive
-    description:
-      name: xservice_kit
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.0.29"
 sdks:
   dart: ">=2.5.0 <3.0.0"
   flutter: ">=1.9.1 <2.0.0"

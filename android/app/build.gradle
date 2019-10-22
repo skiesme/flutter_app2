@@ -30,8 +30,8 @@ rootProject.allprojects {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     lintOptions {
         disable 'InvalidPackage'
@@ -51,7 +51,7 @@ android {
 //        targetSdkVersion 27
         versionCode 12
         versionName "1.5.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -79,15 +79,13 @@ flutter {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation "io.karn:notify:1.1.0"
-    implementation project(':hellodaemon')
-
     implementation 'com.alibaba:fastjson:1.2.41'
-    implementation 'com.android.support:support-v4:26.1.0'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 
 
     ///为库的方式才添加本地仓库依赖，这个本地仓库目前是从 include 那里读取的。

@@ -1,4 +1,4 @@
-include ':app', ':hellodaemon'
+include ':app'
 
 def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
 

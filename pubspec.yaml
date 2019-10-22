@@ -23,7 +23,11 @@ dependencies:
   image_picker: 0.4.12+1
   cached_network_image: 1.1.2+1
   image: 2.0.4
-  flutter_boost: 0.0.420
+  # flutter_boost: 0.1.54
+  flutter_boost:
+    git:
+      url: 'https://github.com/alibaba/flutter_boost.git'
+      ref: 'feature/flutter_1.9_androidx_upgrade'
   flutter_easyrefresh: ^2.0.2
   barcode_scan: ^1.0.0
   dio: ^3.0.3
