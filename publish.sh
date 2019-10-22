@@ -12,7 +12,8 @@ workspace=Runner.xcworkspace
 dart='main_publish.dart'
 
 uploadAndroid(){
-    flutter build apk --release -t lib/${dart}
+    # flutter build apk --release -t lib/${dart}
+    flutter build apk --target-platform android-arm --release -t lib/${dart}
 
     apk_release_file=${pwd}/build/app/outputs/apk/release/app-release.apk
 
