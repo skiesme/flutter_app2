@@ -41,7 +41,7 @@ class PictureListState extends State<PictureList> {
 
   Future _getImage(ImageSource value) async {
     File image = await ImagePicker.pickImage(
-        source: value, maxHeight: 1280.0, maxWidth: 1280.0);
+        source: value, maxHeight: 1280.0, maxWidth: 1280.0, imageQuality: 60);
 
     if (image != null) {
       setState(() {
@@ -53,7 +53,7 @@ class PictureListState extends State<PictureList> {
         _images.add(data);
 
         if (null != widget.onPictureListChanged) {
-          widget.onPictureListChanged(); 
+          widget.onPictureListChanged();
         }
       });
     }

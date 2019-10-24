@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io' as Io;
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:samex_app/data/samex_instance.dart';
 import 'package:samex_app/model/order_detail.dart';
 import 'package:samex_app/model/steps.dart';
@@ -72,7 +73,9 @@ class SaMexApi {
   }
 
   String getImageUrl(String docinfoid) {
-    return 'http://$ipAndPort/static/stepimage/${Cache.instance.site}/$docinfoid';
+    String url = 'http://${ipAndPort()}/static/stepimage/${Cache.instance.site}/$docinfoid';
+    debugPrint("get image with url:${url}");
+    return url;
   }
 
   Future<Map> checkUpdate() async {
@@ -91,7 +94,7 @@ class SaMexApi {
     Io.Directory cacheDir = await getTemporaryDirectory();
 
     if (!url.startsWith('http')) {
-      url = 'http://$ipAndPort$url';
+      url = 'http://${ipAndPort()}$url';
     }
 
 //    print('$url: download');
