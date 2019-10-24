@@ -67,8 +67,6 @@ class _TaskDetailPageState extends State<TaskDetailPage>
   void _updateData(OrderDetailData d) {
     if (null == d) {
       d = OrderDetailData();
-    } else {
-      _getSteps(_data);
     }
 
     debugPrint("task detail :${d.toJson()}");
@@ -76,6 +74,8 @@ class _TaskDetailPageState extends State<TaskDetailPage>
     setState(() {
       _data = d;
       _type = getOrderType(d.worktype);
+
+      _getSteps(_data);
     });
   }
 
@@ -88,9 +88,7 @@ class _TaskDetailPageState extends State<TaskDetailPage>
         Func.showMessage(result.message);
       } else {
         OrderDetailData data = result.response;
-        if (data != null) {
-          _updateData(data);
-        }
+        _updateData(data);
       }
 
       if (mounted) {

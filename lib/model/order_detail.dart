@@ -137,6 +137,8 @@ class OrderDetailData {
     data['supervisor'] = this.supervisor;
     data['sopnum'] = this.sopnum;
     data['ownerid'] = this.ownerid;
+    data['woprof'] = this.woprof;
+    data['faultlev'] = this.faultlev;
     if (this.actions != null) {
       data['actions'] = this.actions.map((v) => v.toJson()).toList();
     }
