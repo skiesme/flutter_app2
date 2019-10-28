@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage>
   List<String> _envList = ['生产', '测试'];
   String _selectedEnv = Cache.instance.inProduction ? '生产' : '测试';
 
-  String _verStr = 'Version 1.5.1910211455';
+  String _verStr = 'Version 1.5.1910281537';
 
   String get cacheKey => '__Cache.instance.site_list';
   @override
