@@ -216,7 +216,7 @@ class StepListState extends State<StepList> with AfterLayoutMixin<StepList> {
             }
           },
           onDoubleTap: () {
-            if (isCM()) {
+            if (!isCM()) {
               gotoStep(step.assetnum, i);
             }
           },
