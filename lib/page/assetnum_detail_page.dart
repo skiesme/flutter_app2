@@ -101,7 +101,7 @@ class _AssetDetailPageState extends State<AssetNumDetailPage> {
     ));
     children.add(Padding(
       padding: Style.pagePadding4,
-      child: Text('运行状况: ${data.assetlev ?? ''}'),
+      child: Text('运行状况: ${data.serialnum ?? ''}'),
     ));
     children.add(Padding(
       padding: Style.pagePadding4,

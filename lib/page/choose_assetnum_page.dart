@@ -24,11 +24,17 @@ class ChooseAssetPage extends StatefulWidget {
 }
 
 class _ChooseAssetPageState extends State<ChooseAssetPage> {
+  static const double ICON_SIZE = 16.0;
+
   TextEditingController _scroller;
   TextEditingController _scroller2;
 
   bool _loading = true;
   bool _request = false;
+
+  bool _stateNormalChecked = true; // 正常
+  bool _stateDisableChecked = false; // 停用/废弃
+  bool _stateOthersChecked = false; // 其他
 
   @override
   void initState() {
@@ -151,8 +157,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _assetsFilterWidget(),
-        _locationFilterWidget(),
+        _filterWidget(),
         Expanded(
           child: _loading
               ? Center(
@@ -161,6 +166,27 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
               : _getContent(),
         )
       ],
+    );
+  }
+
+  Widget _filterWidget() {
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(4.0),
+        child: Wrap(
+          children: <Widget>[
+            Divider(height: 1),
+            _assetsFilterWidget(),
+            Divider(height: 1),
+            _locationFilterWidget(),
+            Divider(height: 1),
+            _statusFilterWidget()
+          ],
+          spacing: 12.0,
+          runSpacing: 8.0,
+          runAlignment: WrapAlignment.center,
+        ),
+      ),
     );
   }
 
@@ -174,19 +200,17 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     );
 
     return Container(
-      color: Style.backgroundColor,
-      padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+      height: 20,
       child: TextField(
         controller: _scroller,
         decoration: InputDecoration(
             prefixIcon: Align(
-              child: Text(widget.chooseLocation ? '位置' : '资产'),
+              child: Text('资       产:'),
               widthFactor: 1.1,
             ),
             hintText: "请输入${widget.chooseLocation ? '位置' : '资产'}编号/描述进行过滤",
-            fillColor: Colors.white,
-            contentPadding: const EdgeInsets.all(0.0),
-            border: new OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+            border: InputBorder.none,
             suffixIcon: _scroller.text.isNotEmpty ? clearBtn : null),
       ),
     );
@@ -202,23 +226,74 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     return widget.chooseLocation
         ? Container()
         : Container(
-            color: Style.backgroundColor,
-            padding:
-                const EdgeInsets.symmetric(vertical: 5.0, horizontal: 20.0),
+            height: 20,
             child: TextField(
               controller: _scroller2,
               decoration: InputDecoration(
                   prefixIcon: Align(
-                    child: Text('位置'),
+                    child: Text('位       置:'),
                     widthFactor: 1.1,
                   ),
                   hintText: "请输入位置编号/描述进行过滤",
-                  fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.all(0.0),
-                  border: new OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+                  border: InputBorder.none,
                   suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null),
             ),
           );
+  }
+
+  Widget _statusFilterWidget() {
+    Color acolor = Style.primaryColor;
+    Checkbox normal = Checkbox(
+      value: _stateNormalChecked,
+      activeColor: acolor,
+      onChanged: (bool value) {
+        setState(() {
+          _stateNormalChecked = value;
+        });
+      },
+    );
+    Checkbox disable = Checkbox(
+      value: _stateDisableChecked,
+      activeColor: acolor,
+      onChanged: (bool value) {
+        setState(() {
+          _stateDisableChecked = value;
+        });
+      },
+    );
+    Checkbox others = Checkbox(
+      value: _stateOthersChecked,
+      activeColor: acolor,
+      onChanged: (bool value) {
+        setState(() {
+          _stateOthersChecked = value;
+        });
+      },
+    );
+    Widget runState() {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text("正常"),
+          normal,
+          Text("停用"),
+          disable,
+          Text("其他"),
+          others
+        ],
+      );
+    }
+
+    return Container(
+      height: 25,
+      child: Row(
+        children: <Widget>[
+          Text("资产状态:"),
+          runState(),
+        ],
+      ),
+    );
   }
 
   /// Old
@@ -226,34 +301,40 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     if (data == null) return null;
 
     return data.where((DescriptionData f) {
-      if (_scroller.text.length > 0 || _scroller2.text.length > 0) {
-        if (!widget.chooseLocation) {
-          bool assetFilter = f.assetnum.contains(_scroller.text.toUpperCase());
-          assetFilter = assetFilter ||
-              (f.description ?? '').contains(_scroller.text.toUpperCase());
+      bool canUsed = true;
 
-          bool locationFilter =
-              (f.location ?? '').contains(_scroller2.text.toUpperCase());
-          locationFilter = locationFilter ||
-              (f.locationDescription ?? '')
-                  .contains(_scroller2.text.toUpperCase());
+      // 资产过滤
+      String assFilterStr = _scroller.text;
+      if (assFilterStr.length > 0) {
+        assFilterStr = assFilterStr.toLowerCase();
 
-          if (assetFilter && locationFilter) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-
-        if ((f.location ?? '').contains(_scroller.text.toUpperCase()) ||
-            (f.description ?? '').contains(_scroller.text.toUpperCase())) {
-          return true;
-        }
-
-        return false;
+        bool assetFilter = f.assetnum.contains(assFilterStr);
+        assetFilter =
+            assetFilter || (f.description ?? '').contains(assFilterStr);
+        canUsed &= assetFilter;
       }
 
-      return true;
+      // 位置过滤
+      String locFilterStr = _scroller2.text;
+      if (locFilterStr.length > 0) {
+        locFilterStr = locFilterStr.toLowerCase();
+        bool locationFilter = (f.location ?? '').contains(locFilterStr);
+        locationFilter = locationFilter ||
+            (f.locationDescription ?? '').contains(locFilterStr);
+        canUsed &= locationFilter;
+      }
+
+      // 状态过滤
+      String status = f.status ?? '';
+      if (status == '停用' || status == 'DECOMMISSIONED') {
+        canUsed &= _stateDisableChecked;
+      } else if (status == 'OPERATING') {
+        canUsed &= _stateNormalChecked;
+      } else {
+        canUsed &= _stateOthersChecked;
+      }
+
+      return canUsed;
     }).toList();
   }
 
