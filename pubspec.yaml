@@ -26,15 +26,15 @@ dependencies:
   # flutter_boost: 0.1.54
   flutter_boost:
     git:
-      url: 'https://github.com/alibaba/flutter_boost.git'
-      ref: 'feature/flutter_1.9_androidx_upgrade'
+      url: "https://github.com/alibaba/flutter_boost.git"
+      ref: "feature/flutter_1.9_androidx_upgrade"
   flutter_easyrefresh: ^2.0.2
   barcode_scan: ^1.0.0
   # dio: 2.1.16
-  dio: 
+  dio:
     git:
-      url: 'https://github.com/skiesme/dio.git'
-      ref: 'flutter'
+      url: "https://github.com/skiesme/dio.git"
+      ref: "flutter"
 
 dev_dependencies:
   flutter_test:
@@ -42,7 +42,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -50,43 +49,42 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-  - assets/images/login_background.png
-  - assets/images/login_user.png
-  - assets/images/login_password.png
-  - assets/images/home_background.png
-  - assets/images/home_message.png
-  - assets/images/home_assets.png
-  - assets/images/home_notification.png
-  - assets/images/home_history.png
-  - assets/images/home_order.png
-  - assets/images/home_material.png
-  - assets/images/home_meter.png
-  - assets/images/task_xj.png
-  - assets/images/task_pm.png
-  - assets/images/task_cm.png
-  - assets/images/order_no_sync.png
-  - assets/images/order_no_handle.png
-  - assets/images/order_error_sync.png
-  - assets/images/task_detail_material.png
-  - assets/images/task_detail_detail.png
-  - assets/images/task_detail_task.png
-  - assets/images/task_detail_person.png
-  - assets/images/scan.png
-  - assets/images/order_ing.png
-  - assets/images/order_ing_red.png
-  - assets/images/order_done.png
-  - assets/images/order_daiyanshou.png
-  - assets/images/order_pizhun.png
-  - assets/images/order_daipizhun.png
-  - assets/images/logout.png
-  - assets/images/szsw.png
+    - assets/images/login_background.png
+    - assets/images/login_user.png
+    - assets/images/login_password.png
+    - assets/images/home_background.png
+    - assets/images/home_message.png
+    - assets/images/home_assets.png
+    - assets/images/home_notification.png
+    - assets/images/home_history.png
+    - assets/images/home_order.png
+    - assets/images/home_material.png
+    - assets/images/home_meter.png
+    - assets/images/task_xj.png
+    - assets/images/task_pm.png
+    - assets/images/task_cm.png
+    - assets/images/order_no_sync.png
+    - assets/images/order_no_handle.png
+    - assets/images/order_error_sync.png
+    - assets/images/task_detail_material.png
+    - assets/images/task_detail_detail.png
+    - assets/images/task_detail_task.png
+    - assets/images/task_detail_person.png
+    - assets/images/scan.png
+    - assets/images/order_ing.png
+    - assets/images/order_ing_red.png
+    - assets/images/order_done.png
+    - assets/images/order_daiyanshou.png
+    - assets/images/order_pizhun.png
+    - assets/images/order_daipizhun.png
+    - assets/images/logout.png
+    - assets/images/szsw.png
 
   fonts:
     - family: Miui
       fonts:
         - asset: assets/fonts/miui.ttf
   #  - images/a_dot_ham.jpeg
-
   # module:
   #   androidPackage: com.hddz.samex_module
   #   iosBundleIdentifier: com.hddz.samex_module
