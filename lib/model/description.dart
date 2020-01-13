@@ -36,10 +36,10 @@ class DescriptionData {
 
   DescriptionData(
       {this.assetnum,
-        this.description,
-        this.location,
-        this.locationDescription,
-        this.status});
+      this.description,
+      this.location,
+      this.locationDescription,
+      this.status});
 
   DescriptionData.fromJson(Map<String, dynamic> json) {
     assetnum = json['assetnum'];
@@ -57,5 +57,60 @@ class DescriptionData {
     data['locationDescription'] = this.locationDescription;
     data['status'] = this.status;
     return data;
+  }
+
+  bool containsLoc(String str) {
+    bool filter = (this.location ?? '').contains(str);
+    filter = filter || (this.description ?? '').contains(str);
+
+    // 强制大小写切换
+    if (filter == false) {
+      String ustr = str.toUpperCase();
+      filter = (this.location ?? '').contains(ustr);
+      filter = filter || (this.description ?? '').contains(ustr);
+    }
+
+    if (filter == false) {
+      String ustr = str.toLowerCase();
+      filter = (this.location ?? '').contains(ustr);
+      filter = filter || (this.description ?? '').contains(ustr);
+    }
+    return filter;
+  }
+
+  bool containsAssets(String str) {
+    bool filter = this.assetnum.contains(str);
+    filter = filter || (this.description ?? '').contains(str);
+
+    if (filter == false) {
+      String ustr = str.toUpperCase();
+      filter = this.assetnum.contains(ustr);
+      filter = filter || (this.description ?? '').contains(ustr);
+    }
+
+    if (filter == false) {
+      String ustr = str.toLowerCase();
+      filter = this.assetnum.contains(ustr);
+      filter = filter || (this.description ?? '').contains(ustr);
+    }
+    return filter;
+  }
+
+  bool containsAssetsLoc(String str) {
+    bool filter = (this.location ?? '').contains(str);
+    filter = filter || (this.locationDescription ?? '').contains(str);
+
+    if (filter == false) {
+      String ustr = str.toUpperCase();
+      filter = (this.location ?? '').contains(ustr);
+      filter = filter || (this.locationDescription ?? '').contains(ustr);
+    }
+
+    if (filter == false) {
+      String ustr = str.toLowerCase();
+      filter = (this.location ?? '').contains(ustr);
+      filter = filter || (this.locationDescription ?? '').contains(ustr);
+    }
+    return filter;
   }
 }
