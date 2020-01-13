@@ -42,9 +42,9 @@ class Style {
   static Color assetStatusColor(String status) {
     Color avatarColor = Colors.blue.shade600;
     status = status ?? '';
-    if (status == '停用' || status == 'DECOMMISSIONED') {
+    if (status == 'DECOMMISSIONED' || status == '停用' || status == '报废') {
       avatarColor = Colors.grey.shade400;
-    } else if (status == 'OPERATING') {
+    } else if (status == 'OPERATING' || status == '正常') {
       // 正常
       avatarColor = Colors.green.shade400;
     }

@@ -170,18 +170,27 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
   }
 
   Widget _filterWidget() {
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(4.0),
-        child: Wrap(
-          children: <Widget>[
+    List<Widget> children = widget.chooseLocation
+        ? [
+            Divider(height: 1),
+            _assetsFilterWidget(),
+            Divider(height: 1),
+            _statusFilterWidget()
+          ]
+        : [
             Divider(height: 1),
             _assetsFilterWidget(),
             Divider(height: 1),
             _locationFilterWidget(),
             Divider(height: 1),
             _statusFilterWidget()
-          ],
+          ];
+
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(4.0),
+        child: Wrap(
+          children: children,
           spacing: 12.0,
           runSpacing: 8.0,
           runAlignment: WrapAlignment.center,
@@ -200,15 +209,18 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
     );
 
     return Container(
-      height: 20,
+      height: 22,
       child: TextField(
         controller: _scroller,
         decoration: InputDecoration(
             prefixIcon: Align(
-              child: Text('资       产:'),
+              child: widget.chooseLocation
+                  ? Text('位       置:')
+                  : Text('资       产:'),
               widthFactor: 1.1,
             ),
             hintText: "请输入${widget.chooseLocation ? '位置' : '资产'}编号/描述进行过滤",
+            hintStyle: TextStyle(fontSize: 15),
             contentPadding: EdgeInsets.symmetric(vertical: 0.0),
             border: InputBorder.none,
             suffixIcon: _scroller.text.isNotEmpty ? clearBtn : null),
@@ -223,23 +235,22 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
         _scroller2.clear();
       },
     );
-    return widget.chooseLocation
-        ? Container()
-        : Container(
-            height: 20,
-            child: TextField(
-              controller: _scroller2,
-              decoration: InputDecoration(
-                  prefixIcon: Align(
-                    child: Text('位       置:'),
-                    widthFactor: 1.1,
-                  ),
-                  hintText: "请输入位置编号/描述进行过滤",
-                  contentPadding: EdgeInsets.symmetric(vertical: 0.0),
-                  border: InputBorder.none,
-                  suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null),
+    return Container(
+      height: 22,
+      child: TextField(
+        controller: _scroller2,
+        decoration: InputDecoration(
+            prefixIcon: Align(
+              child: Text('位       置:'),
+              widthFactor: 1.1,
             ),
-          );
+            hintText: "请输入位置编号/描述进行过滤",
+            hintStyle: TextStyle(fontSize: 15),
+            contentPadding: EdgeInsets.symmetric(vertical: 0.0),
+            border: InputBorder.none,
+            suffixIcon: _scroller2.text.isNotEmpty ? clearBtn : null),
+      ),
+    );
   }
 
   Widget _statusFilterWidget() {
@@ -275,6 +286,7 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
+          Text(" "),
           Text("正常"),
           normal,
           Text("停用"),
@@ -326,9 +338,9 @@ class _ChooseAssetPageState extends State<ChooseAssetPage> {
 
       // 状态过滤
       String status = f.status ?? '';
-      if (status == '停用' || status == 'DECOMMISSIONED') {
+      if (status == 'DECOMMISSIONED' || status == '停用' || status == '报废') {
         canUsed &= _stateDisableChecked;
-      } else if (status == 'OPERATING') {
+      } else if (status == 'OPERATING' || status == '正常') {
         canUsed &= _stateNormalChecked;
       } else {
         canUsed &= _stateOthersChecked;
