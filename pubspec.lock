@@ -124,11 +124,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "feature/flutter_1.9_androidx_upgrade"
-      resolved-ref: "47732cda82f0eec763a115bb96dd1e149429710e"
+      ref: "1.9.1+1"
+      resolved-ref: abb58ad6be1f34de6f0ee23982e603b73934ae95
       url: "https://github.com/alibaba/flutter_boost.git"
     source: git
-    version: "0.1.54"
+    version: "1.9.1+1"
   flutter_cache_manager:
     dependency: transitive
     description:

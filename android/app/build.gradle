@@ -1,4 +1,4 @@
-def isModule = false
+def isModule = true
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
