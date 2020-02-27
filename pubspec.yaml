@@ -27,7 +27,7 @@ dependencies:
   flutter_boost:
     git:
       url: "https://github.com/alibaba/flutter_boost.git"
-      ref: "1.9.1+1"
+      ref: "v1.9.1-hotfixes"
   flutter_easyrefresh: ^2.0.2
   barcode_scan: ^1.0.0
   # dio: 2.1.16
