@@ -1,4 +1,4 @@
-def isLib = false
+def isModule = false
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
@@ -13,7 +13,7 @@ if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
-if(isLib) {
+if(isModule) {
     apply plugin: 'com.android.library'
     apply plugin: 'com.kezong.fat-aar'
 } else  {
@@ -43,7 +43,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        if(!isLib) {
+        if(!isModule) {
             applicationId "com.hdkj.samexapp"
         } else {
             ndk {
@@ -95,7 +95,7 @@ dependencies {
 
 
     ///为库的方式才添加本地仓库依赖，这个本地仓库目前是从 include 那里读取的。
-    if(isLib) {
+    if(isModule) {
         def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
         def plugins = new Properties()
         def pluginsFile = new File(flutterProjectRoot.toFile(), '.flutter-plugins')
