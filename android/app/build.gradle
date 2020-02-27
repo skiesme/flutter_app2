@@ -75,6 +75,16 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    sourceSets {
+        main {
+            if (isModule.toBoolean()) {
+                manifest.srcFile 'src/main/module/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            }
+        }
+    }
 }
 
 flutter {
@@ -103,7 +113,7 @@ dependencies {
             pluginsFile.withReader('UTF-8') { reader -> plugins.load(reader) }
         }
         plugins.each { name, _ ->
-            println name
+            println "plugin name:$name"
             embed project(path: ":$name", configuration: 'default')
         }
     }
