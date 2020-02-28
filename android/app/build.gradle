@@ -1,3 +1,4 @@
+
 def isModule = true
 
 def localProperties = new Properties()
@@ -11,6 +12,16 @@ if (localPropertiesFile.exists()) {
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
 }
 
 if(isModule) {
@@ -70,9 +81,11 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
+            ndk { abiFilters "armeabi-v7a" }
         }
         debug {
             signingConfig signingConfigs.release
+            ndk { abiFilters "armeabi-v7a", "x86" }
         }
     }
 
@@ -91,6 +104,7 @@ flutter {
     source '../..'
 }
 
+configurations.embed.transitive = true
 dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.0'
@@ -102,8 +116,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'com.xdandroid:hellodaemon:+'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-
-
+    
     ///为库的方式才添加本地仓库依赖，这个本地仓库目前是从 include 那里读取的。
     if(isModule) {
         def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
@@ -114,7 +127,8 @@ dependencies {
         }
         plugins.each { name, _ ->
             println "plugin name:$name"
-            embed project(path: ":$name", configuration: 'default')
+            // aar 合并 还存在问题，需要想办法解决
+            // embed project(path: ":$name", configuration: 'default')
         }
     }
 }
