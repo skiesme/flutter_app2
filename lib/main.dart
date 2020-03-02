@@ -207,7 +207,19 @@ class _MyAppState extends State<MyApp> {
   // 新增工单
   Widget renderWorkOrderAdd(String pageName, Map params, String _) {
     _setup(params);
-    return OrderNewPage();
+
+    Map data = _value(params, 'data');
+    if (null == data) {
+      return OrderNewPage();
+    }
+    return OrderNewPage(
+        data: new OrderPostData(
+            description: _value(data, "description"),
+            assetnum: _value(data, "assetnum"),
+            location: _value(data, "location"),
+            locationDescription: _value(data, "locationDescription"),
+            assetDescription: _value(data, "assetDescription"),
+            images: _value(data, "images")));
   }
 
   // 资产
