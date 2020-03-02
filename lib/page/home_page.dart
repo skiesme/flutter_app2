@@ -390,7 +390,7 @@ class _MainPageState extends State<MainPage> with AfterLayoutMixin<MainPage> {
   Future<Null> _handlerRefresh() async {
     UserInfo info = await getApi().user();
     if (Platform.isAndroid) {
-      _checkUpdate();
+      // _checkUpdate();
     }
 
     if (info != null && mounted) {
